@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 
 import java.time.LocalDate;
 
-public interface GetMFReqeurimientoProjection {
+public interface GetMFRequerimientoProjection {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

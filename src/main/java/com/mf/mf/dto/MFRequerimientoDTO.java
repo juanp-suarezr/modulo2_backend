@@ -1,6 +1,7 @@
 package com.mf.mf.dto;
 
 import lombok.Data;
+
 import java.time.LocalDate;
 
 @Data
@@ -16,9 +17,9 @@ public class MFRequerimientoDTO {
     private Integer actoAdministrativo; // Input number
     private LocalDate fechaPublicacion;
     private Integer annioVigencia; // Input number
-    private byte[] documentoActoAdministrativo;
+    private byte[] documentoActo;
     private boolean estadoVigilado; // Lista desplegable datos maestros
-    //private Integer estadoRequerimiento; // datos maestros asignacion por debajo
+    private boolean estadoRequerimiento; // datos maestros asignacion por debajo
     private boolean estado;
 
 }
