@@ -27,4 +27,8 @@ public class MFRequerimiento {
     private boolean estadoRequerimiento; // datos maestros asignacion por debajo
     private boolean estado;
 
+    @ManyToOne
+    @JoinColumn(name = "\"nombreRequerimiento\"", referencedColumnName = "id", insertable = false, updatable = false)
+    private CatalogoDetalle tipoRequerimientoDescripcion;
+
 }

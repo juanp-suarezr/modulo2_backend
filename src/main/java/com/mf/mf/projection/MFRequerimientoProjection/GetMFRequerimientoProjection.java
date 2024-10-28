@@ -32,10 +32,11 @@ public interface GetMFRequerimientoProjection {
 
     byte[] getDocumentoActo();
 
-    boolean getEstadoVigilado();
+    Boolean getEstadoVigilado();
 
     // Integer getEstadoRequerimiento();
 
-    boolean getEstado();
+    Boolean getEstado();
 
+    String getTipoRequerimientoDescripcion();
 }

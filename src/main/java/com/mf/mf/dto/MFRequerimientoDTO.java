@@ -18,8 +18,8 @@ public class MFRequerimientoDTO {
     private LocalDate fechaPublicacion;
     private Integer annioVigencia; // Input number
     private byte[] documentoActo;
-    private boolean estadoVigilado; // Lista desplegable datos maestros
-    private boolean estadoRequerimiento; // datos maestros asignacion por debajo
-    private boolean estado;
+    private Boolean estadoVigilado; // Lista desplegable datos maestros
+    private Boolean estadoRequerimiento; // datos maestros asignacion por debajo
+    private Boolean estado;
 
 }
