@@ -30,7 +30,7 @@ public interface GetMFRequerimientoProjection {
 
     Integer getAnnioVigencia();
 
-    byte[] getDocumentoActoAdministrativo();
+    byte[] getDocumentoActo();
 
     boolean getEstadoVigilado();
 
