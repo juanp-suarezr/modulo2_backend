@@ -19,7 +19,8 @@ public class MFRequerimientoDTO {
     private Integer annioVigencia; // Input number
     private byte[] documentoActo;
     private boolean estadoVigilado; // Lista desplegable datos maestros
-    private boolean estadoRequerimiento; // datos maestros asignacion por debajo
+    private Integer estadoRequerimiento; // Datos maestros asignacion por debajo
+    private String radicadoOrfeo; // Datos maestros radicado orfeo
     private boolean estado;
 
 }
