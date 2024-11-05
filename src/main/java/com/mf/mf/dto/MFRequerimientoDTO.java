@@ -18,8 +18,22 @@ public class MFRequerimientoDTO {
     private LocalDate fechaPublicacion;
     private Integer annioVigencia; // Input number
     private byte[] documentoActo;
-    private Boolean estadoVigilado; // Lista desplegable datos maestros
-    private Boolean estadoRequerimiento; // datos maestros asignacion por debajo
+    private Integer estadoVigilado; // Lista desplegable datos maestros
+    private Integer estadoRequerimiento; // datos maestros asignacion por debajo
     private Boolean estado;
+
+    @Data
+    public class MFHashDelegaturaDTO {
+
+        private long idProgramacion;
+        private Integer idDelegatura; // Lista desplegable datos maestros
+        private Integer idTipoVigilado; // Lista desplegable datos maestros
+        private long idRequerimiento; // FK
+        private LocalDate fechaFin;
+        private boolean estado;
+        private Integer estadoRequerimiento; // datos maestros asignacion por debajo
+
+
+    }
 
 }

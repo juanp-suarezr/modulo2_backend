@@ -23,8 +23,8 @@ public class MFRequerimiento {
     private LocalDate fechaPublicacion;
     private Integer annioVigencia; // Input number
     private byte[] documentoActo;
-    private boolean estadoVigilado; // Lista desplegable datos maestros
-    private boolean estadoRequerimiento; // datos maestros asignacion por debajo
+    private Integer estadoVigilado; // Lista desplegable datos maestros
+    private Integer estadoRequerimiento; // datos maestros asignacion por debajo
     private boolean estado;
 
     @ManyToOne
