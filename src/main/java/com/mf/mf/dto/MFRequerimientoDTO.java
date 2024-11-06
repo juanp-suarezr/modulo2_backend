@@ -3,6 +3,7 @@ package com.mf.mf.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class MFRequerimientoDTO {
@@ -22,8 +23,10 @@ public class MFRequerimientoDTO {
     private Integer estadoRequerimiento; // datos maestros asignacion por debajo
     private Boolean estado;
 
+    private List<MFHashDelegaturaDTO> delegatura;
+
     @Data
-    public class MFHashDelegaturaDTO {
+    public static class MFHashDelegaturaDTO {
 
         private long idProgramacion;
         private Integer idDelegatura; // Lista desplegable datos maestros

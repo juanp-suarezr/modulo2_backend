@@ -1,6 +1,5 @@
 package com.mf.mf.services.MFRequerimientoServices;
 
-import com.mf.mf.dto.MFHashDelegaturaDTO;
 import com.mf.mf.dto.MFRequerimientoDTO;
 import com.mf.mf.mapper.MFHashDelegaturaMapper;
 import com.mf.mf.mapper.MFRequerimientoMapper;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MFRequerimientoServices {
@@ -30,24 +30,23 @@ public class MFRequerimientoServices {
 
     @Transactional
     public MFRequerimientoDTO save(MFRequerimientoDTO mfRequerimientoDTO) {
-        // Convertir y guardar la entidad de MFRequerimiento
-        MFRequerimiento entity = mfRequerimientoMapper.toEntity(mfRequerimientoDTO);
-        MFRequerimiento savedEntity = mfRequerimientoRepository.save(entity);
+        // Convertir y guardar MFRequerimiento
+        MFRequerimiento requerimiento = mfRequerimientoMapper.toEntity(mfRequerimientoDTO);
+        requerimiento = mfRequerimientoRepository.save(requerimiento);
 
-        try {
-            // Verificar el tipoProgramacion y, si coincide, crear el registro en MFHashDelegatura
-            if (mfRequerimientoDTO.getTipoProgramacion().equals(232)) { // reemplaza "especificoId" por el ID específico
-                MFHashDelegatura hashDelegaturaEntity = mfHashDelegaturaMapper.toEntity(mfHashDelegaturaDTO);
-                hashDelegaturaEntity.setIdRequerimiento(savedEntity.getIdRequerimiento()); // Relacionar con MFRequerimiento
-                mfHashDelegaturaRepository.save(hashDelegaturaEntity);
-            }
-        } catch (Exception e) {
-            // Si ocurre un error al guardar MFHashDelegatura, lanzar una excepción
-            throw new RuntimeException("Error al crear la delegatura hash. Eliminando el requerimiento...", e);
+        // Convertir y guardar las delegaturas
+        List<MFHashDelegatura> delegaturas = mfRequerimientoMapper.toDelegaturaEntities(mfRequerimientoDTO.getDelegatura());
+        for (MFHashDelegatura delegatura : delegaturas) {
+            delegatura.setRequerimiento(requerimiento); // Establecer la relación
         }
+        mfHashDelegaturaRepository.saveAll(delegaturas);
 
-        // Retornar el DTO de MFRequerimiento
-        return mfRequerimientoMapper.toDTO(savedEntity);
+        // Convertir y devolver el requerimiento a DTO, incluyendo delegaturas manualmente
+        MFRequerimientoDTO resultDto = mfRequerimientoMapper.toDto(requerimiento);
+        resultDto.setDelegatura(mfRequerimientoDTO.getDelegatura());
+        return resultDto;
+
+
     }
 
     public List<GetMFRequerimientoProjection> obtenerRequerimientos() {

@@ -1,9 +1,11 @@
 package com.mf.mf.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
@@ -26,6 +28,12 @@ public class MFRequerimiento {
     private Integer estadoVigilado; // Lista desplegable datos maestros
     private Integer estadoRequerimiento; // datos maestros asignacion por debajo
     private boolean estado;
+
+
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "idRequerimiento", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MFHashDelegatura> delegatura;
 
     @ManyToOne
     @JoinColumn(name = "\"nombreRequerimiento\"", referencedColumnName = "id", insertable = false, updatable = false)
