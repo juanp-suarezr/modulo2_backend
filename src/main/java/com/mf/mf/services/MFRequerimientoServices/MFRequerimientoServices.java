@@ -5,9 +5,11 @@ import com.mf.mf.dto.MFRequerimientoDTO;
 import com.mf.mf.mapper.MFHashDelegaturaMapper;
 import com.mf.mf.mapper.MFRequerimientoMapper;
 import com.mf.mf.model.MFHashDelegatura;
+import com.mf.mf.model.MFHashDigitoNIT;
 import com.mf.mf.model.MFRequerimiento;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientoProjection;
 import com.mf.mf.repository.MFRequerimientoRepository.MFHashDelegaturaRepository;
+import com.mf.mf.repository.MFRequerimientoRepository.MFHashDigitoNITRepository;
 import com.mf.mf.repository.MFRequerimientoRepository.MFRequerimientoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +25,13 @@ public class MFRequerimientoServices {
     private MFRequerimientoRepository mfRequerimientoRepository;
     @Autowired
     private MFHashDelegaturaRepository mfHashDelegaturaRepository; // Añadir el repositorio de MFHashDelegatura
+
+    @Autowired
+    private MFHashDigitoNITRepository mfHashDigitoNITRepository; // Añadir el repositorio de MFHashDelegatura
     @Autowired
     private MFRequerimientoMapper mfRequerimientoMapper;
-    @Autowired
-    private MFHashDelegaturaMapper mfHashDelegaturaMapper; // Añadir el mapper de MFHashDelegatura
 
+    //guardar con programaciones
     @Transactional
     public MFRequerimientoDTO save(MFRequerimientoDTO mfRequerimientoDTO) {
         // Convertir y guardar la entidad de MFRequerimiento
@@ -37,11 +41,20 @@ public class MFRequerimientoServices {
         try {
             // Verificar el tipoProgramacion y, si coincide, crear el registro en MFHashDelegatura
             if (mfRequerimientoDTO.getTipoProgramacion().equals(232)) { // reemplaza "especificoId" por el ID específico
-                MFHashDelegatura hashDelegaturaEntity = mfHashDelegaturaMapper.toEntity(mfHashDelegaturaDTO);
-                hashDelegaturaEntity.setIdRequerimiento(savedEntity.getIdRequerimiento()); // Relacionar con MFRequerimiento
-                mfHashDelegaturaRepository.save(hashDelegaturaEntity);
+                List<MFHashDelegatura> delegaturaEntities = mfRequerimientoMapper.toEntity(mfRequerimientoDTO.getDelegaturas());
+                for (MFHashDelegatura delegatura : delegaturaEntities) {
+                    delegatura.setIdRequerimiento(savedEntity.getIdRequerimiento());
+                    mfHashDelegaturaRepository.save(delegatura);
+                }
+            } else if(mfRequerimientoDTO.getTipoProgramacion().equals(234)) {
+                List<MFHashDigitoNIT> digitoNITEntities = mfRequerimientoMapper.toDigitoNITEntity(mfRequerimientoDTO.getDigitoNIT());
+                for (MFHashDigitoNIT digitoNIT : digitoNITEntities) {
+                    digitoNIT.setIdRequerimiento(savedEntity.getIdRequerimiento());
+                    mfHashDigitoNITRepository.save(digitoNIT);
+                }
             }
         } catch (Exception e) {
+            mfRequerimientoRepository.delete(savedEntity);
             // Si ocurre un error al guardar MFHashDelegatura, lanzar una excepción
             throw new RuntimeException("Error al crear la delegatura hash. Eliminando el requerimiento...", e);
         }
@@ -49,6 +62,7 @@ public class MFRequerimientoServices {
         // Retornar el DTO de MFRequerimiento
         return mfRequerimientoMapper.toDTO(savedEntity);
     }
+
 
     public List<GetMFRequerimientoProjection> obtenerRequerimientos() {
         return mfRequerimientoRepository.findAllProjections();

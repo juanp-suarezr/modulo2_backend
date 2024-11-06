@@ -31,4 +31,20 @@ public class MFRequerimiento {
     @JoinColumn(name = "\"nombreRequerimiento\"", referencedColumnName = "id", insertable = false, updatable = false)
     private CatalogoDetalle tipoRequerimientoDescripcion;
 
+    @ManyToOne
+    @JoinColumn(name = "\"periodoEntrega\"", referencedColumnName = "id", insertable = false, updatable = false)
+    private CatalogoDetalle periodoEntregaDescripcion;
+
+    @ManyToOne
+    @JoinColumn(name = "\"tipoProgramacion\"", referencedColumnName = "id", insertable = false, updatable = false)
+    private CatalogoDetalle tipoProgramacionDescripcion;
+
+    @ManyToOne
+    @JoinColumn(name = "\"estadoVigilado\"", referencedColumnName = "id", insertable = false, updatable = false)
+    private CatalogoDetalle estadoVigiladoDescripcion;
+
+    @ManyToOne
+    @JoinColumn(name = "\"estadoRequerimiento\"", referencedColumnName = "id", insertable = false, updatable = false)
+    private CatalogoDetalle estadoRequerimientoDescripcion;
+
 }

@@ -1,8 +1,7 @@
 package com.mf.mf.projection.MFRequerimientoProjection;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.mf.mf.model.CatalogoDetalle;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -39,4 +38,12 @@ public interface GetMFRequerimientoProjection {
     Boolean getEstado();
 
     String getTipoRequerimientoDescripcion();
+
+    String getPeriodoEntregaDescripcion();
+
+    String getTipoProgramacionDescripcion();
+
+    String getEstadoVigiladoDescripcion();
+
+    String getEstadoRequerimientoDescripcion();
 }

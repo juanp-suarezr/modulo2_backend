@@ -15,6 +15,7 @@ public class MFHashDigitoNIT {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idProgramacion;
     private Integer idNumeroDigitos; // datos maestros
+    private String inicioRango; // rangos
     private String finRango; // rangos
     private LocalDate fechaFin;
     private long idRequerimiento; // FK
