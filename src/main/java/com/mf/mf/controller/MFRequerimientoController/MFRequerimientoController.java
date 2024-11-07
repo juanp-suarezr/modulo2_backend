@@ -4,6 +4,7 @@ import com.mf.mf.dto.MFHashDelegaturaDTO;
 import com.mf.mf.dto.MFRequerimientoDTO;
 import com.mf.mf.payload.ApiResponse;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientoProjection;
+import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosTableProjection;
 import com.mf.mf.services.MFRequerimientoServices.MFRequerimientoServices;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,9 +32,10 @@ public class MFRequerimientoController {
         return ResponseEntity.ok(response);
     }
 
+    //Obtener requerimientos tabla principal
     @CrossOrigin(origins = "", allowedHeaders = "")
     @GetMapping
-    public List<GetMFRequerimientoProjection> getRequerimientos() {
+    public List<GetMFRequerimientosTableProjection> getRequerimientos() {
         return requerimientoServices.obtenerRequerimientos();
     }
 

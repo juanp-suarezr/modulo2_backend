@@ -8,6 +8,7 @@ import com.mf.mf.model.MFHashDelegatura;
 import com.mf.mf.model.MFHashDigitoNIT;
 import com.mf.mf.model.MFRequerimiento;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientoProjection;
+import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosTableProjection;
 import com.mf.mf.repository.MFRequerimientoRepository.MFHashDelegaturaRepository;
 import com.mf.mf.repository.MFRequerimientoRepository.MFHashDigitoNITRepository;
 import com.mf.mf.repository.MFRequerimientoRepository.MFRequerimientoRepository;
@@ -74,7 +75,8 @@ public class MFRequerimientoServices {
         }
     }
 
-    public List<GetMFRequerimientoProjection> obtenerRequerimientos() {
+    //Obtener requerimientos para tabla principal
+    public List<GetMFRequerimientosTableProjection> obtenerRequerimientos() {
         return mfRequerimientoRepository.findAllProjections();
     }
 
