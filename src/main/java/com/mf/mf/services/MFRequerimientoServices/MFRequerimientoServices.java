@@ -63,6 +63,16 @@ public class MFRequerimientoServices {
         return mfRequerimientoMapper.toDTO(savedEntity);
     }
 
+    //Obtener detalles completos
+    public GetMFRequerimientoProjection obtenerRequerimientoByID(Long idRequerimiento) {
+        List<GetMFRequerimientoProjection> requerimientos = mfRequerimientoRepository.findProjectionsByIdRequerimiento(idRequerimiento);
+
+        try {
+            return requerimientos.get(0);
+        } catch (IndexOutOfBoundsException e) {
+            throw new RuntimeException("Error: No se encontró el requerimiento con ID " + idRequerimiento, e);
+        }
+    }
 
     public List<GetMFRequerimientoProjection> obtenerRequerimientos() {
         return mfRequerimientoRepository.findAllProjections();

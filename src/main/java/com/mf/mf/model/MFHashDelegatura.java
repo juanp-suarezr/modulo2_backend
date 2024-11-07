@@ -22,23 +22,21 @@ public class MFHashDelegatura {
     private Integer estadoRequerimiento; // datos maestros asignacion por debajo
 
     // Relaciones con otras entidades
-    @ManyToOne
-    @JoinColumn(name = "\"idDelegatura\"", insertable = false, updatable = false)
-    @JsonIgnore
-    private CatalogoDetalle delegatura;
 
     @ManyToOne
-    @JoinColumn(name = "\"idTipoVigilado\"", insertable = false, updatable = false)
-    @JsonIgnore
+    @JoinColumn(name = "\"idDelegatura\"", referencedColumnName = "id", insertable = false, updatable = false)
+    private CatalogoDetalle delegaturaDescripcion;
+
+    @ManyToOne
+    @JoinColumn(name = "\"idTipoVigilado\"", referencedColumnName = "id",insertable = false, updatable = false)
     private CatalogoDetalle tipoVigilado;
 
     @ManyToOne
-    @JoinColumn(name = "\"estadoRequerimiento\"", insertable = false, updatable = false)
-    @JsonIgnore
+    @JoinColumn(name = "\"estadoRequerimiento\"", referencedColumnName = "id", insertable = false, updatable = false)
     private CatalogoDetalle estadoRequerimientos;
 
-//    @ManyToOne
-//    @JoinColumn(name = "\"idRequerimiento\"", insertable = false, updatable = false)
-//    @JsonIgnore
-//    private Requerimiento requerimiento;
+    // Relación ManyToOne con MFRequerimiento
+    @ManyToOne
+    @JoinColumn(name = "\"idRequerimiento\"", referencedColumnName = "idRequerimiento", insertable = false, updatable = false)
+    private MFRequerimiento requerimiento;
 }

@@ -37,16 +37,18 @@ public class MFRequerimientoController {
         return requerimientoServices.obtenerRequerimientos();
     }
 
+    //get detalles completos
+    @CrossOrigin(origins = "", allowedHeaders = "")
+    @GetMapping("/by-id/{idRequerimiento}")
+    public GetMFRequerimientoProjection getRequerimientoID(@PathVariable Long idRequerimiento) {
+        return requerimientoServices.obtenerRequerimientoByID(idRequerimiento);
+    }
+
+
     @DeleteMapping("/{idRequerimiento}")
     public ResponseEntity<?> deleteRequerimiento(@PathVariable Long idRequerimiento) {
         requerimientoServices.deleteRequerimiento(idRequerimiento);
         return ResponseEntity.ok(idRequerimiento);
-    }
-
-    @CrossOrigin(origins = "", allowedHeaders = "")
-    @GetMapping("/by-id/{idRequerimiento}")
-    public GetMFRequerimientoProjection getRequerimientoID(@PathVariable Long idRequerimiento) {
-        return requerimientoServices.buscarRequerimientoId(idRequerimiento);
     }
 
     @CrossOrigin(origins = "", allowedHeaders = "")

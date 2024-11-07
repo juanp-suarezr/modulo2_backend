@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
@@ -47,4 +48,11 @@ public class MFRequerimiento {
     @JoinColumn(name = "\"estadoRequerimiento\"", referencedColumnName = "id", insertable = false, updatable = false)
     private CatalogoDetalle estadoRequerimientoDescripcion;
 
+    // Relación OneToMany con MFHashDelegatura
+    @OneToMany(mappedBy = "requerimiento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MFHashDelegatura> delegaturas;
+
+    // Relación OneToMany con MFHashDigitoNIT
+    @OneToMany(mappedBy = "requerimiento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MFHashDigitoNIT> digitoNIT;
 }

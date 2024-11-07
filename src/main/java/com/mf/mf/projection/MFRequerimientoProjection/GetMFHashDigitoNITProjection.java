@@ -17,4 +17,8 @@ public interface GetMFHashDigitoNITProjection {
     Integer getEstadoRequerimiento();
     Boolean getEstado();
 
+//    String getEstadoRequerimientos();
+//
+//    String getNumeroDigitos();
+
 }

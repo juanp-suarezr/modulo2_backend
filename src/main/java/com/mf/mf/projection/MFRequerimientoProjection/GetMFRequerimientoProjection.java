@@ -1,9 +1,12 @@
 package com.mf.mf.projection.MFRequerimientoProjection;
 
+import com.mf.mf.dto.MFHashDelegaturaDTO;
+import com.mf.mf.dto.MFHashDigitoNITDTO;
 import com.mf.mf.model.CatalogoDetalle;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface GetMFRequerimientoProjection {
 
@@ -46,4 +49,7 @@ public interface GetMFRequerimientoProjection {
     String getEstadoVigiladoDescripcion();
 
     String getEstadoRequerimientoDescripcion();
+
+    List<GetMFHashDelegaturaProjection> getDelegaturas();
+    List<GetMFHashDigitoNITProjection> getDigitoNIT();
 }
