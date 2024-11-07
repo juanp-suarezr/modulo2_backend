@@ -1,10 +1,12 @@
 package com.mf.mf.projection.MFRequerimientoProjection;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.mf.mf.dto.MFHashDelegaturaDTO;
+import com.mf.mf.dto.MFHashDigitoNITDTO;
+import com.mf.mf.model.CatalogoDetalle;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface GetMFRequerimientoProjection {
 
@@ -39,4 +41,15 @@ public interface GetMFRequerimientoProjection {
     Boolean getEstado();
 
     String getTipoRequerimientoDescripcion();
+
+    String getPeriodoEntregaDescripcion();
+
+    String getTipoProgramacionDescripcion();
+
+    String getEstadoVigiladoDescripcion();
+
+    String getEstadoRequerimientoDescripcion();
+
+    List<GetMFHashDelegaturaProjection> getDelegaturas();
+    List<GetMFHashDigitoNITProjection> getDigitoNIT();
 }

@@ -15,6 +15,7 @@ public class MFHashDigitoNIT {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idProgramacion;
     private Integer idNumeroDigitos; // datos maestros
+    private String inicioRango; // rangos
     private String finRango; // rangos
     private LocalDate fechaFin;
     private long idRequerimiento; // FK
@@ -23,17 +24,16 @@ public class MFHashDigitoNIT {
 
     // Relaciones con otras entidades
     @ManyToOne
-    @JoinColumn(name = "\"idNumeroDigitos\"", insertable = false, updatable = false)
-    @JsonIgnore
+    @JoinColumn(name = "\"idNumeroDigitos\"", referencedColumnName = "id", insertable = false, updatable = false)
     private CatalogoDetalle NumeroDigitos;
 
     @ManyToOne
-    @JoinColumn(name = "\"estadoRequerimiento\"", insertable = false, updatable = false)
-    @JsonIgnore
+    @JoinColumn(name = "\"estadoRequerimiento\"", referencedColumnName = "id", insertable = false, updatable = false)
     private CatalogoDetalle estadoRequerimientos;
 
-//    @ManyToOne
-//    @JoinColumn(name = "\"idRequerimiento\"", insertable = false, updatable = false)
-//    @JsonIgnore
-//    private Requerimiento requerimiento;
+    // Relación ManyToOne con MFRequerimiento
+    @ManyToOne
+    @JoinColumn(name = "\"idRequerimiento\"", referencedColumnName = "idRequerimiento", insertable = false, updatable = false)
+    private MFRequerimiento requerimiento;
+
 }
