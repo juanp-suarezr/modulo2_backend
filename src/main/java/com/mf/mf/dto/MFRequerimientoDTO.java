@@ -3,6 +3,7 @@ package com.mf.mf.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class MFRequerimientoDTO {
@@ -18,8 +19,15 @@ public class MFRequerimientoDTO {
     private LocalDate fechaPublicacion;
     private Integer annioVigencia; // Input number
     private byte[] documentoActo;
-    private boolean estadoVigilado; // Lista desplegable datos maestros
-    private Integer estadoRequerimiento; // Datos maestros asignacion por debajo
-    private boolean estado;
+    private Integer estadoVigilado; // Lista desplegable datos maestros
+    private Integer estadoRequerimiento; // datos maestros asignacion por debajo
+    private Boolean estado;
+
+    // Agregar lista de MFHashDelegaturaDTO
+    private List<MFHashDelegaturaDTO> delegaturas;
+    // Agregar lista de MFHashDigitoNITDTO
+    private List<MFHashDigitoNITDTO> digitoNIT;
+
+
 
 }
