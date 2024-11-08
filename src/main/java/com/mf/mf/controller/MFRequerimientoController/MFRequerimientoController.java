@@ -1,6 +1,5 @@
 package com.mf.mf.controller.MFRequerimientoController;
 
-import com.mf.mf.dto.MFHashDelegaturaDTO;
 import com.mf.mf.dto.MFRequerimientoDTO;
 import com.mf.mf.payload.ApiResponse;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientoProjection;
@@ -23,9 +22,7 @@ public class MFRequerimientoController {
     @Autowired
     private MFRequerimientoServices requerimientoServices;
 
-
-    @CrossOrigin(origins = "", allowedHeaders = "")
-    @PostMapping()
+    @PostMapping("/nuevo-requerimiento")
     public ResponseEntity<ApiResponse<MFRequerimientoDTO>> create(@RequestBody @Valid MFRequerimientoDTO body) {
         MFRequerimientoDTO saved_item = requerimientoServices.save(body);
         ApiResponse<MFRequerimientoDTO> response = new ApiResponse<>("Registro almacenado exitosamente", saved_item);
