@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
@@ -39,4 +40,8 @@ public class MFHashDelegatura {
     @ManyToOne
     @JoinColumn(name = "\"idRequerimiento\"", referencedColumnName = "idRequerimiento", insertable = false, updatable = false)
     private MFRequerimiento requerimiento;
+
+    // Relación OneToMany con MFHashHeredado
+    @OneToMany(mappedBy = "delegatura", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MFHashHeredado> heredados;
 }

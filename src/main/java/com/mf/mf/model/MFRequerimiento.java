@@ -55,4 +55,6 @@ public class MFRequerimiento {
     // Relación OneToMany con MFHashDigitoNIT
     @OneToMany(mappedBy = "requerimiento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MFHashDigitoNIT> digitoNIT;
+
+
 }
