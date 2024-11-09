@@ -37,6 +37,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "a.fechaPublicacion as fechaPublicacion, " +
             "a.annioVigencia as annioVigencia, " +
             "a.estadoVigilado as estadoVigilado, " +
+            "a.estadoRequerimiento as estadoRequerimiento, " +
             "a.estado as estado, " +
             "f.descripcion as tipoRequerimientoDescripcion, " +
             "p.descripcion as periodoEntregaDescripcion, " +

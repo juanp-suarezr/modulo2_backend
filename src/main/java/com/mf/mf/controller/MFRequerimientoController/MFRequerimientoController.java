@@ -24,7 +24,6 @@ public class MFRequerimientoController {
     private MFRequerimientoServices requerimientoServices;
 
 
-    @CrossOrigin(origins = "", allowedHeaders = "")
     @PostMapping()
     public ResponseEntity<ApiResponse<MFRequerimientoDTO>> create(@RequestBody @Valid MFRequerimientoDTO body) {
         MFRequerimientoDTO saved_item = requerimientoServices.save(body);
