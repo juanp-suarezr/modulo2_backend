@@ -52,4 +52,5 @@ public interface GetMFRequerimientoProjection {
 
     List<GetMFHashDelegaturaProjection> getDelegaturas();
     List<GetMFHashDigitoNITProjection> getDigitoNIT();
+
 }

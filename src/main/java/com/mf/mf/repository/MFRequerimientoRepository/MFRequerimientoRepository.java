@@ -37,22 +37,19 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "a.fechaPublicacion as fechaPublicacion, " +
             "a.annioVigencia as annioVigencia, " +
             "a.estadoVigilado as estadoVigilado, " +
+            "a.estadoRequerimiento as estadoRequerimiento, " +
             "a.estado as estado, " +
             "f.descripcion as tipoRequerimientoDescripcion, " +
             "p.descripcion as periodoEntregaDescripcion, " +
             "t.descripcion as tipoProgramacionDescripcion, " + // Agregado
             "e.descripcion as estadoVigiladoDescripcion, " + // Agregado
-            "r.descripcion as estadoRequerimientoDescripcion, " + // Agregado
-            "d as delegaturas, " + //hash delegatura
-            "n as digitoNIT " + //hash digitoNIT
+            "r.descripcion as estadoRequerimientoDescripcion " + // Agregado
             "FROM MFRequerimiento a " +
             "JOIN a.tipoRequerimientoDescripcion f " +
             "JOIN a.periodoEntregaDescripcion p " +
             "JOIN a.tipoProgramacionDescripcion t " + // Agregado
             "JOIN a.estadoVigiladoDescripcion e " + // Agregado
             "JOIN a.estadoRequerimientoDescripcion r " + // Agregado
-            "LEFT JOIN a.delegaturas d " + //relaciones
-            "LEFT JOIN a.digitoNIT n " + //relaciones
             "WHERE a.idRequerimiento = :idRequerimiento")
     List<GetMFRequerimientoProjection> findProjectionsByIdRequerimiento(Long idRequerimiento);
 }

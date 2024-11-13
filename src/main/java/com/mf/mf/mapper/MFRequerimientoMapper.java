@@ -22,7 +22,6 @@ public interface MFRequerimientoMapper {
 
     // Método para actualizar la entidad MFRequerimiento desde el DTO, ignorando ciertos campos
     @Mapping(target = "idRequerimiento", ignore = true) // Ignora el ID
-    @Mapping(target = "documentoActo", ignore = true) // Opcional: ignora documentoActo si no deseas sobreescribirlo
     void updateEntityFromDto(MFRequerimientoDTO MFRequerimientoDTO, @MappingTarget MFRequerimiento requerimiento);
 
     //Conexion con DTO HASH DELEGATURAS
