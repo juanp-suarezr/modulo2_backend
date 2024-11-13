@@ -30,7 +30,7 @@ public class MFHashDelegatura {
 
     @ManyToOne
     @JoinColumn(name = "\"idTipoVigilado\"", referencedColumnName = "id",insertable = false, updatable = false)
-    private CatalogoDetalle tipoVigilado;
+    private MUVTipoVigilado tipoVigilado;
 
     @ManyToOne
     @JoinColumn(name = "\"estadoRequerimiento\"", referencedColumnName = "id", insertable = false, updatable = false)
