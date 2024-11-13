@@ -21,7 +21,7 @@ public class MUVTipoVigiladoController {
 
     //Obtener TIPO VIGILADOS
     @CrossOrigin(origins = "", allowedHeaders = "")
-    @GetMapping("/tipo-vigilado/{idDelegatura}")
+    @GetMapping("/tipo-vigilado/")
     public List<GetMUVTipoVigiladoProjection> obtenerTipoVigilados(@RequestParam(required = false) Integer idDelegatura) {
         if (idDelegatura == null) {
             throw new RuntimeException("Error: El parámetro 'idDelegatura' no se envió.");
