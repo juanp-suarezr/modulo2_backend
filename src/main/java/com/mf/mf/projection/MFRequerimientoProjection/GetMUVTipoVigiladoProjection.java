@@ -9,10 +9,9 @@ public interface GetMUVTipoVigiladoProjection {
     long getId();
     Integer getIdGrupo();
     String getSigla();
-    String getFinRango();
     String getDescripcion();
-    Integer getIdDelegaturaMUV();
-    Boolean getEstadoMUV();
+    Integer getIdDelegatura();
+    Boolean getEstado();
 
 
 
