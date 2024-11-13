@@ -1,14 +1,12 @@
 package com.mf.mf.services.MFRequerimientoServices;
 
-import com.mf.mf.dto.MFHashDelegaturaDTO;
+import com.mf.mf.dto.MFRequerimientoWithHashDTO;
 import com.mf.mf.dto.MFRequerimientoDTO;
-import com.mf.mf.mapper.MFHashDelegaturaMapper;
 import com.mf.mf.mapper.MFRequerimientoMapper;
 import com.mf.mf.model.MFHashDelegatura;
 import com.mf.mf.model.MFHashDigitoNIT;
 import com.mf.mf.model.MFRequerimiento;
-import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientoProjection;
-import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosTableProjection;
+import com.mf.mf.projection.MFRequerimientoProjection.*;
 import com.mf.mf.repository.MFRequerimientoRepository.MFHashDelegaturaRepository;
 import com.mf.mf.repository.MFRequerimientoRepository.MFHashDigitoNITRepository;
 import com.mf.mf.repository.MFRequerimientoRepository.MFRequerimientoRepository;
@@ -65,15 +63,29 @@ public class MFRequerimientoServices {
     }
 
     //Obtener detalles completos
-    public GetMFRequerimientoProjection obtenerRequerimientoByID(Long idRequerimiento) {
+    public MFRequerimientoWithHashDTO obtenerRequerimientoByID(Long idRequerimiento) {
+        // 1. Obtener el requerimiento usando la proyección GetMFRequerimientoProjection
         List<GetMFRequerimientoProjection> requerimientos = mfRequerimientoRepository.findProjectionsByIdRequerimiento(idRequerimiento);
 
         try {
-            return requerimientos.get(0);
+            // Obtener el primer requerimiento de la lista
+            GetMFRequerimientoProjection requerimiento = requerimientos.get(0);
+
+            // 2. Obtener hash separados
+            List<GetMFHashDigitoNITProjection> digitoNIT = mfHashDigitoNITRepository.findProjectionsByIdRequerimiento(idRequerimiento);
+            List<GetMFHashDelegaturaProjection> delegaturas = mfHashDelegaturaRepository.findProjectionsByIdRequerimiento(idRequerimiento);
+
+            // 3. Crear el DTO con los datos
+            MFRequerimientoWithHashDTO result = new MFRequerimientoWithHashDTO(requerimiento, digitoNIT, delegaturas);
+
+            // 4. Devolver el DTO
+            return result;
         } catch (IndexOutOfBoundsException e) {
             throw new RuntimeException("Error: No se encontró el requerimiento con ID " + idRequerimiento, e);
         }
     }
+
+
 
     //Obtener requerimientos para tabla principal
     public List<GetMFRequerimientosTableProjection> obtenerRequerimientos() {
@@ -84,13 +96,6 @@ public class MFRequerimientoServices {
         mfRequerimientoRepository.deleteById(idRequerimiento);
     }
 
-    public GetMFRequerimientoProjection buscarRequerimientoId(Long idRequerimiento) {
-        List<GetMFRequerimientoProjection> results = mfRequerimientoRepository.findProjectionsByIdRequerimiento(idRequerimiento);
-        if (results.isEmpty()) {
-            throw new EntityNotFoundException("No se encontró la solicitud con el ID: " + idRequerimiento);
-        }
-        return results.get(0);
-    }
 
     public MFRequerimientoDTO updateRequerimiento(Long idRequerimiento, MFRequerimientoDTO dto) {
         // Buscar la entidad existente por ID

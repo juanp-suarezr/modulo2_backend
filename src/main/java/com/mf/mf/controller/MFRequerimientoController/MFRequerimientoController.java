@@ -2,6 +2,8 @@ package com.mf.mf.controller.MFRequerimientoController;
 
 import com.mf.mf.dto.MFHashDelegaturaDTO;
 import com.mf.mf.dto.MFRequerimientoDTO;
+import com.mf.mf.dto.MFRequerimientoWithHashDTO;
+import com.mf.mf.model.MFRequerimiento;
 import com.mf.mf.payload.ApiResponse;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientoProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosTableProjection;
@@ -9,6 +11,7 @@ import com.mf.mf.services.MFRequerimientoServices.MFRequerimientoServices;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,12 +41,23 @@ public class MFRequerimientoController {
         return requerimientoServices.obtenerRequerimientos();
     }
 
-    //get detalles completos
+//    get detalles completos
     @CrossOrigin(origins = "", allowedHeaders = "")
     @GetMapping("/by-id/{idRequerimiento}")
-    public GetMFRequerimientoProjection getRequerimientoID(@PathVariable Long idRequerimiento) {
-        return requerimientoServices.obtenerRequerimientoByID(idRequerimiento);
+    public ResponseEntity<MFRequerimientoWithHashDTO> getRequerimientoById(@PathVariable Long idRequerimiento) {
+        try {
+            MFRequerimientoWithHashDTO requerimientoDTO = requerimientoServices.obtenerRequerimientoByID(idRequerimiento);
+            return ResponseEntity.ok(requerimientoDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
+    @Autowired
+    public MFRequerimientoController(MFRequerimientoServices requerimientoServices) {
+        this.requerimientoServices = requerimientoServices;
+    }
+
 
 
     @DeleteMapping("/{idRequerimiento}")
