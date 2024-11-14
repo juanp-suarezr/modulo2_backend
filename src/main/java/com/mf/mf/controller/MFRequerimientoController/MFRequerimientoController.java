@@ -20,7 +20,10 @@ import java.util.List;
 @RestController
 @RequestMapping("api/requerimiento")
 @Tag(name = "Entidad requerimiento", description = "Requerimiento")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:4200", // Cambia a la URL de tu frontend
+        allowedHeaders = "*",
+        allowCredentials = "true",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class MFRequerimientoController {
 
     @Autowired
@@ -35,14 +38,13 @@ public class MFRequerimientoController {
     }
 
     //Obtener requerimientos tabla principal
-    @CrossOrigin(origins = "", allowedHeaders = "")
+
     @GetMapping
     public List<GetMFRequerimientosTableProjection> getRequerimientos() {
         return requerimientoServices.obtenerRequerimientos();
     }
 
 //    get detalles completos
-    @CrossOrigin(origins = "", allowedHeaders = "")
     @GetMapping("/by-id/{idRequerimiento}")
     public ResponseEntity<MFRequerimientoWithHashDTO> getRequerimientoById(@PathVariable Long idRequerimiento) {
         try {
@@ -66,7 +68,6 @@ public class MFRequerimientoController {
         return ResponseEntity.ok(idRequerimiento);
     }
 
-    @CrossOrigin(origins = "", allowedHeaders = "")
     @PutMapping("/{idRequerimiento}")
     public ResponseEntity<ApiResponse<MFRequerimientoDTO>> updateRequerimientos(@PathVariable Long idRequerimiento, @RequestBody @Valid MFRequerimientoDTO dto) {
         MFRequerimientoDTO updateRequerimiento = requerimientoServices.updateRequerimiento(idRequerimiento, dto);
