@@ -13,14 +13,13 @@ import java.util.List;
 @RestController
 @RequestMapping("api/muv")
 @Tag(name = "Entidad MUV", description = "consultas de modulo vigilados")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MUVTipoVigiladoController {
 
     @Autowired
     private MUVTipoVigiladoServices muvTipoVigiladoServices;
 
     //Obtener TIPO VIGILADOS
-    @CrossOrigin(origins = "", allowedHeaders = "")
     @GetMapping("/tipo-vigilado/")
     public List<GetMUVTipoVigiladoProjection> obtenerTipoVigilados(@RequestParam(required = false) Integer idDelegatura) {
         if (idDelegatura == null) {
