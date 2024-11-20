@@ -1,11 +1,8 @@
 package com.mf.mf.controller.MFRequerimientoController;
 
-import com.mf.mf.dto.MFHashDelegaturaDTO;
 import com.mf.mf.dto.MFRequerimientoDTO;
 import com.mf.mf.dto.MFRequerimientoWithHashDTO;
-import com.mf.mf.model.MFRequerimiento;
 import com.mf.mf.payload.ApiResponse;
-import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientoProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosTableProjection;
 import com.mf.mf.services.MFRequerimientoServices.MFRequerimientoServices;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,10 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/requerimiento")
 @Tag(name = "Entidad requerimiento", description = "Requerimiento")
-@CrossOrigin(origins = "http://localhost:4200", // Cambia a la URL de tu frontend
-        allowedHeaders = "*",
-        allowCredentials = "true",
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MFRequerimientoController {
 
     @Autowired
@@ -44,7 +38,7 @@ public class MFRequerimientoController {
         return requerimientoServices.obtenerRequerimientos();
     }
 
-//    get detalles completos
+    //    get detalles completos
     @GetMapping("/by-id/{idRequerimiento}")
     public ResponseEntity<MFRequerimientoWithHashDTO> getRequerimientoById(@PathVariable Long idRequerimiento) {
         try {
@@ -59,7 +53,6 @@ public class MFRequerimientoController {
     public MFRequerimientoController(MFRequerimientoServices requerimientoServices) {
         this.requerimientoServices = requerimientoServices;
     }
-
 
 
     @DeleteMapping("/{idRequerimiento}")

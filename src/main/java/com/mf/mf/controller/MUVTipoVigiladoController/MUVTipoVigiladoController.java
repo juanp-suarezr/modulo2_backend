@@ -1,8 +1,6 @@
 package com.mf.mf.controller.MUVTipoVigiladoController;
 
-import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosTableProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMUVTipoVigiladoProjection;
-import com.mf.mf.services.MFRequerimientoServices.MFRequerimientoServices;
 import com.mf.mf.services.MFRequerimientoServices.MUVTipoVigiladoServices;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
