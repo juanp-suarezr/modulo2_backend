@@ -1,11 +1,9 @@
 package com.mf.mf.services.MFRequerimientoServices;
 
 import com.mf.mf.projection.MFRequerimientoProjection.*;
-import com.mf.mf.repository.MUVTipoVigiladoRepository.MUVTipoVigiladoRepository;
+import com.mf.mf.repository.MUVconsultaRepository.MUVTipoVigiladoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.ErrorResponseException;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +27,10 @@ public class MUVTipoVigiladoServices {
 
         // Retornar lista vacía si no se encuentran registros, con mensaje de advertencia
         if (tipoVigilados.isEmpty()) {
+            List<GetMUVTipoVigiladoProjection> tipoVigilados1 = muvTipoVigiladoRepository.findProjectionsTipoVigilado();
+
             System.out.println("Advertencia: No se encontraron registros para el idDelegatura: " + idDelegatura);
-            return Collections.emptyList();
+            return tipoVigilados1;
         }
 
         return tipoVigilados;
