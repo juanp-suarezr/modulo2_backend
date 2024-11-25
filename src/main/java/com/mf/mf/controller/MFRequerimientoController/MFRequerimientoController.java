@@ -20,9 +20,8 @@ import java.util.List;
 @RestController
 @RequestMapping("api/requerimiento")
 @Tag(name = "Entidad requerimiento", description = "Requerimiento")
-@CrossOrigin(origins = "http://localhost:4200", // Cambia a la URL de tu frontend
+@CrossOrigin(origins = "*",
         allowedHeaders = "*",
-        allowCredentials = "true",
         methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class MFRequerimientoController {
 
