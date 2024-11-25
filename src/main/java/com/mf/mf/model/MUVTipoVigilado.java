@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(schema = "muv", name = "\"MUVTipoVigilado\"")
+@Table(schema = "muvbck", name = "\"MUVTipoVigilado\"")
 public class MUVTipoVigilado {
 
     @Id
