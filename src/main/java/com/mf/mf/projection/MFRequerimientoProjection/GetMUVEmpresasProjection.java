@@ -9,9 +9,6 @@ public interface GetMUVEmpresasProjection {
     long getId();
     String getNit();
     String getRazonSocial();
-    Integer getEstadoAprobacion();
     Boolean getEstado();
-
-
 
 }

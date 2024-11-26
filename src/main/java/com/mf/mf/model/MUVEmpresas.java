@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(schema = "muv", name = "\"MUVEmpresa\"")
+@Table(schema = "muvbck", name = "\"MUVEmpresa\"")
 public class MUVEmpresas {
 
     @Id
@@ -14,7 +14,5 @@ public class MUVEmpresas {
     private String nit;
     private String razonSocial;
     private boolean estado;
-    private Integer estadoAprobacion;
-
 
 }

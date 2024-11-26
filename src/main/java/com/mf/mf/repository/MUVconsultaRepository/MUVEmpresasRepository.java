@@ -15,7 +15,6 @@ public interface MUVEmpresasRepository extends JpaRepository<MUVEmpresas, Long> 
     @Query("SELECT e.id as id, " +
             "e.nit as nit, " +
             "e.razonSocial as razonSocial, " +
-            "e.estadoAprobacion as estadoAprobacion, " +
             "e.estado as estado " +
             "FROM MUVEmpresas e " +
             "WHERE e.nit = :nit")
@@ -24,7 +23,6 @@ public interface MUVEmpresasRepository extends JpaRepository<MUVEmpresas, Long> 
     @Query("SELECT e.id as id, " +
             "e.nit as nit, " +
             "e.razonSocial as razonSocial, " +
-            "e.estadoAprobacion as estadoAprobacion, " +
             "e.estado as estado " +
             "FROM MUVEmpresas e ")
     List<GetMUVEmpresasProjection> findProjectionsEmpresas();

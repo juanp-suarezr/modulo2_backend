@@ -9,10 +9,12 @@ public class MFHashHeredadoDTO {
 
     private long idHeredado;
     private Integer idVigilado; // FK
-    private Integer idProgramacion; // FK
+    private long idProgramacion; // FK
     private LocalDate fechaEntrega;
     private boolean estado;
     private Integer estadoEntrega; // datos maestros asignacion por debajo
 
+    public MFHashHeredadoDTO(long idHeredado, Integer idVigilado, LocalDate fechaEntrega, Integer estadoEntrega) {
+    }
 
 }

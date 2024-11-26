@@ -9,7 +9,6 @@ public class MUVEmpresasDTO {
     private String nit;
     private String razonSocial;
     private boolean estado;
-    private Integer estadoAprobacion;
 
 
 }

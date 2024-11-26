@@ -17,7 +17,9 @@ import java.util.List;
 @RestController
 @RequestMapping("api/requerimiento")
 @Tag(name = "Entidad requerimiento", description = "Requerimiento")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins = "*",
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class MFRequerimientoController {
 
     @Autowired

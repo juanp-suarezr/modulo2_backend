@@ -14,7 +14,7 @@ public class MFHashHeredado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idHeredado;
     private Integer idVigilado; // FK
-    private Integer idProgramacion; // FK
+    private long idProgramacion; // FK
     private LocalDate fechaEntrega;
     private boolean estado;
     private Integer estadoEntrega; // datos maestros asignacion por debajo
