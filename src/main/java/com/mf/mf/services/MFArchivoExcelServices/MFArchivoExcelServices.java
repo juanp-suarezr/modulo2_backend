@@ -3,6 +3,7 @@ package com.mf.mf.services.MFArchivoExcelServices;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.poi.ss.util.CellReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +33,7 @@ public class MFArchivoExcelServices {
                     .map(ValidationRange::getSheetName)
                     .toList();
 
-            // Verificar si el nombre de la hoja coincide
+            // Verificar todas las hojas
             for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
                 Sheet sheet = workbook.getSheetAt(i);
                 String sheetName = sheet.getSheetName();
@@ -49,11 +50,11 @@ public class MFArchivoExcelServices {
 
                         // Validar los rangos de celdas definidos para esta hoja
                         for (Map.Entry<String, List<String>> entry : validationRange.getRanges().entrySet()) {
-                            String hoja = entry.getKey();
                             List<String> ranges = entry.getValue();
                             for (String range : ranges) {
-                                // Aquí puedes procesar el rango
-                                System.out.println("Validando el rango: " + range + " en la hoja: " + hoja);
+                                if (!validateRange(sheet, range)) {
+                                    return "El archivo no es válido. El rango '" + range + "' en la hoja '" + sheetName + "' no es válido.";
+                                }
                             }
                         }
                     }
@@ -63,6 +64,32 @@ public class MFArchivoExcelServices {
             return "Archivo procesado y validado correctamente";
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar el archivo Excel: " + e.getMessage(), e);
+        }
+    }
+
+    // Método para validar un rango dentro de una hoja
+    private boolean validateRange(Sheet sheet, String range) {
+        try {
+            String[] bounds = range.split(":"); // Dividir el rango en límites ("F9" y "F29")
+            CellReference start = new CellReference(bounds[0]); // Parsear el inicio del rango
+            CellReference end = new CellReference(bounds[1]);   // Parsear el final del rango
+
+            // Recorrer las celdas dentro del rango
+            for (int row = start.getRow(); row <= end.getRow(); row++) {
+                for (int col = start.getCol(); col <= end.getCol(); col++) {
+                    Row currentRow = sheet.getRow(row);
+                    if (currentRow == null || currentRow.getCell(col) == null) {
+                        System.out.println("Celda vacía en " + row + ", " + col);
+                        return false; // Celda no válida o fuera de rango
+                    }
+                    // Puedes añadir reglas adicionales de validación aquí, si es necesario
+                }
+            }
+
+            return true; // Todas las celdas en el rango son válidas
+        } catch (Exception e) {
+            System.err.println("Error al validar el rango: " + range + ". " + e.getMessage());
+            return false; // Error al procesar el rango
         }
     }
 
