@@ -28,19 +28,33 @@ public class MFArchivoExcelServices {
     // Procesar archivo Excel
     public String processExcelFile(MultipartFile file, ValidationRanges validationRanges) throws Exception {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
-            Sheet sheet = workbook.getSheetAt(0);
+            List<String> validSheetNames = validationRanges.getValidationRanges().stream()
+                    .map(ValidationRange::getSheetName)
+                    .toList();
 
             // Verificar si el nombre de la hoja coincide
-            for (ValidationRange validationRange : validationRanges.getValidationRanges()) {
-                if (sheet.getSheetName().equals(validationRange.getSheetName())) {
-                    System.out.println("La hoja " + validationRange.getSheetName() + " se ha encontrado.");
-                    // Validar los rangos de celdas definidos para esta hoja
-                    for (Map.Entry<String, List<String>> entry : validationRange.getRanges().entrySet()) {
-                        String hoja = entry.getKey();
-                        List<String> ranges = entry.getValue();
-                        for (String range : ranges) {
-                            // Aquí puedes procesar el rango
-                            System.out.println("Validando el rango: " + range + " en la hoja: " + hoja);
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+                Sheet sheet = workbook.getSheetAt(i);
+                String sheetName = sheet.getSheetName();
+
+                // Validar si el nombre de la hoja está en la lista de nombres válidos
+                if (!validSheetNames.contains(sheetName)) {
+                    return "El archivo no es válido. La hoja '" + sheetName + "' no está permitida.";
+                }
+
+                // Si la hoja es válida, realizar las validaciones de rangos
+                for (ValidationRange validationRange : validationRanges.getValidationRanges()) {
+                    if (sheetName.equals(validationRange.getSheetName())) {
+                        System.out.println("La hoja " + validationRange.getSheetName() + " se ha encontrado.");
+
+                        // Validar los rangos de celdas definidos para esta hoja
+                        for (Map.Entry<String, List<String>> entry : validationRange.getRanges().entrySet()) {
+                            String hoja = entry.getKey();
+                            List<String> ranges = entry.getValue();
+                            for (String range : ranges) {
+                                // Aquí puedes procesar el rango
+                                System.out.println("Validando el rango: " + range + " en la hoja: " + hoja);
+                            }
                         }
                     }
                 }
@@ -90,7 +104,7 @@ public class MFArchivoExcelServices {
             this.ranges = ranges;
         }
 
-        // Método para capturar cualquier propiedad adicional que no se mapee explícitamente
+        // Metodo para capturar cualquier propiedad adicional que no se mapee explícitamente
         @JsonAnySetter
         public void addRange(String key, List<String> value) {
             this.ranges.put(key, value);
