@@ -1,6 +1,7 @@
 package com.mf.mf.repository.MFRequerimientoRepository;
 
 import com.mf.mf.model.MFHashDelegatura;
+import com.mf.mf.model.MFHashDigitoNIT;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFHashDelegaturaProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,5 +24,6 @@ public interface MFHashDelegaturaRepository extends JpaRepository<MFHashDelegatu
             "WHERE p.idRequerimiento = :idRequerimiento")
     List<GetMFHashDelegaturaProjection> findProjectionsByIdRequerimiento(Long idRequerimiento);
 
+    List<MFHashDelegatura> findByIdRequerimiento(Long idRequerimiento);
 
 }

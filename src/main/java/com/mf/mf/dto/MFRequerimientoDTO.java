@@ -5,6 +5,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.List;
 
+//USAR SIN HASH
 @Data
 public class MFRequerimientoDTO {
 

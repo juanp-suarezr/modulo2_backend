@@ -35,13 +35,23 @@ public class MFRequerimientoServices {
     public MFRequerimientoDTO save(MFRequerimientoDTO mfRequerimientoDTO) {
         // Convertir y guardar la entidad de MFRequerimiento
         MFRequerimiento entity = mfRequerimientoMapper.toEntity(mfRequerimientoDTO);
+        // Eliminar relaciones hijas temporalmente
+
+        entity.setDelegaturas(null);
+        entity.setDigitoNIT(null);
+
+        // Guardar el requerimiento sin relaciones
         MFRequerimiento savedEntity = mfRequerimientoRepository.save(entity);
+        mfRequerimientoRepository.flush();
+        System.out.println("entity save: " + mfRequerimientoMapper.toDTO(savedEntity));
 
         try {
             // Verificar el tipoProgramacion y, si coincide, crear el registro en MFHashDelegatura
             if (mfRequerimientoDTO.getTipoProgramacion().equals(232)) {
                 List<MFHashDelegatura> delegaturaEntities = mfRequerimientoMapper.toEntity(mfRequerimientoDTO.getDelegaturas());
                 delegaturaEntities.forEach(delegatura -> delegatura.setIdRequerimiento(savedEntity.getIdRequerimiento()));
+                System.out.println("Delegatura entities: " + delegaturaEntities);
+
                 mfHashDelegaturaRepository.saveAll(delegaturaEntities);
             } else if (mfRequerimientoDTO.getTipoProgramacion().equals(234)) {
                 List<MFHashDigitoNIT> digitoNITEntities = mfRequerimientoMapper.toDigitoNITEntity(mfRequerimientoDTO.getDigitoNIT());
@@ -88,21 +98,35 @@ public class MFRequerimientoServices {
         return mfRequerimientoRepository.findAllProjections();
     }
 
-    public void deleteRequerimiento(Long idRequerimiento) {
-        mfRequerimientoRepository.deleteById(idRequerimiento);
+    //Anular requerimiento
+    @Transactional
+    public MFRequerimientoDTO AnularRequerimiento(Long idRequerimiento) {
+        // Buscar la entidad principal
+        MFRequerimiento requerimiento = mfRequerimientoRepository.findById(idRequerimiento)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró el requerimiento con ID: " + idRequerimiento));
+
+        // Actualizar el estado del requerimiento principal
+        requerimiento.setEstadoRequerimiento(291);
+        MFRequerimiento updatedRequerimiento = mfRequerimientoRepository.save(requerimiento);
+
+        // Actualizar el estado en las entidades relacionadas (delegaturas y dígitos NIT)
+        if (updatedRequerimiento.getTipoProgramacion().equals(232)) {
+            List<MFHashDelegatura> delegaturas = mfHashDelegaturaRepository.findByIdRequerimiento(idRequerimiento);
+            delegaturas.forEach(delegatura -> delegatura.setEstadoRequerimiento(291));
+            mfHashDelegaturaRepository.saveAll(delegaturas);
+        } else if (updatedRequerimiento.getTipoProgramacion().equals(234)) {
+            List<MFHashDigitoNIT> digitosNIT = mfHashDigitoNITRepository.findByIdRequerimiento(idRequerimiento);
+            digitosNIT.forEach(digitoNIT -> digitoNIT.setEstadoRequerimiento(291));
+            mfHashDigitoNITRepository.saveAll(digitosNIT);
+        }
+
+        // Retornar el DTO actualizado
+        return mfRequerimientoMapper.toDTO(updatedRequerimiento);
     }
 
 
-    public MFRequerimientoDTO updateRequerimiento(Long idRequerimiento, MFRequerimientoDTO dto) {
-        // Buscar la entidad existente por ID
-        MFRequerimiento existingEntity = mfRequerimientoRepository.findById(idRequerimiento)
-                .orElseThrow(() -> new EntityNotFoundException("No se encontró la solicitud con el ID: " + idRequerimiento));
-        // Actualizar la entidad con los valores del DTO
-        mfRequerimientoMapper.updateEntityFromDto(dto, existingEntity);
-        // Guardar la entidad actualizada en la base de datos
-        MFRequerimiento updatedEntity = mfRequerimientoRepository.save(existingEntity);
-        // Mapear la entidad actualizada de vuelta al DTO
-        return mfRequerimientoMapper.toDTO(updatedEntity);
-    }
+
+
+
 
 }

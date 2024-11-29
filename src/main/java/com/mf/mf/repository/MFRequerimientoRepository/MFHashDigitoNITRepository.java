@@ -24,5 +24,6 @@ public interface MFHashDigitoNITRepository extends JpaRepository<MFHashDigitoNIT
             "WHERE p.idRequerimiento = :idRequerimiento")
     List<GetMFHashDigitoNITProjection> findProjectionsByIdRequerimiento(Long idRequerimiento);
 
+    List<MFHashDigitoNIT> findByIdRequerimiento(Long idRequerimiento);
 
 }

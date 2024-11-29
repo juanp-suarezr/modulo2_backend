@@ -57,17 +57,11 @@ public class MFRequerimientoController {
     }
 
 
-    @DeleteMapping("/{idRequerimiento}")
-    public ResponseEntity<?> deleteRequerimiento(@PathVariable Long idRequerimiento) {
-        requerimientoServices.deleteRequerimiento(idRequerimiento);
-        return ResponseEntity.ok(idRequerimiento);
-    }
-
-    @PutMapping("/{idRequerimiento}")
-    public ResponseEntity<ApiResponse<MFRequerimientoDTO>> updateRequerimientos(@PathVariable Long idRequerimiento, @RequestBody @Valid MFRequerimientoDTO dto) {
-        MFRequerimientoDTO updateRequerimiento = requerimientoServices.updateRequerimiento(idRequerimiento, dto);
-        ApiResponse<MFRequerimientoDTO> response = new ApiResponse<>("Registro Actualizado exitosamente", updateRequerimiento);
-        return ResponseEntity.ok(response);
+    @PutMapping("anular/{idRequerimiento}")
+    public ResponseEntity<MFRequerimientoDTO> anularRequerimiento(
+            @RequestParam Long idRequerimiento) {
+        MFRequerimientoDTO updatedRequerimiento = requerimientoServices.AnularRequerimiento(idRequerimiento);
+        return ResponseEntity.ok(updatedRequerimiento);
     }
 
 }
