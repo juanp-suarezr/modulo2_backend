@@ -39,18 +39,14 @@ public class MFRequerimientoServices {
 
         try {
             // Verificar el tipoProgramacion y, si coincide, crear el registro en MFHashDelegatura
-            if (mfRequerimientoDTO.getTipoProgramacion().equals(232)) { // reemplaza "especificoId" por el ID específico
+            if (mfRequerimientoDTO.getTipoProgramacion().equals(232)) {
                 List<MFHashDelegatura> delegaturaEntities = mfRequerimientoMapper.toEntity(mfRequerimientoDTO.getDelegaturas());
-                for (MFHashDelegatura delegatura : delegaturaEntities) {
-                    delegatura.setIdRequerimiento(savedEntity.getIdRequerimiento());
-                    mfHashDelegaturaRepository.save(delegatura);
-                }
-            } else if(mfRequerimientoDTO.getTipoProgramacion().equals(234)) {
+                delegaturaEntities.forEach(delegatura -> delegatura.setIdRequerimiento(savedEntity.getIdRequerimiento()));
+                mfHashDelegaturaRepository.saveAll(delegaturaEntities);
+            } else if (mfRequerimientoDTO.getTipoProgramacion().equals(234)) {
                 List<MFHashDigitoNIT> digitoNITEntities = mfRequerimientoMapper.toDigitoNITEntity(mfRequerimientoDTO.getDigitoNIT());
-                for (MFHashDigitoNIT digitoNIT : digitoNITEntities) {
-                    digitoNIT.setIdRequerimiento(savedEntity.getIdRequerimiento());
-                    mfHashDigitoNITRepository.save(digitoNIT);
-                }
+                digitoNITEntities.forEach(digitoNIT -> digitoNIT.setIdRequerimiento(savedEntity.getIdRequerimiento()));
+                mfHashDigitoNITRepository.saveAll(digitoNITEntities);
             }
         } catch (Exception e) {
             mfRequerimientoRepository.delete(savedEntity);
