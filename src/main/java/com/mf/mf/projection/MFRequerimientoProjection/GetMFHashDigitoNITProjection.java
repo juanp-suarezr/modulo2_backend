@@ -16,6 +16,7 @@ public interface GetMFHashDigitoNITProjection {
     long getIdRequerimiento();
     Integer getEstadoRequerimiento();
     Boolean getEstado();
+    String getDigitoUnico();
 
 //    String getEstadoRequerimientos();
 //

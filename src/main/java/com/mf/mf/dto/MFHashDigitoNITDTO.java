@@ -15,6 +15,6 @@ public class MFHashDigitoNITDTO {
     private long idRequerimiento; // FK
     private boolean estado;
     private Integer estadoRequerimiento; // datos maestros asignacion por debajo
-
+    private String digitoUnico;
 
 }
