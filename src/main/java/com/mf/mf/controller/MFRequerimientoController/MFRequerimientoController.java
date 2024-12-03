@@ -57,9 +57,9 @@ public class MFRequerimientoController {
     }
 
 
-    @PutMapping("anular/{idRequerimiento}")
+    @PutMapping("/anular/{idRequerimiento}")
     public ResponseEntity<MFRequerimientoDTO> anularRequerimiento(
-            @RequestParam Long idRequerimiento) {
+            @PathVariable Long idRequerimiento) {
         MFRequerimientoDTO updatedRequerimiento = requerimientoServices.AnularRequerimiento(idRequerimiento);
         return ResponseEntity.ok(updatedRequerimiento);
     }
