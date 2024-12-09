@@ -1,104 +1,150 @@
 package com.mf.mf.services.MFArchivoExcelServices;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mf.mf.model.excel.MFIdentificacionVigilado;
+import com.mf.mf.repository.MFExcelRepository.MFIdentificacionVigiladoRepository;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.util.Optional;
 
 @Service
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MFArchivoExcelServices {
 
+    @Autowired
+    private MFIdentificacionVigiladoRepository identificacionVigiladoRepository;
+
     // Convertir JSON a ValidationRanges
-    public ValidationRanges convertJsonToValidationRanges(String validationRangesJson) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ValidationRanges validationRanges = objectMapper.readValue(validationRangesJson, ValidationRanges.class);
-        System.out.println("Deserialized validationRanges: " + validationRanges.getValidationRanges());
-        return validationRanges;
+    public ValidationRanges convertJsonToValidationRanges(String validationRangesJson) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.readValue(validationRangesJson, ValidationRanges.class);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error al convertir el JSON de rangos de validación: " + e.getMessage(), e);
+        }
     }
 
     // Procesar archivo Excel
-    public String processExcelFile(MultipartFile file, ValidationRanges validationRanges) throws Exception {
+    public String processExcelFile(MultipartFile file, ValidationRanges validationRanges) {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
-            List<String> validSheetNames = validationRanges.getValidationRanges().stream()
-                    .map(ValidationRange::getSheetName)
-                    .toList();
+            FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
-            // Verificar todas las hojas
-            for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
-                Sheet sheet = workbook.getSheetAt(i);
-                String sheetName = sheet.getSheetName();
-
-                // Validar si el nombre de la hoja está en la lista de nombres válidos
-                if (!validSheetNames.contains(sheetName)) {
-                    return "El archivo no es válido. La hoja '" + sheetName + "' no está permitida.";
+            // Validar cada hoja en el archivo Excel
+            for (ValidationRange range : validationRanges.getValidationRanges()) {
+                Sheet sheet = workbook.getSheet(range.getSheetName());
+                if (sheet == null) {
+                    return "El archivo no es válido. La hoja '" + range.getSheetName() + "' no está presente.";
                 }
 
-                // Si la hoja es válida, realizar las validaciones de rangos
-                for (ValidationRange validationRange : validationRanges.getValidationRanges()) {
-                    if (sheetName.equals(validationRange.getSheetName())) {
-                        System.out.println("La hoja " + validationRange.getSheetName() + " se ha encontrado.");
-
-                        // Validar los rangos de celdas definidos para esta hoja
-                        for (Map.Entry<String, List<String>> entry : validationRange.getRanges().entrySet()) {
-                            List<String> ranges = entry.getValue();
-                            for (String range : ranges) {
-                                if (!validateRange(sheet, range)) {
-                                    return "El archivo no es válido. El rango '" + range + "' en la hoja '" + sheetName + "' no es válido.";
-                                }
-                            }
-                        }
-                    }
+                if (!validateKeywordOccurrences(sheet, range.getKeywords(), formulaEvaluator)) {
+                    return "El archivo no es válido. Las palabras clave no cumplen con las cantidades esperadas en la hoja '" + range.getSheetName() + "'.";
                 }
             }
 
             return "Archivo procesado y validado correctamente";
+        } catch (IOException e) {
+            throw new RuntimeException("Error al procesar el archivo Excel: " + e.getMessage(), e);
+        }
+    }
+
+    //guardar los campos excel
+    @Transactional
+    public String processAndSaveExcelData(MultipartFile file) {
+        try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+            // Procesar y guardar datos de Identificación del Vigilado
+            processAndSaveIdentificacionVigilado(workbook);
+
+            // Procesar y guardar datos de otra hoja (ejemplo)
+//            processAndSaveOtraEntidad(workbook);
+
+            // Más procesamientos según sea necesario
+
+            return "Todos los datos se han procesado y guardado correctamente.";
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar el archivo Excel: " + e.getMessage(), e);
         }
     }
 
-    // Método para validar un rango dentro de una hoja
-    private boolean validateRange(Sheet sheet, String range) {
-        try {
-            String[] bounds = range.split(":"); // Dividir el rango en límites ("F9" y "F29")
-            CellReference start = new CellReference(bounds[0]); // Parsear el inicio del rango
-            CellReference end = new CellReference(bounds[1]);   // Parsear el final del rango
+    // Método para validar las ocurrencias de palabras clave en una hoja
+    private boolean validateKeywordOccurrences(Sheet sheet, Map<String, Integer> keywordCounts, FormulaEvaluator formulaEvaluator) {
+        Map<String, Integer> actualCounts = new HashMap<>();
+        keywordCounts.forEach((keyword, count) -> actualCounts.put(keyword, 0));
 
-            // Recorrer las celdas dentro del rango
-            for (int row = start.getRow(); row <= end.getRow(); row++) {
-                for (int col = start.getCol(); col <= end.getCol(); col++) {
-                    Row currentRow = sheet.getRow(row);
-                    if (currentRow == null || currentRow.getCell(col) == null) {
-                        System.out.println("Celda vacía en " + row + ", " + col);
-                        return false; // Celda no válida o fuera de rango
-                    }
-                    // Puedes añadir reglas adicionales de validación aquí, si es necesario
+        // Iterar sobre las celdas de la hoja
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                String cellValue = extractCellValue(cell, formulaEvaluator);
+
+                if (cellValue != null) {
+                    String finalCellValue = cellValue.trim();
+                    keywordCounts.keySet().forEach(keyword -> {
+                        if (finalCellValue.equalsIgnoreCase(keyword)) {
+                            actualCounts.put(keyword, actualCounts.get(keyword) + 1);
+                        }
+                    });
                 }
             }
-
-            return true; // Todas las celdas en el rango son válidas
-        } catch (Exception e) {
-            System.err.println("Error al validar el rango: " + range + ". " + e.getMessage());
-            return false; // Error al procesar el rango
         }
+
+        // Verificar si las ocurrencias reales coinciden con las esperadas
+        for (Map.Entry<String, Integer> entry : keywordCounts.entrySet()) {
+            String keyword = entry.getKey();
+            int expectedCount = entry.getValue();
+            int actualCount = actualCounts.getOrDefault(keyword, 0);
+
+            if (actualCount < expectedCount) {
+                System.out.println("Palabra clave '" + keyword + "' encontrada " + actualCount + " veces, se esperaban " + expectedCount);
+                return false;
+            }
+        }
+
+        System.out.println("Todas las palabras clave cumplen con las cantidades esperadas.");
+        return true;
+    }
+
+    // Método para extraer el valor de una celda
+    private String extractCellValue(Cell cell, FormulaEvaluator formulaEvaluator) {
+        try {
+            if (cell.getCellType() == CellType.FORMULA) {
+                CellValue evaluatedValue = formulaEvaluator.evaluate(cell);
+                if (evaluatedValue != null) {
+                    switch (evaluatedValue.getCellType()) {
+                        case STRING:
+                            return evaluatedValue.getStringValue();
+                        case NUMERIC:
+                            return String.valueOf(evaluatedValue.getNumberValue());
+                        default:
+                            return null;
+                    }
+                }
+            } else if (cell.getCellType() == CellType.STRING) {
+                return cell.getStringCellValue();
+            } else if (cell.getCellType() == CellType.NUMERIC) {
+                return String.valueOf(cell.getNumericCellValue());
+            }
+        } catch (Exception e) {
+            System.err.println("Error al extraer el valor de la celda: " + e.getMessage());
+        }
+        return null;
     }
 
     // Clase para representar los rangos de validación
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ValidationRanges {
-        private List<ValidationRange> validationRanges; // Lista de objetos ValidationRange
+        private List<ValidationRange> validationRanges;
 
-        // Getter y setter
         public List<ValidationRange> getValidationRanges() {
             return validationRanges;
         }
@@ -110,10 +156,9 @@ public class MFArchivoExcelServices {
 
     // Clase para representar cada rango de validación
     public static class ValidationRange {
-        private String sheetName;  // Nombre de la hoja
-        private Map<String, List<String>> ranges = new HashMap<>(); // Mapa de rangos
+        private String sheetName;
+        private Map<String, Integer> keywords = new HashMap<>();
 
-        // Getter y setter para sheetName
         public String getSheetName() {
             return sheetName;
         }
@@ -122,21 +167,119 @@ public class MFArchivoExcelServices {
             this.sheetName = sheetName;
         }
 
-        // Getter y setter para ranges
-        public Map<String, List<String>> getRanges() {
-            return ranges;
+        public Map<String, Integer> getKeywords() {
+            return keywords;
         }
 
-        public void setRanges(Map<String, List<String>> ranges) {
-            this.ranges = ranges;
+        public void setKeywords(Map<String, Integer> keywords) {
+            this.keywords = keywords;
         }
-
-        // Metodo para capturar cualquier propiedad adicional que no se mapee explícitamente
-        @JsonAnySetter
-        public void addRange(String key, List<String> value) {
-            this.ranges.put(key, value);
-        }
-
     }
+
+    private void processAndSaveIdentificacionVigilado(Workbook workbook) {
+        FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
+        Sheet sheet = workbook.getSheet("Identificación del Vigilado");
+        if (sheet == null) {
+            throw new IllegalArgumentException("La hoja 'Identificación del Vigilado' no está presente en el archivo.");
+        }
+        CellReference ref = new CellReference("F30");
+        Row row = sheet.getRow(ref.getRow());
+        if (row != null) {
+            Cell cell = row.getCell(ref.getCol());
+
+            System.out.println(cell);
+        }
+
+
+        MFIdentificacionVigilado vigilado = new MFIdentificacionVigilado();
+        vigilado.setEstado(true);
+        vigilado.setNitSinDigitoVerificacion(getNumberCellValue(sheet, "F9"));
+        vigilado.setDigitoVerificacion(getNumberCellValue(sheet, "F10"));
+        vigilado.setNombreSociedad(getStringCellValue(sheet, "F11"));
+        vigilado.setGrupoNiifReporte(getStringCellValue(sheet, "F12"));
+        vigilado.setTipoEstadosFinancieros(getStringCellValue(sheet, "F13"));
+        vigilado.setTipoVinculacionEconomica(getStringCellValue(sheet, "F14"));
+        vigilado.setTipoSubordinada(getStringCellValue(sheet, "F15"));
+        vigilado.setVinculadosEconomicos(getNumberCellValue(sheet, "F16").toString());
+        vigilado.setNombreVinculadoEconomico1(getStringCellValue(sheet, "F17"));
+        vigilado.setNitVinculadoEconomico1(getStringCellValue(sheet, "F18"));
+        vigilado.setNombreVinculadoEconomico2(getStringCellValue(sheet, "F19"));
+        vigilado.setNitVinculadoEconomico2(getStringCellValue(sheet, "F20"));
+        vigilado.setNombreVinculadoEconomico3(getStringCellValue(sheet, "F21"));
+        vigilado.setNitVinculadoEconomico3(getStringCellValue(sheet, "F22"));
+        vigilado.setNombreVinculadoEconomico4(getStringCellValue(sheet, "F23"));
+        vigilado.setNitVinculadoEconomico4(getStringCellValue(sheet, "F24"));
+        vigilado.setNombreVinculadoEconomico5(getStringCellValue(sheet, "F25"));
+        vigilado.setNitVinculadoEconomico5(getStringCellValue(sheet, "F26"));
+        vigilado.setFechaInicialEstadosFinancieros(getDateCellValue(sheet, "F27", formulaEvaluator));
+        vigilado.setFechaCorteEstadosFinancieros(getDateCellValue(sheet, "F28", formulaEvaluator));
+        vigilado.setMonedaPresentacion(getStringCellValue(sheet, "F29"));
+        vigilado.setFechaReporte(getDateCellValue(sheet, "F30", formulaEvaluator));
+        vigilado.setPeriodicidadPresentacion(getStringCellValue(sheet, "F31"));
+        vigilado.setAnoActualReporte((Integer) getNumberCellValue(sheet, "F32"));
+        vigilado.setAnoComparativo((Integer) getNumberCellValue(sheet, "F33"));
+
+        System.out.println(vigilado);
+        // Guardar en la base de datos
+        identificacionVigiladoRepository.save(vigilado);
+    }
+
+
+
+    // Métodos auxiliares para obtener valores de celdas
+    private String getStringCellValue(Sheet sheet, String cellRef) {
+        CellReference ref = new CellReference(cellRef);
+        Row row = sheet.getRow(ref.getRow());
+
+        if (row != null) {
+            Cell cell = row.getCell(ref.getCol());
+            if (cell != null && cell.getCellType() == CellType.STRING) {
+                    return cell.getStringCellValue();
+                }
+        }
+        return null;
+    }
+
+
+    private Number getNumberCellValue(Sheet sheet, String cellRef) {
+        CellReference ref = new CellReference(cellRef);
+        Row row = sheet.getRow(ref.getRow());
+        if (row != null) {
+            Cell cell = row.getCell(ref.getCol());
+            if (cell != null && cell.getCellType() == CellType.NUMERIC) {
+                System.out.println(cell.getNumericCellValue());
+                System.out.println(cell.getCellType());
+                return cell.getNumericCellValue();
+            }
+        }
+        return null;
+    }
+
+    private Boolean getBooleanCellValue(Sheet sheet, String cellRef) {
+        String value = getStringCellValue(sheet, cellRef);
+        return value != null && value.equalsIgnoreCase("true");
+    }
+
+
+
+    private LocalDate getDateCellValue(Sheet sheet, String cellRef, FormulaEvaluator formulaEvaluator) {
+        CellReference ref = new CellReference(cellRef);
+        Row row = sheet.getRow(ref.getRow());
+        if (row != null) {
+            Cell cell = row.getCell(ref.getCol());
+            if (cell.getCellType() == CellType.FORMULA) {
+                // Evaluar la fórmula
+                CellValue evaluatedValue = formulaEvaluator.evaluate(cell);
+                if (evaluatedValue != null && evaluatedValue.getCellType() == CellType.NUMERIC) {
+                    // Convertir el número en una fecha
+                    return DateUtil.getLocalDateTime(evaluatedValue.getNumberValue()).toLocalDate();
+                }
+            } else if (cell != null && cell.getCellType() == CellType.NUMERIC) {
+                return cell.getLocalDateTimeCellValue().toLocalDate();
+            }
+        }
+        return null;
+    }
+
 
 }
