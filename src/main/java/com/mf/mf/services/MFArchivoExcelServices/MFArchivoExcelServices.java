@@ -2,7 +2,9 @@ package com.mf.mf.services.MFArchivoExcelServices;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mf.mf.model.excel.MFDocumentosVigilado;
 import com.mf.mf.model.excel.MFIdentificacionVigilado;
+import com.mf.mf.repository.MFExcelRepository.MFDocumentosVigiladoRepository;
 import com.mf.mf.repository.MFExcelRepository.MFIdentificacionVigiladoRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
@@ -13,17 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MFArchivoExcelServices {
 
     @Autowired
-    private MFIdentificacionVigiladoRepository identificacionVigiladoRepository;
+    private MFDocumentosVigiladoRepository documentosVigiladoRepository;
 
     // Convertir JSON a ValidationRanges
     public ValidationRanges convertJsonToValidationRanges(String validationRangesJson) {
@@ -58,17 +59,21 @@ public class MFArchivoExcelServices {
         }
     }
 
-    //guardar los campos excel
+    //convertir excel a csv y guardar
     @Transactional
-    public String processAndSaveExcelData(MultipartFile file) {
+    public String processAndSaveExcelData(MultipartFile file, String tipo, String nit) {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
-            // Procesar y guardar datos de Identificación del Vigilado
-            processAndSaveIdentificacionVigilado(workbook);
 
-            // Procesar y guardar datos de otra hoja (ejemplo)
-//            processAndSaveOtraEntidad(workbook);
+            // Convertir Excel a CSV
+            String csvContent = convertExcelToCsv(workbook);
+            System.out.println(csvContent);
 
-            // Más procesamientos según sea necesario
+            // Codificar el contenido CSV a Base64
+//            byte[] base64Content = encodeToBase64(csvContent);
+
+            // Guardar en la base de datos
+//            saveToDatabase(tipo, nit, base64Content);
+
 
             return "Todos los datos se han procesado y guardado correctamente.";
         } catch (Exception e) {
@@ -175,56 +180,6 @@ public class MFArchivoExcelServices {
         }
     }
 
-    private void processAndSaveIdentificacionVigilado(Workbook workbook) {
-        FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
-        Sheet sheet = workbook.getSheet("Identificación del Vigilado");
-        if (sheet == null) {
-            throw new IllegalArgumentException("La hoja 'Identificación del Vigilado' no está presente en el archivo.");
-        }
-        CellReference ref = new CellReference("F32");
-        Row row = sheet.getRow(ref.getRow());
-        if (row != null) {
-            Cell cell = row.getCell(ref.getCol());
-
-            System.out.println(cell);
-        }
-
-
-        MFIdentificacionVigilado vigilado = new MFIdentificacionVigilado();
-        vigilado.setEstado(true);
-        vigilado.setNitSinDigitoVerificacion(getNumberCellValue(sheet, "F9", formulaEvaluator));
-        vigilado.setDigitoVerificacion(getNumberCellValue(sheet, "F10", formulaEvaluator));
-        vigilado.setNombreSociedad(getStringCellValue(sheet, "F11", formulaEvaluator));
-        vigilado.setGrupoNiifReporte(getStringCellValue(sheet, "F12", formulaEvaluator));
-        vigilado.setTipoEstadosFinancieros(getStringCellValue(sheet, "F13", formulaEvaluator));
-        vigilado.setTipoVinculacionEconomica(getStringCellValue(sheet, "F14", formulaEvaluator));
-        vigilado.setTipoSubordinada(getStringCellValue(sheet, "F15", formulaEvaluator));
-        vigilado.setVinculadosEconomicos(getNumberCellValue(sheet, "F16", formulaEvaluator).toString());
-        vigilado.setNombreVinculadoEconomico1(getStringCellValue(sheet, "F17", formulaEvaluator));
-        vigilado.setNitVinculadoEconomico1(getStringCellValue(sheet, "F18", formulaEvaluator));
-        vigilado.setNombreVinculadoEconomico2(getStringCellValue(sheet, "F19", formulaEvaluator));
-        vigilado.setNitVinculadoEconomico2(getStringCellValue(sheet, "F20", formulaEvaluator));
-        vigilado.setNombreVinculadoEconomico3(getStringCellValue(sheet, "F21", formulaEvaluator));
-        vigilado.setNitVinculadoEconomico3(getStringCellValue(sheet, "F22", formulaEvaluator));
-        vigilado.setNombreVinculadoEconomico4(getStringCellValue(sheet, "F23", formulaEvaluator));
-        vigilado.setNitVinculadoEconomico4(getStringCellValue(sheet, "F24", formulaEvaluator));
-        vigilado.setNombreVinculadoEconomico5(getStringCellValue(sheet, "F25", formulaEvaluator));
-        vigilado.setNitVinculadoEconomico5(getStringCellValue(sheet, "F26", formulaEvaluator));
-        vigilado.setFechaInicialEstadosFinancieros(getDateCellValue(sheet, "F27", formulaEvaluator));
-        vigilado.setFechaCorteEstadosFinancieros(getDateCellValue(sheet, "F28", formulaEvaluator));
-        vigilado.setMonedaPresentacion(getStringCellValue(sheet, "F29", formulaEvaluator));
-        vigilado.setFechaReporte(getDateCellValue(sheet, "F30", formulaEvaluator));
-        vigilado.setPeriodicidadPresentacion(getStringCellValue(sheet, "F31", formulaEvaluator));
-        vigilado.setAnoActualReporte(getNumberCellValue(sheet, "F32", formulaEvaluator));
-        vigilado.setAnoComparativo(getNumberCellValue(sheet, "F33", formulaEvaluator));
-
-        System.out.println("Año Actual Reporte: " + vigilado.getAnoActualReporte());
-        System.out.println("Año Comparativo: " + vigilado.getAnoComparativo());
-        System.out.println(vigilado);
-        // Guardar en la base de datos
-        identificacionVigiladoRepository.save(vigilado);
-    }
-
 
 
     // Métodos auxiliares para obtener valores de celdas
@@ -249,6 +204,64 @@ public class MFArchivoExcelServices {
                 }
         }
         return null;
+    }
+
+    //METODO PARA CONVERTIR EXCEL A CSV
+    private String convertExcelToCsv(Workbook workbook) {
+        StringWriter writer = new StringWriter();
+        DataFormatter formatter = new DataFormatter();
+
+        for (Sheet sheet : workbook) {
+            writer.write("### Hoja: " + sheet.getSheetName() + " ###\n"); // Separador de hojas
+            for (Row row : sheet) {
+                StringBuilder rowBuilder = new StringBuilder();
+
+                for (Cell cell : row) {
+                    // Formatear el valor de la celda como texto
+                    String cellValue = formatter.formatCellValue(cell);
+                    rowBuilder.append(cellValue).append(","); // Separador CSV
+                }
+
+                // Quitar la última coma y añadir salto de línea
+                if (rowBuilder.length() > 0) {
+                    rowBuilder.setLength(rowBuilder.length() - 1);
+                }
+                rowBuilder.append("\n");
+
+                // Escribir la fila en el CSV
+                writer.write(rowBuilder.toString());
+            }
+            writer.write("\n"); // Añadir salto de línea entre hojas
+        }
+
+        return writer.toString();
+    }
+
+    // Codificar texto en Base64
+    private byte[] encodeToBase64(String content) {
+        return Base64.getEncoder().encode(content.getBytes());
+    }
+
+    // Decodificar texto desde Base64 como String
+    private String decodeFromBase64(byte[] base64Content) {
+        return new String(Base64.getDecoder().decode(base64Content));
+    }
+
+    // Guardar el archivo codificado en la base de datos
+    private void saveToDatabase(String tipo, String nit, byte[] base64Content) {
+        MFDocumentosVigilado documento = new MFDocumentosVigilado();
+        documento.setTipo(tipo);
+        documento.setNit(nit);
+        documento.setDocumento(base64Content);
+
+        documentosVigiladoRepository.save(documento);
+    }
+
+    // Recuperar el archivo desde la base de datos
+    public String retrieveAndDecodeFile(Long id) {
+        MFDocumentosVigilado documento = documentosVigiladoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró un documento con el ID proporcionado."));
+        return decodeFromBase64(documento.getDocumento());
     }
 
 

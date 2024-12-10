@@ -61,10 +61,12 @@ public class MFArchivoExcelController {
 
 
     @PostMapping("/saveExcel")
-    public ResponseEntity<Map<String, String>> processExcelFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, String>> processExcelFile(@RequestParam("file") MultipartFile file,
+                                                                @RequestParam("tipo") String tipo,
+                                                                @RequestParam("nit") String nit) {
         Map<String, String> response = new HashMap<>();
         try {
-            String result = excelService.processAndSaveExcelData(file);
+            String result = excelService.processAndSaveExcelData(file, tipo, nit);
             response.put("message", result);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
@@ -72,6 +74,20 @@ public class MFArchivoExcelController {
             return ResponseEntity.badRequest().body(response);
         } catch (RuntimeException e) {
             response.put("error", "Error al procesar el archivo: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    // Recuperar y decodificar el archivo
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String, String>> retrieveFile(@PathVariable Long id) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            String fileContent = excelService.retrieveAndDecodeFile(id);
+            response.put("fileContent", fileContent);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("error", "Error al recuperar el archivo: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }
