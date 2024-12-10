@@ -8,8 +8,8 @@ public class MFIdentificacionVigiladoDTO {
 
     private Long id;
     private Boolean estado;
-    private Number nitSinDigitoVerificacion;
-    private Number digitoVerificacion;
+    private Integer nitSinDigitoVerificacion;
+    private Integer digitoVerificacion;
     private String nombreSociedad;
     private String grupoNiifReporte;
     private String tipoEstadosFinancieros;
@@ -31,8 +31,9 @@ public class MFIdentificacionVigiladoDTO {
     private String monedaPresentacion;
     private LocalDate fechaReporte;
     private String periodicidadPresentacion;
-    private Number anoActualReporte;
-    private Number anoComparativo;
+    private Integer anoActualReporte;
+    private Integer anoComparativo;
+    private Integer nit;
 
 }
 

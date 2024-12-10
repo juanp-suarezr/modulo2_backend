@@ -15,8 +15,8 @@ public class MFIdentificacionVigilado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Boolean estado;
-    private Number nitSinDigitoVerificacion;
-    private Number digitoVerificacion;
+    private Integer nitSinDigitoVerificacion;
+    private Integer digitoVerificacion;
     private String nombreSociedad;
     private String grupoNiifReporte;
     private String tipoEstadosFinancieros;
@@ -38,8 +38,11 @@ public class MFIdentificacionVigilado {
     private String monedaPresentacion;
     private LocalDate fechaReporte;
     private String periodicidadPresentacion;
-    private Number anoActualReporte;
-    private Number anoComparativo;
+    @Column(name = "anoActualReporte")
+    private Integer anoActualReporte;
+    @Column(name = "anoComparativo")
+    private Integer anoComparativo;
+    private Integer nit;
 
 }
 

@@ -6,8 +6,8 @@ public interface GetMFIdentificacionVigiladoProjection {
 
     Long getId();
     Boolean getEstado();
-    Number getNitSinDigitoVerificacion();
-    Number getDigitoVerificacion();
+    Integer getNitSinDigitoVerificacion();
+    Integer getDigitoVerificacion();
     String getNombreSociedad();
     String getGrupoNiifReporte();
     String getTipoEstadosFinancieros();
@@ -29,8 +29,9 @@ public interface GetMFIdentificacionVigiladoProjection {
     String getMonedaPresentacion();
     LocalDate getFechaReporte();
     String getPeriodicidadPresentacion();
-    Number getAnoActualReporte();
-    Number getAnoComparativo();
+    Integer getAnoActualReporte();
+    Integer getAnoComparativo();
+    Integer getNit();
 
 }
 

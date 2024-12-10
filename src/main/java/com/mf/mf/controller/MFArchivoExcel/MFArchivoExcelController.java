@@ -61,10 +61,10 @@ public class MFArchivoExcelController {
 
 
     @PostMapping("/saveExcel")
-    public ResponseEntity<Map<String, String>> processExcelFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, String>> processExcelFile(@RequestParam("file") MultipartFile file, @RequestParam("nit") String nit, @RequestParam("tipo") String tipo) {
         Map<String, String> response = new HashMap<>();
         try {
-            String result = excelService.processAndSaveExcelData(file);
+            String result = excelService.processAndSaveExcelData(file, nit);
             response.put("message", result);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
