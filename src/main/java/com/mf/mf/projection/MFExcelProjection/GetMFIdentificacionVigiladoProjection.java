@@ -29,8 +29,8 @@ public interface GetMFIdentificacionVigiladoProjection {
     String getMonedaPresentacion();
     LocalDate getFechaReporte();
     String getPeriodicidadPresentacion();
-    Integer getAnoActualReporte();
-    Integer getAnoComparativo();
+    Number getAnoActualReporte();
+    Number getAnoComparativo();
 
 }
 

@@ -38,8 +38,8 @@ public class MFIdentificacionVigilado {
     private String monedaPresentacion;
     private LocalDate fechaReporte;
     private String periodicidadPresentacion;
-    private Integer anoActualReporte;
-    private Integer anoComparativo;
+    private Number anoActualReporte;
+    private Number anoComparativo;
 
 }
 

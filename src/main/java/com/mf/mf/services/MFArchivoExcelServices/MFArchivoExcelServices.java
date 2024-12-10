@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -182,7 +181,7 @@ public class MFArchivoExcelServices {
         if (sheet == null) {
             throw new IllegalArgumentException("La hoja 'Identificación del Vigilado' no está presente en el archivo.");
         }
-        CellReference ref = new CellReference("F30");
+        CellReference ref = new CellReference("F32");
         Row row = sheet.getRow(ref.getRow());
         if (row != null) {
             Cell cell = row.getCell(ref.getCol());
@@ -193,32 +192,34 @@ public class MFArchivoExcelServices {
 
         MFIdentificacionVigilado vigilado = new MFIdentificacionVigilado();
         vigilado.setEstado(true);
-        vigilado.setNitSinDigitoVerificacion(getNumberCellValue(sheet, "F9"));
-        vigilado.setDigitoVerificacion(getNumberCellValue(sheet, "F10"));
-        vigilado.setNombreSociedad(getStringCellValue(sheet, "F11"));
-        vigilado.setGrupoNiifReporte(getStringCellValue(sheet, "F12"));
-        vigilado.setTipoEstadosFinancieros(getStringCellValue(sheet, "F13"));
-        vigilado.setTipoVinculacionEconomica(getStringCellValue(sheet, "F14"));
-        vigilado.setTipoSubordinada(getStringCellValue(sheet, "F15"));
-        vigilado.setVinculadosEconomicos(getNumberCellValue(sheet, "F16").toString());
-        vigilado.setNombreVinculadoEconomico1(getStringCellValue(sheet, "F17"));
-        vigilado.setNitVinculadoEconomico1(getStringCellValue(sheet, "F18"));
-        vigilado.setNombreVinculadoEconomico2(getStringCellValue(sheet, "F19"));
-        vigilado.setNitVinculadoEconomico2(getStringCellValue(sheet, "F20"));
-        vigilado.setNombreVinculadoEconomico3(getStringCellValue(sheet, "F21"));
-        vigilado.setNitVinculadoEconomico3(getStringCellValue(sheet, "F22"));
-        vigilado.setNombreVinculadoEconomico4(getStringCellValue(sheet, "F23"));
-        vigilado.setNitVinculadoEconomico4(getStringCellValue(sheet, "F24"));
-        vigilado.setNombreVinculadoEconomico5(getStringCellValue(sheet, "F25"));
-        vigilado.setNitVinculadoEconomico5(getStringCellValue(sheet, "F26"));
+        vigilado.setNitSinDigitoVerificacion(getNumberCellValue(sheet, "F9", formulaEvaluator));
+        vigilado.setDigitoVerificacion(getNumberCellValue(sheet, "F10", formulaEvaluator));
+        vigilado.setNombreSociedad(getStringCellValue(sheet, "F11", formulaEvaluator));
+        vigilado.setGrupoNiifReporte(getStringCellValue(sheet, "F12", formulaEvaluator));
+        vigilado.setTipoEstadosFinancieros(getStringCellValue(sheet, "F13", formulaEvaluator));
+        vigilado.setTipoVinculacionEconomica(getStringCellValue(sheet, "F14", formulaEvaluator));
+        vigilado.setTipoSubordinada(getStringCellValue(sheet, "F15", formulaEvaluator));
+        vigilado.setVinculadosEconomicos(getNumberCellValue(sheet, "F16", formulaEvaluator).toString());
+        vigilado.setNombreVinculadoEconomico1(getStringCellValue(sheet, "F17", formulaEvaluator));
+        vigilado.setNitVinculadoEconomico1(getStringCellValue(sheet, "F18", formulaEvaluator));
+        vigilado.setNombreVinculadoEconomico2(getStringCellValue(sheet, "F19", formulaEvaluator));
+        vigilado.setNitVinculadoEconomico2(getStringCellValue(sheet, "F20", formulaEvaluator));
+        vigilado.setNombreVinculadoEconomico3(getStringCellValue(sheet, "F21", formulaEvaluator));
+        vigilado.setNitVinculadoEconomico3(getStringCellValue(sheet, "F22", formulaEvaluator));
+        vigilado.setNombreVinculadoEconomico4(getStringCellValue(sheet, "F23", formulaEvaluator));
+        vigilado.setNitVinculadoEconomico4(getStringCellValue(sheet, "F24", formulaEvaluator));
+        vigilado.setNombreVinculadoEconomico5(getStringCellValue(sheet, "F25", formulaEvaluator));
+        vigilado.setNitVinculadoEconomico5(getStringCellValue(sheet, "F26", formulaEvaluator));
         vigilado.setFechaInicialEstadosFinancieros(getDateCellValue(sheet, "F27", formulaEvaluator));
         vigilado.setFechaCorteEstadosFinancieros(getDateCellValue(sheet, "F28", formulaEvaluator));
-        vigilado.setMonedaPresentacion(getStringCellValue(sheet, "F29"));
+        vigilado.setMonedaPresentacion(getStringCellValue(sheet, "F29", formulaEvaluator));
         vigilado.setFechaReporte(getDateCellValue(sheet, "F30", formulaEvaluator));
-        vigilado.setPeriodicidadPresentacion(getStringCellValue(sheet, "F31"));
-        vigilado.setAnoActualReporte((Integer) getNumberCellValue(sheet, "F32"));
-        vigilado.setAnoComparativo((Integer) getNumberCellValue(sheet, "F33"));
+        vigilado.setPeriodicidadPresentacion(getStringCellValue(sheet, "F31", formulaEvaluator));
+        vigilado.setAnoActualReporte(getNumberCellValue(sheet, "F32", formulaEvaluator));
+        vigilado.setAnoComparativo(getNumberCellValue(sheet, "F33", formulaEvaluator));
 
+        System.out.println("Año Actual Reporte: " + vigilado.getAnoActualReporte());
+        System.out.println("Año Comparativo: " + vigilado.getAnoComparativo());
         System.out.println(vigilado);
         // Guardar en la base de datos
         identificacionVigiladoRepository.save(vigilado);
@@ -227,13 +228,23 @@ public class MFArchivoExcelServices {
 
 
     // Métodos auxiliares para obtener valores de celdas
-    private String getStringCellValue(Sheet sheet, String cellRef) {
+    private String getStringCellValue(Sheet sheet, String cellRef, FormulaEvaluator formulaEvaluator) {
         CellReference ref = new CellReference(cellRef);
         Row row = sheet.getRow(ref.getRow());
 
         if (row != null) {
             Cell cell = row.getCell(ref.getCol());
-            if (cell != null && cell.getCellType() == CellType.STRING) {
+            if (cell.getCellType() == CellType.FORMULA) {
+                // Evaluar la fórmula
+                CellValue evaluatedValue = formulaEvaluator.evaluate(cell);
+                if (evaluatedValue != null && evaluatedValue.getCellType() == CellType.STRING) {
+                    // Validar si es un entero o un decimal
+
+                        return evaluatedValue.getStringValue(); // Devolver como Long si es entero
+
+                }
+            }
+            else if (cell != null && cell.getCellType() == CellType.STRING) {
                     return cell.getStringCellValue();
                 }
         }
@@ -241,22 +252,35 @@ public class MFArchivoExcelServices {
     }
 
 
-    private Number getNumberCellValue(Sheet sheet, String cellRef) {
+    private Number getNumberCellValue(Sheet sheet, String cellRef, FormulaEvaluator formulaEvaluator) {
         CellReference ref = new CellReference(cellRef);
         Row row = sheet.getRow(ref.getRow());
         if (row != null) {
             Cell cell = row.getCell(ref.getCol());
-            if (cell != null && cell.getCellType() == CellType.NUMERIC) {
-                System.out.println(cell.getNumericCellValue());
-                System.out.println(cell.getCellType());
-                return cell.getNumericCellValue();
+
+            if (cell != null) {
+                if (cell.getCellType() == CellType.FORMULA) {
+                    // Evaluar la fórmula
+                    CellValue evaluatedValue = formulaEvaluator.evaluate(cell);
+                    if (evaluatedValue != null && evaluatedValue.getCellType() == CellType.NUMERIC) {
+                        // Validar si es un entero o un decimal
+                        System.out.println(evaluatedValue.getNumberValue());
+                        return evaluatedValue.getNumberValue();
+
+                    }
+                } else if (cell.getCellType() == CellType.NUMERIC) {
+                    return cell.getNumericCellValue();
+
+
+
+                }
             }
         }
         return null;
     }
 
-    private Boolean getBooleanCellValue(Sheet sheet, String cellRef) {
-        String value = getStringCellValue(sheet, cellRef);
+    private Boolean getBooleanCellValue(Sheet sheet, String cellRef, FormulaEvaluator formulaEvaluator) {
+        String value = getStringCellValue(sheet, cellRef, formulaEvaluator);
         return value != null && value.equalsIgnoreCase("true");
     }
 
