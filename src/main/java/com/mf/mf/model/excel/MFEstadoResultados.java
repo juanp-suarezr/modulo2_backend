@@ -47,5 +47,6 @@ public class MFEstadoResultados {
     private Integer gananciaOperacionesContinuadas;
     private Integer gananciaOperacionesDiscontinuadas;
     private Integer gananciaNeta;
+    private Integer nit;
     
 }

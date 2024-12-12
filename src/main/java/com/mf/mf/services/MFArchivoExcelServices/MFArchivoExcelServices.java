@@ -32,6 +32,8 @@ public class MFArchivoExcelServices {
     @Autowired
     private MFEstadoResultadoIntegralORIRepository estadoResultadoIntegralORIRepository;
     @Autowired
+    private MFEstadoResultadoRepository estadoResultadoRepository;
+    @Autowired
     private MFEstadoFlujoEfectivoIndirectoRepository estadoFlujoEfectivoIndirectoRepository;
     @Autowired
     private MFEstadoFlujoEfectivoDirectoRepository estadoFlujoEfectivoDirectoRepository;
@@ -97,6 +99,8 @@ public class MFArchivoExcelServices {
                 return MFIdentificacionVigilado.class;
             case "ESF":
                 return MFEstadoSituacionFinanciera.class;
+            case "ER":
+                return MFEstadoResultados.class;
             case "ORI":
                 return MFEstadoResultadoIntegralORI.class;
             case "EFE-indirecto":
@@ -312,7 +316,9 @@ public class MFArchivoExcelServices {
             estadoSituacionFinancieraRepository.save((MFEstadoSituacionFinanciera) entity);
         } else if (entity instanceof MFEstadoResultadoIntegralORI) {
             estadoResultadoIntegralORIRepository.save((MFEstadoResultadoIntegralORI) entity);
-        }else if (entity instanceof MFEstadoFlujoEfectivoIndirecto) {
+        } else if (entity instanceof MFEstadoResultados) {
+            estadoResultadoRepository.save((MFEstadoResultados) entity);
+    }else if (entity instanceof MFEstadoFlujoEfectivoIndirecto) {
             estadoFlujoEfectivoIndirectoRepository.save((MFEstadoFlujoEfectivoIndirecto) entity);
         }else if (entity instanceof MFEstadoFlujoEfectivoDirecto) {
             estadoFlujoEfectivoDirectoRepository.save((MFEstadoFlujoEfectivoDirecto) entity);
