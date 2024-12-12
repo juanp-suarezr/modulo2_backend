@@ -2,12 +2,8 @@ package com.mf.mf.services.MFArchivoExcelServices;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mf.mf.model.excel.MFEstadoResultadoIntegralORI;
-import com.mf.mf.model.excel.MFEstadoSituacionFinanciera;
-import com.mf.mf.model.excel.MFIdentificacionVigilado;
-import com.mf.mf.repository.MFExcelRepository.MFEstadoResultadoIntegralORIRepository;
-import com.mf.mf.repository.MFExcelRepository.MFEstadoSituacionFinancieraRepository;
-import com.mf.mf.repository.MFExcelRepository.MFIdentificacionVigiladoRepository;
+import com.mf.mf.model.excel.*;
+import com.mf.mf.repository.MFExcelRepository.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -35,6 +31,13 @@ public class MFArchivoExcelServices {
     private MFEstadoSituacionFinancieraRepository estadoSituacionFinancieraRepository;
     @Autowired
     private MFEstadoResultadoIntegralORIRepository estadoResultadoIntegralORIRepository;
+    @Autowired
+    private MFEstadoFlujoEfectivoIndirectoRepository estadoFlujoEfectivoIndirectoRepository;
+    @Autowired
+    private MFEstadoFlujoEfectivoDirectoRepository estadoFlujoEfectivoDirectoRepository;
+    @Autowired
+    private MFDictamenRevisorFiscalRepository estadoDictamenRevisorFiscalRepository;
+
 
     // Convertir JSON a ValidationRanges
     public ValidationRanges convertJsonToValidationRanges(String validationRangesJson) {
@@ -96,6 +99,12 @@ public class MFArchivoExcelServices {
                 return MFEstadoSituacionFinanciera.class;
             case "ORI":
                 return MFEstadoResultadoIntegralORI.class;
+            case "EFE-indirecto":
+                return MFEstadoFlujoEfectivoIndirecto.class;
+            case "EFE-directo":
+                return MFEstadoFlujoEfectivoDirecto.class;
+            case "Dictamen":
+                return MFDictamenRevisorFiscal.class;
             default:
                 throw new IllegalArgumentException("La hoja '" + sheetName + "' no está mapeada para su procesamiento.");
         }
@@ -282,199 +291,16 @@ public class MFArchivoExcelServices {
             estadoSituacionFinancieraRepository.save((MFEstadoSituacionFinanciera) entity);
         } else if (entity instanceof MFEstadoResultadoIntegralORI) {
             estadoResultadoIntegralORIRepository.save((MFEstadoResultadoIntegralORI) entity);
+        }else if (entity instanceof MFEstadoFlujoEfectivoIndirecto) {
+            estadoFlujoEfectivoIndirectoRepository.save((MFEstadoFlujoEfectivoIndirecto) entity);
+        }else if (entity instanceof MFEstadoFlujoEfectivoDirecto) {
+            estadoFlujoEfectivoDirectoRepository.save((MFEstadoFlujoEfectivoDirecto) entity);
+        }else if (entity instanceof MFDictamenRevisorFiscal) {
+            estadoDictamenRevisorFiscalRepository.save((MFDictamenRevisorFiscal) entity);
         } else {
             throw new IllegalArgumentException("Tipo de entidad no soportado: " + entity.getClass().getName());
         }
     }
-
-
-
-
-
-    //METODO INDENTIFICACION VIGILADO SHEET
-    private void processAndSaveIdentificacionVigilado(Workbook workbook, String nit) {
-        FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
-        Sheet sheet = workbook.getSheet("Identificación del Vigilado");
-        if (sheet == null) {
-            throw new IllegalArgumentException("La hoja 'Identificación del Vigilado' no está presente en el archivo.");
-        }
-        CellReference ref = new CellReference("F32");
-        Row row = sheet.getRow(ref.getRow());
-        if (row != null) {
-            Cell cell = row.getCell(ref.getCol());
-
-            System.out.println(cell);
-        }
-
-
-        MFIdentificacionVigilado vigilado = new MFIdentificacionVigilado();
-        vigilado.setEstado(true);
-        vigilado.setNitSinDigitoVerificacion(getNumberCellValue(sheet, "F9", formulaEvaluator));
-        vigilado.setDigitoVerificacion(getNumberCellValue(sheet, "F10", formulaEvaluator));
-        vigilado.setNombreSociedad(getStringCellValue(sheet, "F11", formulaEvaluator));
-        vigilado.setGrupoNiifReporte(getStringCellValue(sheet, "F12", formulaEvaluator));
-        vigilado.setTipoEstadosFinancieros(getStringCellValue(sheet, "F13", formulaEvaluator));
-        vigilado.setTipoVinculacionEconomica(getStringCellValue(sheet, "F14", formulaEvaluator));
-        vigilado.setTipoSubordinada(getStringCellValue(sheet, "F15", formulaEvaluator));
-        vigilado.setVinculadosEconomicos(getNumberCellValue(sheet, "F16", formulaEvaluator).toString());
-        vigilado.setNombreVinculadoEconomico1(getStringCellValue(sheet, "F17", formulaEvaluator));
-        vigilado.setNitVinculadoEconomico1(getStringCellValue(sheet, "F18", formulaEvaluator));
-        vigilado.setNombreVinculadoEconomico2(getStringCellValue(sheet, "F19", formulaEvaluator));
-        vigilado.setNitVinculadoEconomico2(getStringCellValue(sheet, "F20", formulaEvaluator));
-        vigilado.setNombreVinculadoEconomico3(getStringCellValue(sheet, "F21", formulaEvaluator));
-        vigilado.setNitVinculadoEconomico3(getStringCellValue(sheet, "F22", formulaEvaluator));
-        vigilado.setNombreVinculadoEconomico4(getStringCellValue(sheet, "F23", formulaEvaluator));
-        vigilado.setNitVinculadoEconomico4(getStringCellValue(sheet, "F24", formulaEvaluator));
-        vigilado.setNombreVinculadoEconomico5(getStringCellValue(sheet, "F25", formulaEvaluator));
-        vigilado.setNitVinculadoEconomico5(getStringCellValue(sheet, "F26", formulaEvaluator));
-        vigilado.setFechaInicialEstadosFinancieros(getDateCellValue(sheet, "F27", formulaEvaluator));
-        vigilado.setFechaCorteEstadosFinancieros(getDateCellValue(sheet, "F28", formulaEvaluator));
-        vigilado.setMonedaPresentacion(getStringCellValue(sheet, "F29", formulaEvaluator));
-        vigilado.setFechaReporte(getDateCellValue(sheet, "F30", formulaEvaluator));
-        vigilado.setPeriodicidadPresentacion(getStringCellValue(sheet, "F31", formulaEvaluator));
-        vigilado.setAnoActualReporte(getNumberCellValue(sheet, "F32", formulaEvaluator) != null ? getNumberCellValue(sheet, "F32", formulaEvaluator) : 0);
-        vigilado.setAnoComparativo(getNumberCellValue(sheet, "F33", formulaEvaluator) != null ? getNumberCellValue(sheet, "F33", formulaEvaluator) : 0);
-
-
-        // Guardar en la base de datos
-        identificacionVigiladoRepository.save(vigilado);
-    }
-    //METODO ESTADO DE SITUACION FINANCIERA SHEET
-    private void processAndSaveEstadoSituacionFinanciera(Workbook workbook, String nit) {
-        FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
-        Sheet sheet = workbook.getSheet("ESF");
-        if (sheet == null) {
-            throw new IllegalArgumentException("La hoja 'Estado Situación Financiera' no está presente en el archivo.");
-        }
-
-        MFEstadoSituacionFinanciera estadoFinanciero = new MFEstadoSituacionFinanciera();
-        estadoFinanciero.setEstado(true);
-        estadoFinanciero.setTotalActivosCorrientes(getNumberCellValue(sheet, "H12", formulaEvaluator));
-        estadoFinanciero.setEfectivoYEquivalentesAlEfectivo(getNumberCellValue(sheet, "H13", formulaEvaluator));
-        estadoFinanciero.setEfectivoRestringido(getNumberCellValue(sheet, "H14", formulaEvaluator));
-        estadoFinanciero.setInversionesCortoPlazo(getNumberCellValue(sheet, "H15", formulaEvaluator));
-        estadoFinanciero.setCuentasComercialesCobrarOperacionalesClientes(getNumberCellValue(sheet, "H16", formulaEvaluator));
-        estadoFinanciero.setCuentasPorCobrarConPartesRelacionadas1(getNumberCellValue(sheet, "H17", formulaEvaluator));
-        estadoFinanciero.setActivosBiologicos(getNumberCellValue(sheet, "H18", formulaEvaluator));
-        estadoFinanciero.setOtrasCuentasPorCobrar1(getNumberCellValue(sheet, "H19", formulaEvaluator));
-        estadoFinanciero.setPagosAnticipados(getNumberCellValue(sheet, "H20", formulaEvaluator));
-        estadoFinanciero.setInventariosCorrientes(getNumberCellValue(sheet, "H21", formulaEvaluator));
-        estadoFinanciero.setActivosPorImpuestos(getNumberCellValue(sheet, "H22", formulaEvaluator));
-        estadoFinanciero.setActivosDistintosAlEfectivoPignoradosComoGarantia(getNumberCellValue(sheet, "H23", formulaEvaluator));
-        estadoFinanciero.setOtrosActivosFinancieros1(getNumberCellValue(sheet, "H24", formulaEvaluator));
-        estadoFinanciero.setOtrosActivosNoFinancieros1(getNumberCellValue(sheet, "H25", formulaEvaluator));
-        estadoFinanciero.setValidacionActivosCorrientes(getStringCellValue(sheet, "H26", formulaEvaluator));
-
-        estadoFinanciero.setTotalActivosNoCorrientes(getNumberCellValue(sheet, "H28", formulaEvaluator));
-        estadoFinanciero.setDepositosYOtrosActivos1(getNumberCellValue(sheet, "H29", formulaEvaluator));
-        estadoFinanciero.setInversionesLargoPlazo(getNumberCellValue(sheet, "H30", formulaEvaluator));
-        estadoFinanciero.setCuentasComercialesPorCobrar(getNumberCellValue(sheet, "H31", formulaEvaluator));
-        estadoFinanciero.setCuentasPorCobrarConPartesRelacionadas2(getNumberCellValue(sheet, "H32", formulaEvaluator));
-        estadoFinanciero.setOtrasCuentasPorCobrar2(getNumberCellValue(sheet, "H33", formulaEvaluator));
-        estadoFinanciero.setPropiedadDeInversion(getNumberCellValue(sheet, "H34", formulaEvaluator));
-        estadoFinanciero.setActivosIntangiblesYCreditoMercantil(getNumberCellValue(sheet, "H35", formulaEvaluator));
-        estadoFinanciero.setPropiedadesPlantaYEquipo(getNumberCellValue(sheet, "H36", formulaEvaluator));
-        estadoFinanciero.setActivosBiologicosNoCorrientes(getNumberCellValue(sheet, "H37", formulaEvaluator));
-        estadoFinanciero.setInversionesContabilizadasParticipacion(getNumberCellValue(sheet, "H38", formulaEvaluator));
-        estadoFinanciero.setInversionesSubsidiarNegocios(getNumberCellValue(sheet, "H39", formulaEvaluator));
-        estadoFinanciero.setPlusvalia(getNumberCellValue(sheet, "H40", formulaEvaluator));
-        estadoFinanciero.setInventariosNoCorrientes(getNumberCellValue(sheet, "H41", formulaEvaluator));
-        estadoFinanciero.setActivosPorImpuestosDiferidos(getNumberCellValue(sheet, "H42", formulaEvaluator));
-        estadoFinanciero.setActivosPorImpuestosCorrientesNoCorrientes(getNumberCellValue(sheet, "H43", formulaEvaluator));
-        estadoFinanciero.setOtrosActivosFinancieros2(getNumberCellValue(sheet, "H44", formulaEvaluator));
-        estadoFinanciero.setOtrosActivosNoFinancieros2(getNumberCellValue(sheet, "H45", formulaEvaluator));
-        estadoFinanciero.setActivosDistintosAlEfectivo(getNumberCellValue(sheet, "H46", formulaEvaluator));
-        estadoFinanciero.setValidacionActivosNoCorrientes(getStringCellValue(sheet, "H47", formulaEvaluator));
-        estadoFinanciero.setValidacionActivos(getStringCellValue(sheet, "H49", formulaEvaluator));
-        
-        estadoFinanciero.setPasivos(getNumberCellValue(sheet, "H51", formulaEvaluator));
-        estadoFinanciero.setPasivosCorrientes(getNumberCellValue(sheet, "H53", formulaEvaluator));
-        estadoFinanciero.setCuentasPorPagarComercialesProveedores(getNumberCellValue(sheet, "H54", formulaEvaluator));
-        estadoFinanciero.setOtrasCuentasPorPagar(getNumberCellValue(sheet, "H55", formulaEvaluator));
-        estadoFinanciero.setPasivosPorImpuestos1(getNumberCellValue(sheet, "H56", formulaEvaluator));
-        estadoFinanciero.setDeudaFinanciera(getNumberCellValue(sheet, "H57", formulaEvaluator));
-        estadoFinanciero.setOtrosPasivosNoFinancieros1(getNumberCellValue(sheet, "H58", formulaEvaluator));
-        estadoFinanciero.setDepositosYOtrosActivos2(getNumberCellValue(sheet, "H59", formulaEvaluator));
-        estadoFinanciero.setPorcionCorrienteDeuda(getNumberCellValue(sheet, "H60", formulaEvaluator));
-        estadoFinanciero.setCuentasPorPagarConPartesRelacionadas3(getNumberCellValue(sheet, "H61", formulaEvaluator));
-        estadoFinanciero.setOtrasProvisiones(getNumberCellValue(sheet, "H62", formulaEvaluator));
-        estadoFinanciero.setProvisionesPorBeneficiosAEmpleados1(getNumberCellValue(sheet, "H63", formulaEvaluator));
-        estadoFinanciero.setIngresosRecibidosPorCuentaDeTerceros(getNumberCellValue(sheet, "H64", formulaEvaluator));
-        estadoFinanciero.setValidacionPasivosCorrientes(getStringCellValue(sheet, "H65", formulaEvaluator));
-
-        estadoFinanciero.setPasivosNoCorrientes(getNumberCellValue(sheet, "H67", formulaEvaluator));
-        estadoFinanciero.setDeudaALargoPlazo(getNumberCellValue(sheet, "H68", formulaEvaluator));
-        estadoFinanciero.setCuentasPorPagar(getNumberCellValue(sheet, "H69", formulaEvaluator));
-        estadoFinanciero.setProvisionesPorBeneficiosAEmpleados2(getNumberCellValue(sheet, "H70", formulaEvaluator));
-        estadoFinanciero.setPasivosPorImpuestosDiferidos(getNumberCellValue(sheet, "H71", formulaEvaluator));
-        estadoFinanciero.setIngresosRecibidosPorAnticipado(getNumberCellValue(sheet, "H72", formulaEvaluator));
-        estadoFinanciero.setOtrosPasivosNoFinancieros2(getNumberCellValue(sheet, "H73", formulaEvaluator));
-        estadoFinanciero.setOtrosPasivosFinancieros(getNumberCellValue(sheet, "H74", formulaEvaluator));
-        estadoFinanciero.setPasivosPorImpuestos2(getNumberCellValue(sheet, "H75", formulaEvaluator));
-        estadoFinanciero.setValidacionPasivosNoCorrientes(getStringCellValue(sheet, "H76", formulaEvaluator));
-
-        estadoFinanciero.setValidacionPasivos(getStringCellValue(sheet, "H78", formulaEvaluator));
-        estadoFinanciero.setPatrimonio(getNumberCellValue(sheet, "H80", formulaEvaluator));
-        estadoFinanciero.setCapitalPagado(getNumberCellValue(sheet, "H81", formulaEvaluator));
-        estadoFinanciero.setPrimaDeEmision(getNumberCellValue(sheet, "H82", formulaEvaluator));
-        estadoFinanciero.setReadquisicionDeInstrumentosDePatrimonioPropio(getNumberCellValue(sheet, "H83", formulaEvaluator));
-        estadoFinanciero.setInversionSumplementariaAlCapitalAsignado(getNumberCellValue(sheet, "H84", formulaEvaluator));
-        estadoFinanciero.setOtrasParticipacionesEnElPatrimonio(getNumberCellValue(sheet, "H85", formulaEvaluator));
-        estadoFinanciero.setSuperavitPorRevaluacion(getNumberCellValue(sheet, "H86", formulaEvaluator));
-        estadoFinanciero.setReservaLegal(getNumberCellValue(sheet, "H87", formulaEvaluator));
-        estadoFinanciero.setOtrasReservas(getNumberCellValue(sheet, "H88", formulaEvaluator));
-        estadoFinanciero.setUtilidadYorPerdidaDelEjercicio(getNumberCellValue(sheet, "H89", formulaEvaluator));
-        estadoFinanciero.setUtilidadYorPerdidaAcumulada(getNumberCellValue(sheet, "H90", formulaEvaluator));
-        estadoFinanciero.setGananciasAcumuladasPorEfectoDeLaConvergencia(getNumberCellValue(sheet, "H91", formulaEvaluator));
-        estadoFinanciero.setGananciasAcumuladasDiferentesALasGeneradasPorEfectoDeLaConvergencia(getNumberCellValue(sheet, "H92", formulaEvaluator));
-        estadoFinanciero.setValidacionPatrimonio(getStringCellValue(sheet, "H93", formulaEvaluator));
-        estadoFinanciero.setValidacionGananciaPerdidaNeta(getStringCellValue(sheet, "H95", formulaEvaluator));
-        estadoFinanciero.setTotalPasivoPatrimonio(getNumberCellValue(sheet, "H97", formulaEvaluator));
-        estadoFinanciero.setValidacionEcuacionPatrimonial(getStringCellValue(sheet, "H99", formulaEvaluator));
-        estadoFinanciero.setNit(parseInt(nit));
-
-        System.out.println("validacionActivos: " + estadoFinanciero.getValidacionActivos());
-
-        System.out.println(estadoFinanciero);
-
-
-
-        // Guardar en la base de datos
-        estadoSituacionFinancieraRepository.save(estadoFinanciero);
-    }
-    //METODO ESTADO DE RESULTADOS ORI SHEET
-    private void processAndSaveEstadoResultadosORI(Workbook workbook, String nit) {
-        FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
-        Sheet sheet = workbook.getSheet("ORI");
-        if (sheet == null) {
-            throw new IllegalArgumentException("La hoja 'Estado Situación Financiera' no está presente en el archivo.");
-        }
-
-        MFEstadoResultadoIntegralORI estadoResORI = new MFEstadoResultadoIntegralORI();
-        estadoResORI.setEstado(true);
-        estadoResORI.setGananciaPerdidaNeta(getNumberCellValue(sheet, "J10", formulaEvaluator));
-        estadoResORI.setOtroResultadoIntegralDiferenciasCambioConversion(getNumberCellValue(sheet, "J13", formulaEvaluator));
-        estadoResORI.setOtroResultadoIntegralGananciasActuariales(getNumberCellValue(sheet, "J14", formulaEvaluator));
-        estadoResORI.setOtroResultadoIntegralGananciasRevaluacion(getNumberCellValue(sheet, "J15", formulaEvaluator));
-        estadoResORI.setTotalOtroResultadoIntegralNoReclasificable(getNumberCellValue(sheet, "J16", formulaEvaluator));
-        estadoResORI.setGananciasCoberturasFlujosEfectivo(getNumberCellValue(sheet, "J18", formulaEvaluator));
-        estadoResORI.setTotalOtroResultadoIntegralReclasificable(getNumberCellValue(sheet, "J19", formulaEvaluator));
-        estadoResORI.setParticipacionOtroResultadoIntegralSubsidiarias(getNumberCellValue(sheet, "J20", formulaEvaluator));
-        estadoResORI.setTotalOtroResultadoIntegral(getNumberCellValue(sheet, "J21", formulaEvaluator));
-        estadoResORI.setResultadoIntegralTotal(getNumberCellValue(sheet, "J22", formulaEvaluator));
-        estadoResORI.setResultadoIntegralPropietariosControladora(getNumberCellValue(sheet, "J24", formulaEvaluator));
-        estadoResORI.setResultadoIntegralParticipacionesNoControladoras(getNumberCellValue(sheet, "J25", formulaEvaluator));
-        estadoResORI.setValidacionEstadoResultados(getStringCellValue(sheet, "J27", formulaEvaluator));
-        estadoResORI.setNit(parseInt(nit));
-
-        System.out.println(estadoResORI);
-
-
-
-        // Guardar en la base de datos
-        estadoResultadoIntegralORIRepository.save(estadoResORI);
-    }
-
 
 
     // Métodos auxiliares para obtener valores de celdas
@@ -490,7 +316,7 @@ public class MFArchivoExcelServices {
                 CellValue evaluatedValue = formulaEvaluator.evaluate(cell);
                 if (evaluatedValue != null && evaluatedValue.getCellType() == CellType.STRING) {
                     // Validar si es un entero o un decimal
-
+                    System.out.println(evaluatedValue.getStringValue());
                         return evaluatedValue.getStringValue();
 
                 }

@@ -38,6 +38,7 @@ public class MFEstadoFlujoEfectivoIndirecto {
     private Integer pagosAdquirirParticipacionesNegociosConjuntos;
     private Integer ventaPropiedadesPlantaEquipo;
     private Integer comprasPropiedadesPlantaEquipo;
+    private Integer ventaActivosIntangibles;
     private Integer comprasActivosIntangibles;
     private Integer recursosVentasOtrosActivosLargoPlazo;
     private Integer comprasOtrosActivosLargoPlazo;
