@@ -1,5 +1,6 @@
 package com.mf.mf.controller.MFArchivoExcel;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mf.mf.services.MFArchivoExcelServices.MFArchivoExcelServices;
 import com.mf.mf.services.MFArchivoExcelServices.MFArchivoExcelServices.ValidationRanges;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,12 +65,23 @@ public class MFArchivoExcelController {
 
 
     @PostMapping("/saveExcel")
-    public ResponseEntity<Map<String, String>> processExcelFile(@RequestParam("file") MultipartFile file, @RequestParam("nit") String nit, @RequestParam("tipo") String tipo) {
+    public ResponseEntity<Map<String, String>> processExcelFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("nit") String nit,
+            @RequestParam("fieldMapping") String fieldMappingJSON) {
         Map<String, String> response = new HashMap<>();
         try {
-            String result = excelService.processAndSaveExcelData(file, nit);
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Map<String, String>> fieldMappings = objectMapper.readValue(
+                    fieldMappingJSON, new TypeReference<Map<String, Map<String, String>>>() {});
+            String result = excelService.processAndSaveExcelData(file, nit, fieldMappings);
+            // Preparar respuesta de éxito
             response.put("message", result);
             return ResponseEntity.ok(response);
+        } catch (JsonProcessingException e) {
+            // Manejar errores en la conversión de JSON
+            response.put("error", "Formato de JSON inválido: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         } catch (IllegalArgumentException e) {
             response.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(response);

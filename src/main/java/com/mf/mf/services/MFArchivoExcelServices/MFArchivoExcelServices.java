@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -70,22 +71,33 @@ public class MFArchivoExcelServices {
 
     //guardar los campos excel
     @Transactional
-    public String processAndSaveExcelData(MultipartFile file, String nit) {
+    public String processAndSaveExcelData(MultipartFile file, String nit, Map<String, Map<String, String>> fieldMappings) {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
-            // Procesar y guardar datos de Identificación del Vigilado
-            processAndSaveIdentificacionVigilado(workbook, nit);
+            FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
-//             Procesar y guardar datos de ESF
-            processAndSaveEstadoSituacionFinanciera(workbook, nit);
-
-            // Procesar y guardar datos de ORI
-            processAndSaveEstadoResultadosORI(workbook, nit);
-
-            // Más procesamientos según sea necesario
+            // Iterar por las hojas y sus mapeos
+            fieldMappings.forEach((sheetName, mappings) -> {
+                Class<?> entityClass = getEntityClass(sheetName);
+                processSheetData(workbook, sheetName, mappings, formulaEvaluator, nit, entityClass);
+            });
 
             return "Todos los datos se han procesado y guardado correctamente.";
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar el archivo Excel: " + e.getMessage(), e);
+        }
+    }
+
+    // Método auxiliar para obtener la clase de entidad correspondiente
+    private Class<?> getEntityClass(String sheetName) {
+        switch (sheetName) {
+            case "Identificación del Vigilado":
+                return MFIdentificacionVigilado.class;
+            case "ESF":
+                return MFEstadoSituacionFinanciera.class;
+            case "ORI":
+                return MFEstadoResultadoIntegralORI.class;
+            default:
+                throw new IllegalArgumentException("La hoja '" + sheetName + "' no está mapeada para su procesamiento.");
         }
     }
 
@@ -187,6 +199,97 @@ public class MFArchivoExcelServices {
             this.keywords = keywords;
         }
     }
+
+    private <T> void processSheetData(
+            Workbook workbook,
+            String sheetName,
+            Map<String, String> mappings,
+            FormulaEvaluator formulaEvaluator,
+            String nit,
+            Class<T> entityClass) {
+        Sheet sheet = workbook.getSheet(sheetName);
+        if (sheet == null) {
+            throw new IllegalArgumentException("La hoja '" + sheetName + "' no está presente en el archivo.");
+        }
+
+        try {
+            // Crear instancia de la entidad
+            T entity = entityClass.getDeclaredConstructor().newInstance();
+
+            // Iterar sobre los mapeos y asignar valores
+            for (Map.Entry<String, String> mapping : mappings.entrySet()) {
+                String field = mapping.getKey();
+                String cellRef = mapping.getValue();
+
+                // Obtener el valor de la celda
+                Object cellValue = getCellValue(sheet, cellRef, formulaEvaluator, entityClass.getDeclaredField(field).getType());
+
+                // Asignar el valor al campo correspondiente
+                Field declaredField = entityClass.getDeclaredField(field);
+                declaredField.setAccessible(true);
+                declaredField.set(entity, cellValue);
+            }
+
+            //ASIGNAR ESTADO
+            Field estadoField = entityClass.getDeclaredField("estado");
+            estadoField.setAccessible(true);
+            estadoField.set(entity, true);
+
+            // Asignar NIT como Integer a cualquier entidad que lo requiera
+            try {
+                Field nitField = entityClass.getDeclaredField("nit");
+                nitField.setAccessible(true);
+                nitField.set(entity, Integer.parseInt(nit));
+            } catch (NoSuchFieldException e) {
+                // Si no existe el campo "nit", no hacer nada
+            }
+
+            // Guardar en la base de datos
+            System.out.println(entity);
+            saveEntity(entity);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al procesar la hoja '" + sheetName + "': " + e.getMessage(), e);
+        }
+    }
+
+
+    private Object getCellValue(Sheet sheet, String cellRef, FormulaEvaluator formulaEvaluator, Class<?> fieldType) {
+        CellReference ref = new CellReference(cellRef);
+        System.out.println(cellRef);
+        Row row = sheet.getRow(ref.getRow());
+        if (row != null) {
+            Cell cell = row.getCell(ref.getCol());
+            if (cell != null) {
+                if (fieldType == Integer.class || fieldType == int.class) {
+                    return getNumberCellValue(sheet, cellRef, formulaEvaluator);
+                } else if (fieldType == String.class) {
+                    return getStringCellValue(sheet, cellRef, formulaEvaluator);
+                } else if (fieldType == LocalDate.class) {
+                    return getDateCellValue(sheet, cellRef, formulaEvaluator);
+                } else if (fieldType == Boolean.class || fieldType == boolean.class) {
+                    return getBooleanCellValue(sheet, cellRef, formulaEvaluator);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Transactional
+    protected void saveEntity(Object entity) {
+        if (entity instanceof MFIdentificacionVigilado) {
+            identificacionVigiladoRepository.save((MFIdentificacionVigilado) entity);
+        } else if (entity instanceof MFEstadoSituacionFinanciera) {
+            estadoSituacionFinancieraRepository.save((MFEstadoSituacionFinanciera) entity);
+        } else if (entity instanceof MFEstadoResultadoIntegralORI) {
+            estadoResultadoIntegralORIRepository.save((MFEstadoResultadoIntegralORI) entity);
+        } else {
+            throw new IllegalArgumentException("Tipo de entidad no soportado: " + entity.getClass().getName());
+        }
+    }
+
+
+
+
 
     //METODO INDENTIFICACION VIGILADO SHEET
     private void processAndSaveIdentificacionVigilado(Workbook workbook, String nit) {
@@ -381,6 +484,7 @@ public class MFArchivoExcelServices {
 
         if (row != null) {
             Cell cell = row.getCell(ref.getCol());
+            System.out.println(cell.getCellType());
             if (cell.getCellType() == CellType.FORMULA) {
                 // Evaluar la fórmula
                 CellValue evaluatedValue = formulaEvaluator.evaluate(cell);
@@ -393,7 +497,9 @@ public class MFArchivoExcelServices {
             }
             else if (cell != null && cell.getCellType() == CellType.STRING) {
                     return cell.getStringCellValue();
-                }
+            } else if (cell != null && cell.getCellType() == CellType.NUMERIC) {
+                return String.valueOf(cell.getNumericCellValue());
+            }
         }
         return null;
     }

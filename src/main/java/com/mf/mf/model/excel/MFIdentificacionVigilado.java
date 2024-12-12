@@ -36,11 +36,13 @@ public class MFIdentificacionVigilado {
     private String monedaPresentacion;
     private LocalDate fechaReporte;
     private String periodicidadPresentacion;
+//    @Column(name = "nit")
+//    private Integer nit;
     @Column(name = "anoActualReporte")
     private Integer anoActualReporte;
     @Column(name = "anoComparativo")
     private Integer anoComparativo;
-    private Integer nit;
+
 
 }
 
