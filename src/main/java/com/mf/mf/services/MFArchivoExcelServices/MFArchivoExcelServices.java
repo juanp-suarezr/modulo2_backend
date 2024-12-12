@@ -216,50 +216,71 @@ public class MFArchivoExcelServices {
             FormulaEvaluator formulaEvaluator,
             String nit,
             Class<T> entityClass) {
+
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null) {
             throw new IllegalArgumentException("La hoja '" + sheetName + "' no está presente en el archivo.");
         }
 
         try {
-            // Crear instancia de la entidad
-            T entity = entityClass.getDeclaredConstructor().newInstance();
-
-            // Iterar sobre los mapeos y asignar valores
-            for (Map.Entry<String, String> mapping : mappings.entrySet()) {
-                String field = mapping.getKey();
-                String cellRef = mapping.getValue();
-
-                // Obtener el valor de la celda
-                Object cellValue = getCellValue(sheet, cellRef, formulaEvaluator, entityClass.getDeclaredField(field).getType());
-
-                // Asignar el valor al campo correspondiente
-                Field declaredField = entityClass.getDeclaredField(field);
-                declaredField.setAccessible(true);
-                declaredField.set(entity, cellValue);
+            // Identificar referencias múltiples
+            int maxRecords = 1;
+            for (String cellRefs : mappings.values()) {
+                int refCount = cellRefs.split(",\\s*").length;
+                maxRecords = Math.max(maxRecords, refCount); // Determinar el máximo de registros a generar
             }
 
-            //ASIGNAR ESTADO
-            Field estadoField = entityClass.getDeclaredField("estado");
-            estadoField.setAccessible(true);
-            estadoField.set(entity, true);
+            // Crear un registro por cada conjunto de referencias
+            for (int recordIndex = 0; recordIndex < maxRecords; recordIndex++) {
+                // Crear instancia de la entidad
+                T entity = entityClass.getDeclaredConstructor().newInstance();
 
-            // Asignar NIT como Integer a cualquier entidad que lo requiera
-            try {
-                Field nitField = entityClass.getDeclaredField("nit");
-                nitField.setAccessible(true);
-                nitField.set(entity, Integer.parseInt(nit));
-            } catch (NoSuchFieldException e) {
-                // Si no existe el campo "nit", no hacer nada
+                for (Map.Entry<String, String> mapping : mappings.entrySet()) {
+                    String field = mapping.getKey();
+                    String cellRefs = mapping.getValue();
+                    String[] refArray = cellRefs.split(",\\s*");
+
+                    // Usar la referencia actual si existe, de lo contrario ignorar
+                    if (recordIndex < refArray.length) {
+                        String cellRef = refArray[recordIndex];
+                        Object cellValue = getCellValue(sheet, cellRef, formulaEvaluator, entityClass.getDeclaredField(field).getType());
+
+                        // Asignar el valor al campo correspondiente
+                        Field declaredField = entityClass.getDeclaredField(field);
+                        declaredField.setAccessible(true);
+                        declaredField.set(entity, cellValue);
+                    }
+                }
+
+                // Asignar el estado y el NIT
+                setEntityDefaults(entity, nit);
+
+                // Guardar en la base de datos
+                System.out.println(entity);
+                saveEntity(entity);
             }
-
-            // Guardar en la base de datos
-            System.out.println(entity);
-            saveEntity(entity);
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar la hoja '" + sheetName + "': " + e.getMessage(), e);
         }
     }
+
+    // Método para asignar valores predeterminados (estado y NIT)
+    private <T> void setEntityDefaults(T entity, String nit) {
+        try {
+            Field estadoField = entity.getClass().getDeclaredField("estado");
+            estadoField.setAccessible(true);
+            estadoField.set(entity, true);
+
+            Field nitField = entity.getClass().getDeclaredField("nit");
+            nitField.setAccessible(true);
+            nitField.set(entity, Integer.parseInt(nit));
+        } catch (NoSuchFieldException e) {
+            // Si no existe el campo, continuar sin hacer nada
+        } catch (Exception e) {
+            throw new RuntimeException("Error al asignar valores predeterminados: " + e.getMessage(), e);
+        }
+    }
+
 
 
     private Object getCellValue(Sheet sheet, String cellRef, FormulaEvaluator formulaEvaluator, Class<?> fieldType) {

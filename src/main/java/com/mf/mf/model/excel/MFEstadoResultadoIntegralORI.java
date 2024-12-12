@@ -37,6 +37,8 @@ public class MFEstadoResultadoIntegralORI {
 
     private String validacionEstadoResultados;
     private Integer nit;
+    private Integer annio;
+//    private Boolean actual;
 
 
 }

@@ -97,6 +97,9 @@ public class MFEstadoSituacionFinanciera {
     private Integer totalPasivoPatrimonio;
     private String validacionEcuacionPatrimonial;
     private Integer nit;
+    private Integer annio;
+//    private Boolean actual;
+
 
 }
 

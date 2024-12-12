@@ -31,5 +31,6 @@ public class MFEstadoCambioPatrimonio {
     private Integer incrementoDisminucionAportacionesPropietarios;
     private Integer annio;
     private Integer nit;
+//    private Boolean actual;
     
 }
