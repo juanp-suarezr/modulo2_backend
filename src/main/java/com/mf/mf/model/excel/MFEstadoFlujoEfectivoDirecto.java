@@ -50,6 +50,6 @@ public class MFEstadoFlujoEfectivoDirecto {
     private Integer efectivoEquivalentesFinalPeriodo;
     private Integer nit;
     private Integer annio;
-//    private Boolean actual;
+    private Boolean actual;
     
 }

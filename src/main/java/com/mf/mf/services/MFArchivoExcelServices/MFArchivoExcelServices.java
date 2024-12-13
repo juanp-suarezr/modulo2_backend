@@ -257,7 +257,7 @@ public class MFArchivoExcelServices {
                 }
 
                 // Asignar el estado y el NIT
-                setEntityDefaults(entity, nit);
+                setEntityDefaults(entity, nit, recordIndex);
 
                 // Guardar en la base de datos
                 System.out.println(entity);
@@ -269,7 +269,7 @@ public class MFArchivoExcelServices {
     }
 
     // Método para asignar valores predeterminados (estado y NIT)
-    private <T> void setEntityDefaults(T entity, String nit) {
+    private <T> void setEntityDefaults(T entity, String nit, Integer contador) {
         try {
             Field estadoField = entity.getClass().getDeclaredField("estado");
             estadoField.setAccessible(true);
@@ -278,6 +278,15 @@ public class MFArchivoExcelServices {
             Field nitField = entity.getClass().getDeclaredField("nit");
             nitField.setAccessible(true);
             nitField.set(entity, Integer.parseInt(nit));
+
+            Field actualField = entity.getClass().getDeclaredField("actual");
+            if (contador == 0) {
+                actualField.setAccessible(true);
+                actualField.set(entity, true);
+            } else {
+                actualField.setAccessible(true);
+                actualField.set(entity, false);
+            }
         } catch (NoSuchFieldException e) {
             // Si no existe el campo, continuar sin hacer nada
         } catch (Exception e) {
