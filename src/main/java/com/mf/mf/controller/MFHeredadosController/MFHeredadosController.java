@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -30,7 +31,8 @@ public class MFHeredadosController {
             @RequestParam String fechaFin,
             @RequestParam Integer estado) {
 
-        List<MFHashHeredadoDTO> registrosCreados = mfHeredadosServices.crearRegistros(idProgramacion, idVigilados, fechaFin, estado);
+//        List<MFHashHeredadoDTO> registrosCreados = mfHeredadosServices.crearRegistros(idProgramacion, idVigilados, LocalDate.parse(fechaFin), estado);
+        List<MFHashHeredadoDTO> registrosCreados = List.of();
         ApiResponse<List<MFHashHeredadoDTO>> response = new ApiResponse<>("Registro almacenado exitosamente", registrosCreados);
         return ResponseEntity.ok(response);
     }

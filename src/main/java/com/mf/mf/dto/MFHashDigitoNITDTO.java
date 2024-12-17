@@ -3,6 +3,7 @@ package com.mf.mf.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class MFHashDigitoNITDTO {
@@ -16,5 +17,6 @@ public class MFHashDigitoNITDTO {
     private boolean estado;
     private Integer estadoRequerimiento; // datos maestros asignacion por debajo
     private String digitoUnico;
+    private List<MFVigiladoDTO> vigilados; // Nueva lista con ID y NIT de los vigilados
 
 }

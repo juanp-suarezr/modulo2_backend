@@ -1,8 +1,10 @@
 package com.mf.mf.dto;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 //USAR SIN HASH
@@ -29,6 +31,8 @@ public class MFRequerimientoDTO {
     // Agregar lista de MFHashDigitoNITDTO
     private List<MFHashDigitoNITDTO> digitoNIT;
 
+    @Getter
+    private List<MFVigiladoDTO> vigilados = new ArrayList<>(); // Lista con ID y NIT de los vigilados.
 
 
 }

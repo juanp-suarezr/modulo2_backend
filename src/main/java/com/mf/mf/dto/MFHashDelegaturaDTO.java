@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class MFHashDelegaturaDTO {
@@ -19,5 +20,6 @@ public class MFHashDelegaturaDTO {
     private boolean estado;
     private Integer estadoRequerimiento; // datos maestros asignacion por debajo
 
+    private List<MFVigiladoDTO> vigilados; // Nueva lista con ID y NIT de los vigilados
 
 }

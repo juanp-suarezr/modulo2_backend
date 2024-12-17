@@ -1,5 +1,7 @@
 package com.mf.mf.services.MFRequerimientoServices;
 
+import com.mf.mf.dto.MFHashDelegaturaDTO;
+import com.mf.mf.dto.MFHashDigitoNITDTO;
 import com.mf.mf.dto.MFRequerimientoWithHashDTO;
 import com.mf.mf.dto.MFRequerimientoDTO;
 import com.mf.mf.mapper.MFRequerimientoMapper;
@@ -30,6 +32,9 @@ public class MFRequerimientoServices {
     @Autowired
     private MFRequerimientoMapper mfRequerimientoMapper;
 
+    @Autowired
+    private MFHeredadosServices mfHeredadosServices;
+
     //guardar con programaciones
     @Transactional
     public MFRequerimientoDTO save(MFRequerimientoDTO mfRequerimientoDTO) {
@@ -45,7 +50,7 @@ public class MFRequerimientoServices {
         mfRequerimientoRepository.flush();
         System.out.println("entity save: " + mfRequerimientoMapper.toDTO(savedEntity));
 
-        try {
+
             // Verificar el tipoProgramacion y, si coincide, crear el registro en MFHashDelegatura
             if (mfRequerimientoDTO.getTipoProgramacion().equals(232)) {
                 List<MFHashDelegatura> delegaturaEntities = mfRequerimientoMapper.toEntity(mfRequerimientoDTO.getDelegaturas());
@@ -53,16 +58,38 @@ public class MFRequerimientoServices {
                 System.out.println("Delegatura entities: " + delegaturaEntities);
 
                 mfHashDelegaturaRepository.saveAll(delegaturaEntities);
+
+                // Procesar vigilados de cada digitoNIT
+                for (MFHashDelegaturaDTO delegaturaDTO : mfRequerimientoDTO.getDelegaturas()) {
+                    if (delegaturaDTO.getVigilados() != null && !delegaturaDTO.getVigilados().isEmpty()) {
+                        mfHeredadosServices.crearRegistros(
+                                savedEntity.getIdRequerimiento(),
+                                delegaturaDTO.getVigilados(),
+                                delegaturaDTO.getFechaFin(),
+                                delegaturaDTO.getEstadoRequerimiento()
+                        );
+                    }
+                }
+
             } else if (mfRequerimientoDTO.getTipoProgramacion().equals(234)) {
                 List<MFHashDigitoNIT> digitoNITEntities = mfRequerimientoMapper.toDigitoNITEntity(mfRequerimientoDTO.getDigitoNIT());
                 digitoNITEntities.forEach(digitoNIT -> digitoNIT.setIdRequerimiento(savedEntity.getIdRequerimiento()));
                 mfHashDigitoNITRepository.saveAll(digitoNITEntities);
+
+                // Procesar vigilados de cada digitoNIT
+                for (MFHashDigitoNITDTO digitoNITDTO : mfRequerimientoDTO.getDigitoNIT()) {
+                    if (digitoNITDTO.getVigilados() != null && !digitoNITDTO.getVigilados().isEmpty()) {
+                        mfHeredadosServices.crearRegistros(
+                                savedEntity.getIdRequerimiento(),
+                                digitoNITDTO.getVigilados(),
+                                digitoNITDTO.getFechaFin(),
+                                digitoNITDTO.getEstadoRequerimiento()
+                        );
+                    }
+                }
             }
-        } catch (Exception e) {
-            mfRequerimientoRepository.delete(savedEntity);
-            // Si ocurre un error al guardar MFHashDelegatura, lanzar una excepción
-            throw new RuntimeException("Error al crear la delegatura hash. Eliminando el requerimiento...", e);
-        }
+
+
 
         // Retornar el DTO de MFRequerimiento
         return mfRequerimientoMapper.toDTO(savedEntity);
