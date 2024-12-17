@@ -1,9 +1,6 @@
 package com.mf.mf.services.MFRequerimientoServices;
 
-import com.mf.mf.dto.MFHashDelegaturaDTO;
-import com.mf.mf.dto.MFHashDigitoNITDTO;
-import com.mf.mf.dto.MFRequerimientoWithHashDTO;
-import com.mf.mf.dto.MFRequerimientoDTO;
+import com.mf.mf.dto.*;
 import com.mf.mf.mapper.MFRequerimientoMapper;
 import com.mf.mf.model.MFHashDelegatura;
 import com.mf.mf.model.MFHashDigitoNIT;
@@ -18,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class MFRequerimientoServices {
@@ -53,40 +52,77 @@ public class MFRequerimientoServices {
 
             // Verificar el tipoProgramacion y, si coincide, crear el registro en MFHashDelegatura
             if (mfRequerimientoDTO.getTipoProgramacion().equals(232)) {
+
+                // Crear una lista temporal para retener los valores de "vigilados"
+                List<MFHashDelegaturaDTO> delegaturaDTOs = mfRequerimientoDTO.getDelegaturas();
+                List<List<MFVigiladoDTO>> vigiladosTemp = delegaturaDTOs.stream()
+                        .map(MFHashDelegaturaDTO::getVigilados)
+                        .toList();
+
+
                 List<MFHashDelegatura> delegaturaEntities = mfRequerimientoMapper.toEntity(mfRequerimientoDTO.getDelegaturas());
+
                 delegaturaEntities.forEach(delegatura -> delegatura.setIdRequerimiento(savedEntity.getIdRequerimiento()));
-                System.out.println("Delegatura entities: " + delegaturaEntities);
 
-                mfHashDelegaturaRepository.saveAll(delegaturaEntities);
+                // Guardar las entidades y recuperar las persistidas
+                List<MFHashDelegatura> savedDelegaturas = mfHashDelegaturaRepository.saveAll(delegaturaEntities);
 
-                // Procesar vigilados de cada digitoNIT
-                for (MFHashDelegaturaDTO delegaturaDTO : mfRequerimientoDTO.getDelegaturas()) {
+                // Mapear las entidades guardadas nuevamente a DTOs
+                List<MFHashDelegaturaDTO> updatedDelegaturaDTOs = mfRequerimientoMapper.toDTO(savedDelegaturas);
+
+                // Restaurar los valores de "vigilados" desde el mapa
+                // Reasignar los valores "vigilados" desde la lista temporal
+                for (int i = 0; i < updatedDelegaturaDTOs.size(); i++) {
+                    updatedDelegaturaDTOs.get(i).setVigilados(vigiladosTemp.get(i));
+                }
+
+                // Procesar los valores "vigilados"
+                for (MFHashDelegaturaDTO delegaturaDTO : updatedDelegaturaDTOs) {
+                    System.out.println(delegaturaDTO);
                     if (delegaturaDTO.getVigilados() != null && !delegaturaDTO.getVigilados().isEmpty()) {
                         mfHeredadosServices.crearRegistros(
-                                savedEntity.getIdRequerimiento(),
-                                delegaturaDTO.getVigilados(),
+                                delegaturaDTO.getIdProgramacion(), // idProgramacion asignado después
+                                delegaturaDTO.getVigilados(),      // vigilados restaurado
                                 delegaturaDTO.getFechaFin(),
                                 delegaturaDTO.getEstadoRequerimiento()
                         );
                     }
                 }
 
+
             } else if (mfRequerimientoDTO.getTipoProgramacion().equals(234)) {
+
+                // Crear una lista temporal para retener los valores de "vigilados"
+                List<MFHashDigitoNITDTO> digitoNitDTOs = mfRequerimientoDTO.getDigitoNIT();
+                List<List<MFVigiladoDTO>> vigiladosTemp = digitoNitDTOs.stream()
+                        .map(MFHashDigitoNITDTO::getVigilados)
+                        .toList();
+
                 List<MFHashDigitoNIT> digitoNITEntities = mfRequerimientoMapper.toDigitoNITEntity(mfRequerimientoDTO.getDigitoNIT());
                 digitoNITEntities.forEach(digitoNIT -> digitoNIT.setIdRequerimiento(savedEntity.getIdRequerimiento()));
-                mfHashDigitoNITRepository.saveAll(digitoNITEntities);
+                List<MFHashDigitoNIT> savedDigitoNit = mfHashDigitoNITRepository.saveAll(digitoNITEntities);
+
+                // Mapear las entidades guardadas nuevamente a DTOs
+                List<MFHashDigitoNITDTO> updatedDigitoNITDTOs = mfRequerimientoMapper.toDigitoNITDTO(savedDigitoNit);
+
+                // Reasignar los valores "vigilados" desde la lista temporal
+                for (int i = 0; i < updatedDigitoNITDTOs.size(); i++) {
+                    updatedDigitoNITDTOs.get(i).setVigilados(vigiladosTemp.get(i));
+                }
 
                 // Procesar vigilados de cada digitoNIT
-                for (MFHashDigitoNITDTO digitoNITDTO : mfRequerimientoDTO.getDigitoNIT()) {
+                for (MFHashDigitoNITDTO digitoNITDTO : updatedDigitoNITDTOs) {
+                    System.out.println(digitoNITDTO);
                     if (digitoNITDTO.getVigilados() != null && !digitoNITDTO.getVigilados().isEmpty()) {
                         mfHeredadosServices.crearRegistros(
-                                savedEntity.getIdRequerimiento(),
+                                digitoNITDTO.getIdProgramacion(),
                                 digitoNITDTO.getVigilados(),
                                 digitoNITDTO.getFechaFin(),
                                 digitoNITDTO.getEstadoRequerimiento()
                         );
                     }
                 }
+
             }
 
 
