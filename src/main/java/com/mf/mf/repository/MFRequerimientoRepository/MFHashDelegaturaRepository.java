@@ -26,4 +26,6 @@ public interface MFHashDelegaturaRepository extends JpaRepository<MFHashDelegatu
 
     List<MFHashDelegatura> findByIdRequerimiento(Long idRequerimiento);
 
+    List<MFHashDelegatura> findByIdTipoVigilado(Long idTipoVigilado);
+
 }

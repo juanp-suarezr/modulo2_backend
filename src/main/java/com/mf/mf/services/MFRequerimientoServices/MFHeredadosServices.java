@@ -2,8 +2,10 @@ package com.mf.mf.services.MFRequerimientoServices;
 
 import com.mf.mf.dto.MFHashHeredadoDTO;
 import com.mf.mf.dto.MFVigiladoDTO;
+import com.mf.mf.model.MFHashDelegatura;
 import com.mf.mf.model.MFHashHeredado;
 import com.mf.mf.repository.MFHeredadosRepository.MFHeredadosRepository;
+import com.mf.mf.repository.MFRequerimientoRepository.MFHashDelegaturaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +20,12 @@ public class MFHeredadosServices {
     @Autowired
     private final MFHeredadosRepository MFHeredadosRepository;
 
-    public MFHeredadosServices(MFHeredadosRepository mfHeredadosRepository) {
+    @Autowired
+    private final MFHashDelegaturaRepository MFHashDelegaturaRepository;
+
+    public MFHeredadosServices(MFHeredadosRepository mfHeredadosRepository, MFHashDelegaturaRepository mfHashDelegaturaRepository) {
         this.MFHeredadosRepository = mfHeredadosRepository;
+        this.MFHashDelegaturaRepository = mfHashDelegaturaRepository;
     }
 
     @Transactional
@@ -61,6 +67,48 @@ public class MFHeredadosServices {
                         registro.isIndividual()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<MFHashHeredadoDTO> crearRegistroMUV(
+            long idVigilado,
+            Integer nit,
+            long tipoVigilado) {
+
+
+        List<MFHashHeredado> registrosCreados = new ArrayList<>();
+
+        // Buscar programaciones que coincidan con el NIT y el tipo de vigilado
+        List<MFHashDelegatura> programacionesDelegatura = MFHashDelegaturaRepository.findByIdTipoVigilado(tipoVigilado);
+
+        for (MFHashDelegatura programacion : programacionesDelegatura) {
+
+            MFHashHeredado registro = new MFHashHeredado();
+            registro.setIdProgramacion(programacion.getIdProgramacion());
+            registro.setIdVigilado((int) idVigilado);
+            registro.setNit(nit);
+            registro.setFechaEntrega(programacion.getFechaFin());
+            registro.setEstadoEntrega(programacion.getEstadoRequerimiento());
+            registro.setEstado(true);
+            registro.setIndividual(false);
+
+            registrosCreados.add(MFHeredadosRepository.save(registro));
+
+
+        }
+
+        // Mapear los registros creados a DTO
+        return registrosCreados.stream()
+                .map(registro -> new MFHashHeredadoDTO(
+                        registro.getIdHeredado(),
+                        registro.getIdVigilado(),
+                        registro.getNit(),
+                        registro.getFechaEntrega(),
+                        registro.getEstadoEntrega(),
+                        registro.isIndividual()
+                ))
+                .collect(Collectors.toList());
+
     }
 
 

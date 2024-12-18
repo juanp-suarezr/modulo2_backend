@@ -26,14 +26,13 @@ public class MFHeredadosController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<List<MFHashHeredadoDTO>>> crearRegistros(
-            @RequestParam Long idProgramacion,
-            @RequestParam List<Integer> idVigilados,
-            @RequestParam String fechaFin,
-            @RequestParam Integer estado) {
+            @RequestParam Long idVigilado,
+            @RequestParam Integer nit,
+            @RequestParam Long tipoVigilado) {
 
-//        List<MFHashHeredadoDTO> registrosCreados = mfHeredadosServices.crearRegistros(idProgramacion, idVigilados, LocalDate.parse(fechaFin), estado);
-        List<MFHashHeredadoDTO> registrosCreados = List.of();
-        ApiResponse<List<MFHashHeredadoDTO>> response = new ApiResponse<>("Registro almacenado exitosamente", registrosCreados);
+        List<MFHashHeredadoDTO> registrosCreadosMUV = mfHeredadosServices.crearRegistroMUV(idVigilado, nit, tipoVigilado);
+
+        ApiResponse<List<MFHashHeredadoDTO>> response = new ApiResponse<>("Registro almacenado exitosamente", registrosCreadosMUV);
         return ResponseEntity.ok(response);
     }
 
