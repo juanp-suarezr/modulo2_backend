@@ -1,4 +1,4 @@
-package com.mf.mf.projection.MFRequerimientoProjection;
+package com.mf.mf.projection;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 
 import java.time.LocalDate;
 
-public interface GetMFHashDigitoNITProjection {
+public interface GetMFHashDigitoNITMUVProjection {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,13 +15,8 @@ public interface GetMFHashDigitoNITProjection {
     String getInicioRango();
     String getFinRango();
     LocalDate getFechaFin();
-    long getIdRequerimiento();
     Integer getEstadoRequerimiento();
     Boolean getEstado();
-    String getDigitoUnico();
 
-//    String getEstadoRequerimientos();
-//
-//    String getNumeroDigitos();
 
 }

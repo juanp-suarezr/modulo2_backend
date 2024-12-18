@@ -31,12 +31,12 @@ public class MUVconsultaController {
     }
 
     //Obtener Empresas by NIT
-    @GetMapping("/empresasByNit/")
-    public List<GetMUVEmpresasProjection> obtenerEmpresas(@RequestParam(required = false) String nit) {
-        if (nit == null) {
-            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
-        }
-        return muvEmpresasServices.obtenerEmpresasByNIT(nit);
-    }
+//    @GetMapping("/empresasByNit/")
+//    public List<GetMUVEmpresasProjection> obtenerEmpresas(@RequestParam(required = false) String nit) {
+//        if (nit == null) {
+//            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+//        }
+//        return muvEmpresasServices.obtenerEmpresasByNIT(nit);
+//    }
 
 }

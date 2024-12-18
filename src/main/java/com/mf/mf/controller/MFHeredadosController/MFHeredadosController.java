@@ -1,15 +1,15 @@
 package com.mf.mf.controller.MFHeredadosController;
 
 import com.mf.mf.dto.MFHashHeredadoDTO;
-import com.mf.mf.dto.MFRequerimientoDTO;
-import com.mf.mf.model.MFHashHeredado;
 import com.mf.mf.payload.ApiResponse;
+import com.mf.mf.projection.MFRequerimientoProjection.GetMFHashDelegaturaProjection;
+import com.mf.mf.repository.MFRequerimientoRepository.MFHashDigitoNITRepository;
 import com.mf.mf.services.MFRequerimientoServices.MFHeredadosServices;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -22,12 +22,16 @@ public class MFHeredadosController {
 
     public MFHeredadosController(MFHeredadosServices mfHeredadosServices) {
         this.mfHeredadosServices = mfHeredadosServices;
+
     }
+
+    @Autowired
+    private MFHashDigitoNITRepository mfHashDigitoNITRepository;
 
     @PostMapping
     public ResponseEntity<ApiResponse<List<MFHashHeredadoDTO>>> crearRegistros(
             @RequestParam Long idVigilado,
-            @RequestParam Integer nit,
+            @RequestParam String nit,
             @RequestParam Long tipoVigilado) {
 
         List<MFHashHeredadoDTO> registrosCreadosMUV = mfHeredadosServices.crearRegistroMUV(idVigilado, nit, tipoVigilado);
@@ -35,5 +39,6 @@ public class MFHeredadosController {
         ApiResponse<List<MFHashHeredadoDTO>> response = new ApiResponse<>("Registro almacenado exitosamente", registrosCreadosMUV);
         return ResponseEntity.ok(response);
     }
+
 
 }

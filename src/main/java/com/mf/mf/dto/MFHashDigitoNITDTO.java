@@ -19,4 +19,6 @@ public class MFHashDigitoNITDTO {
     private String digitoUnico;
     private List<MFVigiladoDTO> vigilados; // Nueva lista con ID y NIT de los vigilados
 
+    
+
 }

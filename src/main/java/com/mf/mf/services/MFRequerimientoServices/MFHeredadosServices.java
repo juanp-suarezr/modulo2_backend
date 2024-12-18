@@ -1,11 +1,17 @@
 package com.mf.mf.services.MFRequerimientoServices;
 
+import com.mf.mf.dto.MFHashDigitoNITDTO;
 import com.mf.mf.dto.MFHashHeredadoDTO;
 import com.mf.mf.dto.MFVigiladoDTO;
 import com.mf.mf.model.MFHashDelegatura;
+import com.mf.mf.model.MFHashDigitoNIT;
 import com.mf.mf.model.MFHashHeredado;
+import com.mf.mf.projection.GetMFHashDigitoNITMUVProjection;
+import com.mf.mf.projection.MFRequerimientoProjection.GetMFHashDelegaturaProjection;
+import com.mf.mf.projection.MFRequerimientoProjection.GetMFHashDigitoNITProjection;
 import com.mf.mf.repository.MFHeredadosRepository.MFHeredadosRepository;
 import com.mf.mf.repository.MFRequerimientoRepository.MFHashDelegaturaRepository;
+import com.mf.mf.repository.MFRequerimientoRepository.MFHashDigitoNITRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +29,15 @@ public class MFHeredadosServices {
     @Autowired
     private final MFHashDelegaturaRepository MFHashDelegaturaRepository;
 
-    public MFHeredadosServices(MFHeredadosRepository mfHeredadosRepository, MFHashDelegaturaRepository mfHashDelegaturaRepository) {
+    @Autowired
+    private final MFHashDigitoNITRepository mfHashDigitoNITRepository;
+
+
+    public MFHeredadosServices(MFHeredadosRepository mfHeredadosRepository, MFHashDelegaturaRepository mfHashDelegaturaRepository, MFHashDigitoNITRepository mfHashDigitoNITRepository) {
         this.MFHeredadosRepository = mfHeredadosRepository;
         this.MFHashDelegaturaRepository = mfHashDelegaturaRepository;
+        this.mfHashDigitoNITRepository = mfHashDigitoNITRepository;
+
     }
 
     @Transactional
@@ -72,27 +84,65 @@ public class MFHeredadosServices {
     @Transactional
     public List<MFHashHeredadoDTO> crearRegistroMUV(
             long idVigilado,
-            Integer nit,
+            String nit,
             long tipoVigilado) {
 
 
         List<MFHashHeredado> registrosCreados = new ArrayList<>();
 
-        // Buscar programaciones que coincidan con el NIT y el tipo de vigilado
-        List<MFHashDelegatura> programacionesDelegatura = MFHashDelegaturaRepository.findByIdTipoVigilado(tipoVigilado);
+        // Buscar programaciones que coincidan  el tipo de vigilado
+        List<GetMFHashDelegaturaProjection> programacionesDelegatura = MFHashDelegaturaRepository.findByIdTipoVigilado(tipoVigilado);
 
-        for (MFHashDelegatura programacion : programacionesDelegatura) {
 
+        for (GetMFHashDelegaturaProjection programacion : programacionesDelegatura) {
+            System.out.println(programacion.getIdProgramacion());
             MFHashHeredado registro = new MFHashHeredado();
             registro.setIdProgramacion(programacion.getIdProgramacion());
             registro.setIdVigilado((int) idVigilado);
-            registro.setNit(nit);
+            registro.setNit(Integer.valueOf(nit));
             registro.setFechaEntrega(programacion.getFechaFin());
             registro.setEstadoEntrega(programacion.getEstadoRequerimiento());
             registro.setEstado(true);
             registro.setIndividual(false);
 
             registrosCreados.add(MFHeredadosRepository.save(registro));
+
+
+        }
+
+
+//        String nitComoString = String.valueOf(nit); // Convertimos el NIT a String
+        String lastOneDigits = nit.substring(nit.length() - 1);
+        String lastTwoDigits = nit.substring(nit.length() - 2);
+        String lastThreeDigits = nit.substring(nit.length() - 3);
+        // Buscar programaciones que coincidan con el NIT y el tipo de vigilado
+
+        // Search for records matching the NIT's last digits
+        // Consultas utilizando los DTOs AQUI QUEDE.
+        List<GetMFHashDigitoNITMUVProjection> resultadosUnicos = mfHashDigitoNITRepository.findByNITunico(nit);
+        System.out.println("Resultados Unicos (último dígito): " + resultadosUnicos);
+
+//        resultadosUnicos.addAll(MFHashDigitoNITRepository.findByNITultimosDIgitos(256, lastTwoDigits));
+//        System.out.println("Resultados Unicos (últimos dos dígitos): " + resultadosUnicos);
+//
+//        resultadosUnicos.addAll(MFHashDigitoNITRepository.findByNITultimos3DIgitos(257, lastThreeDigits));
+//        System.out.println("Resultados Unicos (últimos tres dígitos): " + resultadosUnicos);System.out.println(resultadosUnicos);
+
+
+        for (GetMFHashDigitoNITMUVProjection programacion : resultadosUnicos) {
+
+//            MFHashHeredado registro = new MFHashHeredado();
+//            registro.setIdProgramacion(programacion.getIdProgramacion());
+//            registro.setIdVigilado((int) idVigilado);
+//            registro.setNit(nit);
+//            registro.setFechaEntrega(programacion.getFechaFin());
+//            registro.setEstadoEntrega(programacion.getEstadoRequerimiento());
+//            registro.setEstado(true);
+//            registro.setIndividual(false);
+//
+//            registrosCreados.add(MFHeredadosRepository.save(registro));
+
+            System.out.println(resultadosUnicos);
 
 
         }
