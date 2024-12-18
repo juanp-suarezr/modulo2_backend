@@ -32,7 +32,7 @@ public class MFRequerimientoDTO {
     private List<MFHashDigitoNITDTO> digitoNIT;
 
     @Getter
-    private List<MFVigiladoDTO> vigilados = new ArrayList<>(); // Lista con ID y NIT de los vigilados.
+    private List<MFVigiladoDTO> vigiladoNIT = new ArrayList<>(); // Lista con ID y NIT de los vigilados.
 
 
 }

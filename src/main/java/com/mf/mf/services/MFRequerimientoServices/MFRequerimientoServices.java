@@ -84,13 +84,15 @@ public class MFRequerimientoServices {
                                 delegaturaDTO.getIdProgramacion(), // idProgramacion asignado después
                                 delegaturaDTO.getVigilados(),      // vigilados restaurado
                                 delegaturaDTO.getFechaFin(),
-                                delegaturaDTO.getEstadoRequerimiento()
+                                delegaturaDTO.getEstadoRequerimiento(),
+                                false
                         );
                     }
                 }
 
 
-            } else if (mfRequerimientoDTO.getTipoProgramacion().equals(234)) {
+            }
+            else if (mfRequerimientoDTO.getTipoProgramacion().equals(234)) {
 
                 // Crear una lista temporal para retener los valores de "vigilados"
                 List<MFHashDigitoNITDTO> digitoNitDTOs = mfRequerimientoDTO.getDigitoNIT();
@@ -118,12 +120,24 @@ public class MFRequerimientoServices {
                                 digitoNITDTO.getIdProgramacion(),
                                 digitoNITDTO.getVigilados(),
                                 digitoNITDTO.getFechaFin(),
-                                digitoNITDTO.getEstadoRequerimiento()
+                                digitoNITDTO.getEstadoRequerimiento(),
+                                false
                         );
                     }
                 }
 
             }
+            else {
+                mfHeredadosServices.crearRegistros(
+                        savedEntity.getIdRequerimiento(),
+                        mfRequerimientoDTO.getVigiladoNIT(),
+                        mfRequerimientoDTO.getFechaFin(),
+                        mfRequerimientoDTO.getEstadoRequerimiento(),
+                        true
+                );
+            }
+
+
 
 
 

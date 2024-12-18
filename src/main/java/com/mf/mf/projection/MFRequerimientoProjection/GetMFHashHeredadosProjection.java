@@ -14,5 +14,6 @@ public interface GetMFHashHeredadosProjection {
     LocalDate getFechaEntrega();
     Integer getEstadoRequerimiento();
     Boolean getEstado();
+    Boolean getIndividual();
 
 }

@@ -27,7 +27,8 @@ public class MFHeredadosServices {
             long idProgramacion,
             List<MFVigiladoDTO> vigilados,
             LocalDate fechaFin,
-            Integer estado) {
+            Integer estado,
+            Boolean isIndividual) {
 
         if (vigilados == null || vigilados.isEmpty()) {
             throw new IllegalArgumentException("La lista de vigilados no puede estar vacía.");
@@ -44,6 +45,7 @@ public class MFHeredadosServices {
                 registro.setFechaEntrega(fechaFin);
                 registro.setEstadoEntrega(estado);
                 registro.setEstado(true);
+                registro.setIndividual(isIndividual);
 
                 registrosCreados.add(MFHeredadosRepository.save(registro));
             }
@@ -55,7 +57,8 @@ public class MFHeredadosServices {
                         registro.getIdVigilado(),
                         registro.getNit(),
                         registro.getFechaEntrega(),
-                        registro.getEstadoEntrega()
+                        registro.getEstadoEntrega(),
+                        registro.isIndividual()
                 ))
                 .collect(Collectors.toList());
     }
