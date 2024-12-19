@@ -46,7 +46,8 @@ public class MFHeredadosServices {
             List<MFVigiladoDTO> vigilados,
             LocalDate fechaFin,
             Integer estado,
-            Boolean isIndividual) {
+            Boolean isIndividual,
+            Integer tipoProgamacion) {
 
         if (vigilados == null || vigilados.isEmpty()) {
             throw new IllegalArgumentException("La lista de vigilados no puede estar vacía.");
@@ -64,6 +65,7 @@ public class MFHeredadosServices {
                 registro.setEstadoEntrega(estado);
                 registro.setEstado(true);
                 registro.setIndividual(isIndividual);
+                registro.setTipoProgramacion(tipoProgamacion);
 
                 registrosCreados.add(MFHeredadosRepository.save(registro));
             }
@@ -95,15 +97,15 @@ public class MFHeredadosServices {
 
 
         for (GetMFHashDelegaturaProjection programacion : programacionesDelegatura) {
-            System.out.println(programacion.getIdProgramacion());
             MFHashHeredado registro = new MFHashHeredado();
             registro.setIdProgramacion(programacion.getIdProgramacion());
             registro.setIdVigilado((int) idVigilado);
             registro.setNit(Integer.valueOf(nit));
             registro.setFechaEntrega(programacion.getFechaFin());
-            registro.setEstadoEntrega(programacion.getEstadoRequerimiento());
+            registro.setEstadoEntrega(285);
             registro.setEstado(true);
             registro.setIndividual(false);
+            registro.setTipoProgramacion(232);
 
             registrosCreados.add(MFHeredadosRepository.save(registro));
 
@@ -115,34 +117,28 @@ public class MFHeredadosServices {
         String lastOneDigits = nit.substring(nit.length() - 1);
         String lastTwoDigits = nit.substring(nit.length() - 2);
         String lastThreeDigits = nit.substring(nit.length() - 3);
-        // Buscar programaciones que coincidan con el NIT y el tipo de vigilado
 
         // Search for records matching the NIT's last digits
-        // Consultas utilizando los DTOs AQUI QUEDE.
-        List<GetMFHashDigitoNITMUVProjection> resultadosUnicos = mfHashDigitoNITRepository.findByNITunico(nit);
-        System.out.println("Resultados Unicos (último dígito): " + resultadosUnicos);
+        // Consultas utilizando las projections
+        List<GetMFHashDigitoNITMUVProjection> resultadosUnicos = mfHashDigitoNITRepository.findByNITunico(lastOneDigits);
 
-//        resultadosUnicos.addAll(MFHashDigitoNITRepository.findByNITultimosDIgitos(256, lastTwoDigits));
-//        System.out.println("Resultados Unicos (últimos dos dígitos): " + resultadosUnicos);
-//
-//        resultadosUnicos.addAll(MFHashDigitoNITRepository.findByNITultimos3DIgitos(257, lastThreeDigits));
-//        System.out.println("Resultados Unicos (últimos tres dígitos): " + resultadosUnicos);System.out.println(resultadosUnicos);
+        resultadosUnicos.addAll(mfHashDigitoNITRepository.findByNITultimosDIgitos(256, lastTwoDigits));
 
+        resultadosUnicos.addAll(mfHashDigitoNITRepository.findByNITultimos3DIgitos(257, lastThreeDigits));
 
         for (GetMFHashDigitoNITMUVProjection programacion : resultadosUnicos) {
 
-//            MFHashHeredado registro = new MFHashHeredado();
-//            registro.setIdProgramacion(programacion.getIdProgramacion());
-//            registro.setIdVigilado((int) idVigilado);
-//            registro.setNit(nit);
-//            registro.setFechaEntrega(programacion.getFechaFin());
-//            registro.setEstadoEntrega(programacion.getEstadoRequerimiento());
-//            registro.setEstado(true);
-//            registro.setIndividual(false);
-//
-//            registrosCreados.add(MFHeredadosRepository.save(registro));
+            MFHashHeredado registro = new MFHashHeredado();
+            registro.setIdProgramacion(programacion.getIdProgramacion());
+            registro.setIdVigilado((int) idVigilado);
+            registro.setNit(Integer.valueOf(nit));
+            registro.setFechaEntrega(programacion.getFechaFin());
+            registro.setEstadoEntrega(285);
+            registro.setEstado(true);
+            registro.setIndividual(false);
+            registro.setTipoProgramacion(234);
 
-            System.out.println(resultadosUnicos);
+            registrosCreados.add(MFHeredadosRepository.save(registro));
 
 
         }

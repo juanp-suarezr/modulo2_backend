@@ -34,6 +34,7 @@ public class MFIdentificacionVigiladoDTO {
     private Integer anoActualReporte;
     private Integer anoComparativo;
     private Integer nit;
+    private Integer idHeredado;
 
 }
 

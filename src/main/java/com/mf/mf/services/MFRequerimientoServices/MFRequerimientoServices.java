@@ -85,7 +85,8 @@ public class MFRequerimientoServices {
                                 delegaturaDTO.getVigilados(),      // vigilados restaurado
                                 delegaturaDTO.getFechaFin(),
                                 delegaturaDTO.getEstadoRequerimiento(),
-                                false
+                                false,
+                                mfRequerimientoDTO.getTipoProgramacion()
                         );
                     }
                 }
@@ -121,7 +122,8 @@ public class MFRequerimientoServices {
                                 digitoNITDTO.getVigilados(),
                                 digitoNITDTO.getFechaFin(),
                                 digitoNITDTO.getEstadoRequerimiento(),
-                                false
+                                false,
+                                mfRequerimientoDTO.getTipoProgramacion()
                         );
                     }
                 }
@@ -133,7 +135,8 @@ public class MFRequerimientoServices {
                         mfRequerimientoDTO.getVigiladoNIT(),
                         mfRequerimientoDTO.getFechaFin(),
                         mfRequerimientoDTO.getEstadoRequerimiento(),
-                        true
+                        true,
+                        mfRequerimientoDTO.getTipoProgramacion()
                 );
             }
 

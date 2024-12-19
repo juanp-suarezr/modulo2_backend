@@ -43,5 +43,6 @@ public class MFIdentificacionVigilado {
     private Integer anoComparativo;
     @Column(name = "nit")
     private Integer nit;
+    private Integer idHeredado;
 }
 

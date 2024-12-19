@@ -20,6 +20,7 @@ public class MFHashHeredado {
     private Integer estadoEntrega; // datos maestros asignacion por debajo
     private Integer nit;
     private boolean individual;
+    private Integer tipoProgramacion;
 
     // Relaciones con otras entidades
 

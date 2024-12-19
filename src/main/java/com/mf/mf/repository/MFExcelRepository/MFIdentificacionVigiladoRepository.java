@@ -14,7 +14,8 @@ public interface MFIdentificacionVigiladoRepository extends JpaRepository<MFIden
 
     @Query("SELECT t FROM MFIdentificacionVigilado t " +
             "WHERE t.nit = :nit "+
-            "AND t.estado = true")
-    List<GetMFIdentificacionVigiladoProjection> findMFIdentificacionVigiladosByNit(Integer nit);
+            "AND t.estado = true "+
+            "AND t.idHeredado = :idHeredado")
+    List<GetMFIdentificacionVigiladoProjection> findMFIdentificacionVigiladosByNit(Integer nit, Integer idHeredado);
 
 }

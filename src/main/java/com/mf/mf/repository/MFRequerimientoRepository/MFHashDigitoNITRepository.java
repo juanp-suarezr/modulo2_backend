@@ -40,6 +40,7 @@ public interface MFHashDigitoNITRepository extends JpaRepository<MFHashDigitoNIT
              "FROM MFHashDigitoNIT p " +
             "WHERE p.estadoRequerimiento = 289 "+
             "AND p.idNumeroDigitos = 255 "+
+            "AND p.inicioRango = :nit "+
             "AND p.estado = true")
     List<GetMFHashDigitoNITMUVProjection> findByNITunico(String nit);
 

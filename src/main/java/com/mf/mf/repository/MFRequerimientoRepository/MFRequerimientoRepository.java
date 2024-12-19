@@ -2,9 +2,11 @@ package com.mf.mf.repository.MFRequerimientoRepository;
 
 import com.mf.mf.model.MFRequerimiento;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientoProjection;
+import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosEntregasProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosTableProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -52,4 +54,57 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "JOIN a.estadoRequerimientoDescripcion r " + // Agregado
             "WHERE a.idRequerimiento = :idRequerimiento")
     List<GetMFRequerimientoProjection> findProjectionsByIdRequerimiento(Long idRequerimiento);
+
+    @Query("SELECT r.idRequerimiento as idRequerimiento, " +
+            "r.nombreRequerimiento as nombreRequerimiento, " +
+            "r.fechaInicio as fechaInicio, " +
+            "r.fechaFin as fechaFin, " +
+            "r.actoAdministrativo as actoAdministrativo, " +
+            "r.annioVigencia as annioVigencia, " +
+            "r.tipoProgramacion as tipoProgramacion, " +
+            "h.idProgramacion as idProgramacion, " +
+            "h.individual as individual, " +
+            "h.estadoEntrega as estadoEntrega, " +
+            "h.idHeredado as idHeredado, " +
+            "d.idNumeroDigitos as idNumeroDigitos, " +
+            "f.descripcion as tipoRequerimientoDescripcion, " +
+            "e.descripcion as estadoRequerimientoDescripcion " +
+            "FROM MFRequerimiento r " +
+            "LEFT JOIN MFHashHeredado h ON " +
+            "   ((h.tipoProgramacion = 232 AND h.idProgramacion IN (SELECT del.idProgramacion FROM MFHashDelegatura del WHERE del.idRequerimiento = r.idRequerimiento)) OR " +
+            "    (h.tipoProgramacion = 234 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
+            "    (h.tipoProgramacion = 233 AND h.idProgramacion = r.idRequerimiento)) " +
+            "LEFT JOIN r.tipoRequerimientoDescripcion f " +
+            "LEFT JOIN r.estadoRequerimientoDescripcion e " +
+            "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
+            "WHERE h.estadoEntrega = 285 " +
+            "AND h.nit = :nitUsuario")
+    List<GetMFRequerimientosEntregasProjection> findEntregasPendientesByNIT(@Param("nitUsuario") Integer nitUsuario);
+
+
+
+    //ENTREGAS FINALIZADAS
+    @Query("SELECT r.idRequerimiento as idRequerimiento, " +
+            "r.nombreRequerimiento as nombreRequerimiento, " +
+            "r.fechaInicio as fechaInicio, " +
+            "r.fechaFin as fechaFin, " +
+            "r.actoAdministrativo as actoAdministrativo, " +
+            "r.annioVigencia as annioVigencia, " +
+            "r.tipoProgramacion as tipoProgramacion, " +
+            "h.idProgramacion as idProgramacion, " +
+            "h.individual as individual, " +
+            "d.idNumeroDigitos as idNumeroDigitos, " +
+            "f.descripcion as tipoRequerimientoDescripcion, " +
+            "e.descripcion as estadoRequerimientoDescripcion " +
+            "FROM MFRequerimiento r " +
+            "LEFT JOIN MFHashHeredado h ON " +
+            "   ((h.tipoProgramacion = 232 AND h.idProgramacion IN (SELECT del.idProgramacion FROM MFHashDelegatura del WHERE del.idRequerimiento = r.idRequerimiento)) OR " +
+            "    (h.tipoProgramacion = 234 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
+            "    (h.tipoProgramacion = 233 AND h.idProgramacion = r.idRequerimiento)) " +
+            "LEFT JOIN r.tipoRequerimientoDescripcion f " +
+            "LEFT JOIN r.estadoRequerimientoDescripcion e " +
+            "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
+            "WHERE h.estadoEntrega != 285 " +
+            "AND h.nit = :nitUsuario")
+    List<GetMFRequerimientosEntregasProjection> findEntregasByNIT(@Param("nitUsuario") Integer nitUsuario);
 }

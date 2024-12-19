@@ -21,8 +21,8 @@ public class MFTablasExcelController {
     private MFTablasExcelServices mfTablasExcelServices;
 
     //Obtener TIPO VIGILADOS
-    @GetMapping("/indentificacion-vigilado/")
-    public List<GetMFIdentificacionVigiladoProjection> obtenerTipoVigilados(Integer nit) {
+    @GetMapping("/indentificacion-vigilado")
+    public List<GetMFIdentificacionVigiladoProjection> obtenerTipoVigilados(@RequestParam Integer nit) {
         if (nit == null) {
             throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
         }
