@@ -18,7 +18,7 @@ public class MFTablasExcelServices {
     private MFIdentificacionVigiladoRepository mfIdentificacionVigiladoRepository;
 
     //Obtener requerimientos para tabla principal
-    public List<GetMFIdentificacionVigiladoProjection> obtenerIdentificacionVigiladoByNIT(Integer nit) {
+    public List<GetMFIdentificacionVigiladoProjection> obtenerIdentificacionVigiladoByNIT(Integer nit, Integer idHeredado) {
         // Si no se proporciona idDelegatura, retornar una lista vacía
         if (nit == null) {
             System.out.println("Advertencia: nit empresa no proporcionado");
@@ -26,7 +26,7 @@ public class MFTablasExcelServices {
         }
 
         // Intentar obtener los registros
-        List<GetMFIdentificacionVigiladoProjection> tipoVigiladoInfo = mfIdentificacionVigiladoRepository.findMFIdentificacionVigiladosByNit(nit);
+        List<GetMFIdentificacionVigiladoProjection> tipoVigiladoInfo = mfIdentificacionVigiladoRepository.findMFIdentificacionVigiladosByNit(nit, idHeredado);
 
         // Retornar lista vacía si no se encuentran registros, con mensaje de advertencia
         if (tipoVigiladoInfo.isEmpty()) {
