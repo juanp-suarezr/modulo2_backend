@@ -1,5 +1,6 @@
 package com.mf.mf.controller.MFTablasExcelController;
 
+import com.mf.mf.projection.MFExcelProjection.GetMFEstadoSituacionFinancieraProjection;
 import com.mf.mf.projection.MFExcelProjection.GetMFIdentificacionVigiladoProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMUVTipoVigiladoProjection;
 import com.mf.mf.services.MFRequerimientoServices.MUVEmpresasServices;
@@ -27,6 +28,15 @@ public class MFTablasExcelController {
             throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
         }
         return mfTablasExcelServices.obtenerIdentificacionVigiladoByNIT(nit, idHeredado);
+    }
+
+    //Obtener TIPO VIGILADOS
+    @GetMapping("/ESF")
+    public List<GetMFEstadoSituacionFinancieraProjection> obtenerESF(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+        return mfTablasExcelServices.obtenerESFByNIT(nit, idHeredado);
     }
 
 

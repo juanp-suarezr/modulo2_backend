@@ -55,6 +55,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "WHERE a.idRequerimiento = :idRequerimiento")
     List<GetMFRequerimientoProjection> findProjectionsByIdRequerimiento(Long idRequerimiento);
 
+    //ENTREGAS PENDIENTES
     @Query("SELECT r.idRequerimiento as idRequerimiento, " +
             "r.nombreRequerimiento as nombreRequerimiento, " +
             "r.fechaInicio as fechaInicio, " +
@@ -62,12 +63,17 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "r.actoAdministrativo as actoAdministrativo, " +
             "r.annioVigencia as annioVigencia, " +
             "r.tipoProgramacion as tipoProgramacion, " +
+            "r.periodoEntrega as periodoEntrega, " +
+            "r.fechaPublicacion as fechaPublicacion, " +
             "h.idProgramacion as idProgramacion, " +
             "h.individual as individual, " +
             "h.estadoEntrega as estadoEntrega, " +
             "h.idHeredado as idHeredado, " +
+            "h.nit as nit, " +
+            "h.fechaEntrega as fechaEntrega, " +
             "d.idNumeroDigitos as idNumeroDigitos, " +
             "f.descripcion as tipoRequerimientoDescripcion, " +
+            "p.descripcion as periodoEntregaDescripcion, " +
             "e.descripcion as estadoRequerimientoDescripcion " +
             "FROM MFRequerimiento r " +
             "LEFT JOIN MFHashHeredado h ON " +
@@ -76,6 +82,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "    (h.tipoProgramacion = 233 AND h.idProgramacion = r.idRequerimiento)) " +
             "LEFT JOIN r.tipoRequerimientoDescripcion f " +
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
+            "LEFT JOIN r.periodoEntregaDescripcion p " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
             "WHERE h.estadoEntrega = 285 " +
             "AND h.nit = :nitUsuario")

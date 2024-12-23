@@ -76,14 +76,14 @@ public class MFArchivoExcelServices {
 
     //guardar los campos excel
     @Transactional
-    public String processAndSaveExcelData(MultipartFile file, String nit, Map<String, Map<String, String>> fieldMappings) {
+    public String processAndSaveExcelData(MultipartFile file, String nit, Integer idHeredado, Map<String, Map<String, String>> fieldMappings) {
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
             // Iterar por las hojas y sus mapeos
             fieldMappings.forEach((sheetName, mappings) -> {
                 Class<?> entityClass = getEntityClass(sheetName);
-                processSheetData(workbook, sheetName, mappings, formulaEvaluator, nit, entityClass);
+                processSheetData(workbook, sheetName, mappings, formulaEvaluator, nit, entityClass, idHeredado);
             });
 
             return "Todos los datos se han procesado y guardado correctamente.";
@@ -219,7 +219,9 @@ public class MFArchivoExcelServices {
             Map<String, String> mappings,
             FormulaEvaluator formulaEvaluator,
             String nit,
-            Class<T> entityClass) {
+            Class<T> entityClass,
+            Integer idHeredado
+    ) {
 
         Sheet sheet = workbook.getSheet(sheetName);
         if (sheet == null) {
@@ -257,7 +259,7 @@ public class MFArchivoExcelServices {
                 }
 
                 // Asignar el estado y el NIT
-                setEntityDefaults(entity, nit, recordIndex);
+                setEntityDefaults(entity, nit, idHeredado, recordIndex);
 
                 // Guardar en la base de datos
                 System.out.println(entity);
@@ -269,7 +271,7 @@ public class MFArchivoExcelServices {
     }
 
     // Método para asignar valores predeterminados (estado y NIT)
-    private <T> void setEntityDefaults(T entity, String nit, Integer contador) {
+    private <T> void setEntityDefaults(T entity, String nit, Integer idHeredado, Integer contador) {
         try {
             Field estadoField = entity.getClass().getDeclaredField("estado");
             estadoField.setAccessible(true);
@@ -278,6 +280,10 @@ public class MFArchivoExcelServices {
             Field nitField = entity.getClass().getDeclaredField("nit");
             nitField.setAccessible(true);
             nitField.set(entity, Integer.parseInt(nit));
+
+            Field idHeredadoField = entity.getClass().getDeclaredField("idHeredado");
+            idHeredadoField.setAccessible(true);
+            idHeredadoField.set(entity, idHeredado);
 
             Field actualField = entity.getClass().getDeclaredField("actual");
             if (contador == 0) {

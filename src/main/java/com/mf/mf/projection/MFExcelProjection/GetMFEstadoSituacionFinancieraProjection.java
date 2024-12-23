@@ -160,6 +160,9 @@ public interface GetMFEstadoSituacionFinancieraProjection {
 
     String getValidacionGananciaPerdidaNeta();
     Integer getNit();
+    Integer getIdHeredado();
+    Integer getAnnio();
+    Boolean getActual();
 }
 
 

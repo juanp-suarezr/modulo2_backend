@@ -17,20 +17,26 @@ public interface GetMFRequerimientosEntregasProjection {
     Integer getActoAdministrativo();
     LocalDate getFechaInicio();
     LocalDate getFechaFin();
+    LocalDate getFechaPublicacion();
     Integer getAnnioVigencia();
 
     Integer getEstadoRequerimiento();
     Integer getTipoProgramacion();
 
     String getTipoRequerimientoDescripcion();
+    String getPeriodoEntregaDescripcion();
     String getEstadoRequerimientoDescripcion();
 
     //PROGRAMACION
     Integer getIdProgramacion();
 
+
     //HEREDADOS
     Integer getIdHeredado();
     Integer getEstadoEntrega();
     boolean getIndividual();
+    LocalDate getFechaEntrega();
+    Integer getNit();
+
 
 }

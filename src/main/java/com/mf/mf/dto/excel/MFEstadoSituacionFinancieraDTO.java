@@ -89,6 +89,7 @@ public class MFEstadoSituacionFinancieraDTO {
     private Integer gananciasAcumuladasDiferentesALasGeneradasPorEfectoDeLaConvergencia;
     private String validacionPatrimonio;
     private String validacionGananciaPerdidaNeta;
-
+    private Integer idHeredado;
+    private Integer nit;
 }
 

@@ -99,6 +99,7 @@ public class MFEstadoSituacionFinanciera {
     private Integer nit;
     private Integer annio;
     private Boolean actual;
+    private Integer idHeredado;
 
 
 }

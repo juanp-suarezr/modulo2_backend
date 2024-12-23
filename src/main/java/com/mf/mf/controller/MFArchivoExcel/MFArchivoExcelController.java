@@ -68,13 +68,14 @@ public class MFArchivoExcelController {
     public ResponseEntity<Map<String, String>> processExcelFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam("nit") String nit,
+            @RequestParam("idHeredado") String idHeredado,
             @RequestParam("fieldMapping") String fieldMappingJSON) {
         Map<String, String> response = new HashMap<>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, Map<String, String>> fieldMappings = objectMapper.readValue(
                     fieldMappingJSON, new TypeReference<Map<String, Map<String, String>>>() {});
-            String result = excelService.processAndSaveExcelData(file, nit, fieldMappings);
+            String result = excelService.processAndSaveExcelData(file, nit, Integer.valueOf(idHeredado), fieldMappings);
             // Preparar respuesta de éxito
             response.put("message", result);
             return ResponseEntity.ok(response);
