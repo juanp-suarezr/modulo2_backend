@@ -33,6 +33,9 @@ public interface GetMFEstadoResultadoIntegralORIProjection {
     String getValidacionEstadoResultados();
 
     Integer getNit();
+    Integer getIdHeredado();
+    Integer getAnnio();
+    Boolean getActual();
 }
 
 

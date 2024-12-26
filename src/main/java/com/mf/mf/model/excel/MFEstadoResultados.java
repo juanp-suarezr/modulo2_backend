@@ -49,4 +49,5 @@ public class MFEstadoResultados {
     private Integer gananciaNeta;
     private Integer nit;
     private Boolean actual;
+    private Integer idHeredado;
 }

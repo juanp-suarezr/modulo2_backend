@@ -156,9 +156,11 @@ public interface GetMFEstadoSituacionFinancieraProjection {
 
     Integer getGananciasAcumuladasDiferentesALasGeneradasPorEfectoDeLaConvergencia();
 
+    Integer getTotalPasivoPatrimonio();
     String getValidacionPatrimonio();
 
     String getValidacionGananciaPerdidaNeta();
+    String getValidacionEcuacionPatrimonial();
     Integer getNit();
     Integer getIdHeredado();
     Integer getAnnio();

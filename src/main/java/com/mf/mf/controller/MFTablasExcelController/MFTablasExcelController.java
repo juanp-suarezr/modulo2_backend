@@ -1,5 +1,7 @@
 package com.mf.mf.controller.MFTablasExcelController;
 
+import com.mf.mf.projection.MFExcelProjection.GetMFEstadoResultadoIntegralORIProjection;
+import com.mf.mf.projection.MFExcelProjection.GetMFEstadoResultadosProjection;
 import com.mf.mf.projection.MFExcelProjection.GetMFEstadoSituacionFinancieraProjection;
 import com.mf.mf.projection.MFExcelProjection.GetMFIdentificacionVigiladoProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMUVTipoVigiladoProjection;
@@ -30,13 +32,31 @@ public class MFTablasExcelController {
         return mfTablasExcelServices.obtenerIdentificacionVigiladoByNIT(nit, idHeredado);
     }
 
-    //Obtener TIPO VIGILADOS
+    //Obtener ESTADOS FINANCIEROS
     @GetMapping("/ESF")
     public List<GetMFEstadoSituacionFinancieraProjection> obtenerESF(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
         if (nit == null) {
             throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
         }
         return mfTablasExcelServices.obtenerESFByNIT(nit, idHeredado);
+    }
+
+    //Obtener ESTADOS RESULTADOS
+    @GetMapping("/ER")
+    public List<GetMFEstadoResultadosProjection> obtenerER(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+        return mfTablasExcelServices.obtenerERByNIT(nit, idHeredado);
+    }
+
+    //Obtener ESTADOS RESULTADOS ORI
+    @GetMapping("/ORI")
+    public List<GetMFEstadoResultadoIntegralORIProjection> obtenerORI(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+        return mfTablasExcelServices.obtenerORIByNIT(nit, idHeredado);
     }
 
 
