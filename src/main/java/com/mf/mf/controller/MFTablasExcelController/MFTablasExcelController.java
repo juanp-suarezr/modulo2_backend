@@ -1,9 +1,6 @@
 package com.mf.mf.controller.MFTablasExcelController;
 
-import com.mf.mf.projection.MFExcelProjection.GetMFEstadoResultadoIntegralORIProjection;
-import com.mf.mf.projection.MFExcelProjection.GetMFEstadoResultadosProjection;
-import com.mf.mf.projection.MFExcelProjection.GetMFEstadoSituacionFinancieraProjection;
-import com.mf.mf.projection.MFExcelProjection.GetMFIdentificacionVigiladoProjection;
+import com.mf.mf.projection.MFExcelProjection.*;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMUVTipoVigiladoProjection;
 import com.mf.mf.services.MFRequerimientoServices.MUVEmpresasServices;
 import com.mf.mf.services.MFRequerimientoServices.MUVTipoVigiladoServices;
@@ -58,6 +55,34 @@ public class MFTablasExcelController {
         }
         return mfTablasExcelServices.obtenerORIByNIT(nit, idHeredado);
     }
+
+    //Obtener ESTADOS FLUJO EFECTIVO INDIRECTO
+    @GetMapping("/EFEIndirecto")
+    public List<GetMFEstadoFlujoIndirectoProjection> obtenerEFEIndirecto(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+        return mfTablasExcelServices.obtenerEFEIndirectoByNIT(nit, idHeredado);
+    }
+
+    //Obtener ESTADOS FLUJO EFECTIVO DIRECTO
+    @GetMapping("/EFEDirecto")
+    public List<GetMFEstadoFlujoDirectoProjection> obtenerEFEDirecto(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+        return mfTablasExcelServices.obtenerEFEDirectoByNIT(nit, idHeredado);
+    }
+
+    //Obtener ESTADOS DICTAMEN
+    @GetMapping("/dictamen")
+    public List<GetMFDictamenRevisorFiscalProjection> obtenerDictamen(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+        return mfTablasExcelServices.obtenerDictamenByNIT(nit, idHeredado);
+    }
+
 
 
 

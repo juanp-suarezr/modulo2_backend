@@ -51,5 +51,7 @@ public class MFEstadoFlujoEfectivoDirecto {
     private Integer nit;
     private Integer annio;
     private Boolean actual;
+    private Integer idHeredado;
+    private Integer flujosEfectivoProcedentesUtilizadosFinanciacion;
     
 }

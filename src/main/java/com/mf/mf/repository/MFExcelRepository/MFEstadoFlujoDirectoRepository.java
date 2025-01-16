@@ -1,9 +1,9 @@
 package com.mf.mf.repository.MFExcelRepository;
 
-import com.mf.mf.model.excel.MFDictamenRevisorFiscal;
 import com.mf.mf.model.excel.MFEstadoFlujoEfectivoDirecto;
-import com.mf.mf.projection.MFExcelProjection.GetMFDictamenRevisorFiscalProjection;
+import com.mf.mf.model.excel.MFEstadoFlujoEfectivoIndirecto;
 import com.mf.mf.projection.MFExcelProjection.GetMFEstadoFlujoDirectoProjection;
+import com.mf.mf.projection.MFExcelProjection.GetMFEstadoFlujoIndirectoProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MFDictamenRevisorFiscalRepository extends JpaRepository<MFDictamenRevisorFiscal, Long> {
+public interface MFEstadoFlujoDirectoRepository extends JpaRepository<MFEstadoFlujoEfectivoDirecto, Long> {
 
-    @Query("SELECT t FROM MFDictamenRevisorFiscal t " +
+    @Query("SELECT t FROM MFEstadoFlujoEfectivoDirecto t " +
             "WHERE t.nit = :nit "+
             "AND t.estado = true "+
             "AND t.idHeredado = :idHeredado")
-    List<GetMFDictamenRevisorFiscalProjection> findMFDictamenByNit(Integer nit, Integer idHeredado);
+    List<GetMFEstadoFlujoDirectoProjection> findMFEFEDirectoByNit(Integer nit, Integer idHeredado);
 
 }

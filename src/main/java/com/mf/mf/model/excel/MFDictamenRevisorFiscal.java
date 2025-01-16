@@ -20,5 +20,6 @@ public class MFDictamenRevisorFiscal {
     private Integer nit;
     private Integer annio;
     private Boolean actual;
+    private Integer idHeredado;
     
 }

@@ -1,15 +1,9 @@
 package com.mf.mf.services.MFTablasExcelService;
 
-import com.mf.mf.projection.MFExcelProjection.GetMFEstadoResultadoIntegralORIProjection;
-import com.mf.mf.projection.MFExcelProjection.GetMFEstadoResultadosProjection;
-import com.mf.mf.projection.MFExcelProjection.GetMFEstadoSituacionFinancieraProjection;
-import com.mf.mf.projection.MFExcelProjection.GetMFIdentificacionVigiladoProjection;
+import com.mf.mf.projection.MFExcelProjection.*;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMUVEmpresasProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMUVTipoVigiladoProjection;
-import com.mf.mf.repository.MFExcelRepository.MFEstadoResultadoIntegralORIRepository;
-import com.mf.mf.repository.MFExcelRepository.MFEstadoResultadoRepository;
-import com.mf.mf.repository.MFExcelRepository.MFEstadoSituacionFinancieraRepository;
-import com.mf.mf.repository.MFExcelRepository.MFIdentificacionVigiladoRepository;
+import com.mf.mf.repository.MFExcelRepository.*;
 import com.mf.mf.repository.MUVconsultaRepository.MUVEmpresasRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +22,12 @@ public class MFTablasExcelServices {
     private MFEstadoResultadoRepository mfEstadoResultadoRepository;
     @Autowired
     private MFEstadoResultadoIntegralORIRepository mfEstadoResultadoIntegralORIRepository;
+    @Autowired
+    private MFEstadoFlujoIndirectoRepository mfEstadoFlujoIndirectoRepository;
+    @Autowired
+    private MFEstadoFlujoDirectoRepository mfEstadoFlujoDirectoRepository;
+    @Autowired
+    private MFDictamenRevisorFiscalRepository mfDictamenRevisorFiscalRepository;
 
     //Obtener info IDENTIFICACION VIGILADO para tabla principal
     public List<GetMFIdentificacionVigiladoProjection> obtenerIdentificacionVigiladoByNIT(Integer nit, Integer idHeredado) {
@@ -92,7 +92,7 @@ public class MFTablasExcelServices {
         return tipoVigiladoInfo;
     }
 
-    //Obtener info ER para tabla principal
+    //Obtener info ERORI para tabla principal
     public List<GetMFEstadoResultadoIntegralORIProjection> obtenerORIByNIT(Integer nit, Integer idHeredado) {
         // Si no se proporciona idDelegatura, retornar una lista vacía
         if (nit == null) {
@@ -112,6 +112,71 @@ public class MFTablasExcelServices {
 
         return tipoVigiladoInfo;
     }
+
+    //Obtener info EFEIndirecto para tabla principal
+    public List<GetMFEstadoFlujoIndirectoProjection> obtenerEFEIndirectoByNIT(Integer nit, Integer idHeredado) {
+        // Si no se proporciona idDelegatura, retornar una lista vacía
+        if (nit == null) {
+            System.out.println("Advertencia: nit empresa no proporcionado");
+            return Collections.emptyList(); // Retorna una lista vacía
+        }
+
+        // Intentar obtener los registros
+        List<GetMFEstadoFlujoIndirectoProjection> tipoVigiladoInfo = mfEstadoFlujoIndirectoRepository.findMFEFEIndirectoByNit(nit, idHeredado);
+
+        // Retornar lista vacía si no se encuentran registros, con mensaje de advertencia
+        if (tipoVigiladoInfo.isEmpty()) {
+
+            System.out.println("Advertencia: No se encontraron registros para el nit: " + nit);
+            return Collections.emptyList();
+        }
+
+        return tipoVigiladoInfo;
+    }
+
+    //Obtener info EFEDirecto para tabla principal
+    public List<GetMFEstadoFlujoDirectoProjection> obtenerEFEDirectoByNIT(Integer nit, Integer idHeredado) {
+        // Si no se proporciona idDelegatura, retornar una lista vacía
+        if (nit == null) {
+            System.out.println("Advertencia: nit empresa no proporcionado");
+            return Collections.emptyList(); // Retorna una lista vacía
+        }
+
+        // Intentar obtener los registros
+        List<GetMFEstadoFlujoDirectoProjection> tipoVigiladoInfo = mfEstadoFlujoDirectoRepository.findMFEFEDirectoByNit(nit, idHeredado);
+
+        // Retornar lista vacía si no se encuentran registros, con mensaje de advertencia
+        if (tipoVigiladoInfo.isEmpty()) {
+
+            System.out.println("Advertencia: No se encontraron registros para el nit: " + nit);
+            return Collections.emptyList();
+        }
+
+        return tipoVigiladoInfo;
+    }
+
+    //Obtener info EFEDirecto para tabla principal
+    public List<GetMFDictamenRevisorFiscalProjection> obtenerDictamenByNIT(Integer nit, Integer idHeredado) {
+        // Si no se proporciona idDelegatura, retornar una lista vacía
+        if (nit == null) {
+            System.out.println("Advertencia: nit empresa no proporcionado");
+            return Collections.emptyList(); // Retorna una lista vacía
+        }
+
+        // Intentar obtener los registros
+        List<GetMFDictamenRevisorFiscalProjection> tipoVigiladoInfo = mfDictamenRevisorFiscalRepository.findMFDictamenByNit(nit, idHeredado);
+
+        // Retornar lista vacía si no se encuentran registros, con mensaje de advertencia
+        if (tipoVigiladoInfo.isEmpty()) {
+
+            System.out.println("Advertencia: No se encontraron registros para el nit: " + nit);
+            return Collections.emptyList();
+        }
+
+        return tipoVigiladoInfo;
+    }
+
+
 
 
 
