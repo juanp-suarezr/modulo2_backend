@@ -53,6 +53,7 @@ public class MFRequerimientoServices {
             // Verificar el tipoProgramacion y, si coincide, crear el registro en MFHashDelegatura
             if (mfRequerimientoDTO.getTipoProgramacion().equals(232)) {
 
+
                 // Crear una lista temporal para retener los valores de "vigilados"
                 List<MFHashDelegaturaDTO> delegaturaDTOs = mfRequerimientoDTO.getDelegaturas();
                 List<List<MFVigiladoDTO>> vigiladosTemp = delegaturaDTOs.stream()
@@ -84,7 +85,7 @@ public class MFRequerimientoServices {
                                 delegaturaDTO.getIdProgramacion(), // idProgramacion asignado después
                                 delegaturaDTO.getVigilados(),      // vigilados restaurado
                                 delegaturaDTO.getFechaFin(),
-                                delegaturaDTO.getEstadoRequerimiento(),
+                                delegaturaDTO.getEstadoRequerimiento() == 289 ? 285 : 286,
                                 false,
                                 mfRequerimientoDTO.getTipoProgramacion()
                         );
@@ -95,12 +96,13 @@ public class MFRequerimientoServices {
             }
             else if (mfRequerimientoDTO.getTipoProgramacion().equals(234)) {
 
+
                 // Crear una lista temporal para retener los valores de "vigilados"
                 List<MFHashDigitoNITDTO> digitoNitDTOs = mfRequerimientoDTO.getDigitoNIT();
                 List<List<MFVigiladoDTO>> vigiladosTemp = digitoNitDTOs.stream()
                         .map(MFHashDigitoNITDTO::getVigilados)
                         .toList();
-
+                System.out.println(vigiladosTemp);
                 List<MFHashDigitoNIT> digitoNITEntities = mfRequerimientoMapper.toDigitoNITEntity(mfRequerimientoDTO.getDigitoNIT());
                 digitoNITEntities.forEach(digitoNIT -> digitoNIT.setIdRequerimiento(savedEntity.getIdRequerimiento()));
                 List<MFHashDigitoNIT> savedDigitoNit = mfHashDigitoNITRepository.saveAll(digitoNITEntities);
@@ -121,7 +123,7 @@ public class MFRequerimientoServices {
                                 digitoNITDTO.getIdProgramacion(),
                                 digitoNITDTO.getVigilados(),
                                 digitoNITDTO.getFechaFin(),
-                                digitoNITDTO.getEstadoRequerimiento(),
+                                digitoNITDTO.getEstadoRequerimiento() == 289 ? 285 : 286,
                                 false,
                                 mfRequerimientoDTO.getTipoProgramacion()
                         );
@@ -134,7 +136,7 @@ public class MFRequerimientoServices {
                         savedEntity.getIdRequerimiento(),
                         mfRequerimientoDTO.getVigiladoNIT(),
                         mfRequerimientoDTO.getFechaFin(),
-                        mfRequerimientoDTO.getEstadoRequerimiento(),
+                        mfRequerimientoDTO.getEstadoRequerimiento() == 289 ? 285 : 286,
                         true,
                         mfRequerimientoDTO.getTipoProgramacion()
                 );

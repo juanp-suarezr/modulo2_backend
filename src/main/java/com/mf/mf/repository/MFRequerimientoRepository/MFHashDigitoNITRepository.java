@@ -5,10 +5,12 @@ import com.mf.mf.model.MFHashDigitoNIT;
 import com.mf.mf.projection.GetMFHashDigitoNITMUVProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFHashDigitoNITProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -70,5 +72,9 @@ public interface MFHashDigitoNITRepository extends JpaRepository<MFHashDigitoNIT
             "WHERE p.idNumeroDigitos = :NumeroDigitos "+
             "AND :nit BETWEEN p.inicioRango AND p.finRango")
     List<GetMFHashDigitoNITMUVProjection> findByNITultimos3DIgitos(@Param("NumeroDigitos") Integer idNumeroDigitos, String nit);
+
+    @Modifying
+    @Query("UPDATE MFHashDigitoNIT m SET m.estadoRequerimiento = :estadoReq WHERE m.fechaFin < :fechaActual")
+    void actualizarEstadoPorFechaEntrega(@Param("estadoReq") Integer estadoReq, @Param("fechaActual") LocalDate fechaActual);
 
 }

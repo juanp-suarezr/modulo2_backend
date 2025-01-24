@@ -5,10 +5,12 @@ import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientoProjecti
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosEntregasProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosTableProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -114,4 +116,9 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "WHERE h.estadoEntrega != 285 " +
             "AND h.nit = :nitUsuario")
     List<GetMFRequerimientosEntregasProjection> findEntregasByNIT(@Param("nitUsuario") Integer nitUsuario);
+
+    @Modifying
+    @Query("UPDATE MFRequerimiento m SET m.estadoRequerimiento = :estadoReq WHERE m.fechaFin < :fechaActual")
+    void actualizarEstadoPorFechaEntrega(@Param("estadoReq") Integer estadoReq, @Param("fechaActual") LocalDate fechaActual);
+
 }

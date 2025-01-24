@@ -54,7 +54,7 @@ public class MFHeredadosServices {
         }
 
         List<MFHashHeredado> registrosCreados = new ArrayList<>();
-
+        System.out.print(estado);
         for (MFVigiladoDTO vigilado : vigilados) {
             if (!MFHeredadosRepository.existsByIdProgramacionAndIdVigilado(idProgramacion, vigilado.getIdVigilado())) {
                 MFHashHeredado registro = new MFHashHeredado();
