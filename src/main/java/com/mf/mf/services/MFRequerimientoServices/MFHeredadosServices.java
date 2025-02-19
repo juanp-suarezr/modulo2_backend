@@ -105,7 +105,7 @@ public class MFHeredadosServices {
             registro.setEstadoEntrega(285);
             registro.setEstado(true);
             registro.setIndividual(false);
-            registro.setTipoProgramacion(232);
+            registro.setTipoProgramacion(231);
 
             registrosCreados.add(MFHeredadosRepository.save(registro));
 
@@ -136,7 +136,7 @@ public class MFHeredadosServices {
             registro.setEstadoEntrega(285);
             registro.setEstado(true);
             registro.setIndividual(false);
-            registro.setTipoProgramacion(234);
+            registro.setTipoProgramacion(233);
 
             registrosCreados.add(MFHeredadosRepository.save(registro));
 

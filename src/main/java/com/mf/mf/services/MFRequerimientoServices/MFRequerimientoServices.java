@@ -51,7 +51,7 @@ public class MFRequerimientoServices {
 
 
             // Verificar el tipoProgramacion y, si coincide, crear el registro en MFHashDelegatura
-            if (mfRequerimientoDTO.getTipoProgramacion().equals(232)) {
+            if (mfRequerimientoDTO.getTipoProgramacion().equals(231)) {
 
 
                 // Crear una lista temporal para retener los valores de "vigilados"
@@ -94,7 +94,7 @@ public class MFRequerimientoServices {
 
 
             }
-            else if (mfRequerimientoDTO.getTipoProgramacion().equals(234)) {
+            else if (mfRequerimientoDTO.getTipoProgramacion().equals(233)) {
 
 
                 // Crear una lista temporal para retener los valores de "vigilados"
@@ -192,11 +192,11 @@ public class MFRequerimientoServices {
         MFRequerimiento updatedRequerimiento = mfRequerimientoRepository.save(requerimiento);
 
         // Actualizar el estado en las entidades relacionadas (delegaturas y dígitos NIT)
-        if (updatedRequerimiento.getTipoProgramacion().equals(232)) {
+        if (updatedRequerimiento.getTipoProgramacion().equals(231)) {
             List<MFHashDelegatura> delegaturas = mfHashDelegaturaRepository.findByIdRequerimiento(idRequerimiento);
             delegaturas.forEach(delegatura -> delegatura.setEstadoRequerimiento(291));
             mfHashDelegaturaRepository.saveAll(delegaturas);
-        } else if (updatedRequerimiento.getTipoProgramacion().equals(234)) {
+        } else if (updatedRequerimiento.getTipoProgramacion().equals(233)) {
             List<MFHashDigitoNIT> digitosNIT = mfHashDigitoNITRepository.findByIdRequerimiento(idRequerimiento);
             digitosNIT.forEach(digitoNIT -> digitoNIT.setEstadoRequerimiento(291));
             mfHashDigitoNITRepository.saveAll(digitosNIT);

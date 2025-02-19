@@ -79,9 +79,9 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "e.descripcion as estadoRequerimientoDescripcion " +
             "FROM MFRequerimiento r " +
             "LEFT JOIN MFHashHeredado h ON " +
-            "   ((h.tipoProgramacion = 232 AND h.idProgramacion IN (SELECT del.idProgramacion FROM MFHashDelegatura del WHERE del.idRequerimiento = r.idRequerimiento)) OR " +
-            "    (h.tipoProgramacion = 234 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
-            "    (h.tipoProgramacion = 233 AND h.idProgramacion = r.idRequerimiento)) " +
+            "   ((h.tipoProgramacion = 231 AND h.idProgramacion IN (SELECT del.idProgramacion FROM MFHashDelegatura del WHERE del.idRequerimiento = r.idRequerimiento)) OR " +
+            "    (h.tipoProgramacion = 233 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
+            "    (h.tipoProgramacion = 232 AND h.idProgramacion = r.idRequerimiento)) " +
             "LEFT JOIN r.tipoRequerimientoDescripcion f " +
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN r.periodoEntregaDescripcion p " +
@@ -107,9 +107,9 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "e.descripcion as estadoRequerimientoDescripcion " +
             "FROM MFRequerimiento r " +
             "LEFT JOIN MFHashHeredado h ON " +
-            "   ((h.tipoProgramacion = 232 AND h.idProgramacion IN (SELECT del.idProgramacion FROM MFHashDelegatura del WHERE del.idRequerimiento = r.idRequerimiento)) OR " +
-            "    (h.tipoProgramacion = 234 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
-            "    (h.tipoProgramacion = 233 AND h.idProgramacion = r.idRequerimiento)) " +
+            "   ((h.tipoProgramacion = 231 AND h.idProgramacion IN (SELECT del.idProgramacion FROM MFHashDelegatura del WHERE del.idRequerimiento = r.idRequerimiento)) OR " +
+            "    (h.tipoProgramacion = 233 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
+            "    (h.tipoProgramacion = 232 AND h.idProgramacion = r.idRequerimiento)) " +
             "LEFT JOIN r.tipoRequerimientoDescripcion f " +
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
