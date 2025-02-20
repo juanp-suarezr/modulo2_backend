@@ -1,6 +1,7 @@
 package com.mf.mf.controller.MFArchivoExcel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mf.mf.repository.MFHeredadosRepository.MFHeredadosRepository;
 import com.mf.mf.services.MFArchivoExcelServices.MFArchivoExcelServices;
 import com.mf.mf.services.MFArchivoExcelServices.MFArchivoExcelServices.ValidationRanges;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,11 +23,13 @@ import java.util.Map;
 public class MFArchivoExcelController {
 
     private final MFArchivoExcelServices excelService;
+    private final MFHeredadosRepository mfHashHeredadoRepository;
 
 
     @Autowired
-    public MFArchivoExcelController(MFArchivoExcelServices excelService) {
+    public MFArchivoExcelController(MFArchivoExcelServices excelService, MFHeredadosRepository mfHashHeredadoRepository) {
         this.excelService = excelService;
+        this.mfHashHeredadoRepository = mfHashHeredadoRepository;
     }
 
     @PostMapping("/upload")
@@ -78,6 +81,9 @@ public class MFArchivoExcelController {
             String result = excelService.processAndSaveExcelData(file, nit, Integer.valueOf(idHeredado), fieldMappings);
             // Preparar respuesta de éxito
             response.put("message", result);
+
+            mfHashHeredadoRepository.actualizarEstadoEntrega(Integer.valueOf(idHeredado)); // Donde 123L es el ID del registro a modificar
+
             return ResponseEntity.ok(response);
         } catch (JsonProcessingException e) {
             // Manejar errores en la conversión de JSON

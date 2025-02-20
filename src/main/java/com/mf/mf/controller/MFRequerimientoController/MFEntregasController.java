@@ -42,7 +42,7 @@ public class MFEntregasController {
     }
 
     //Obtener entregas finalizadas por nit
-    @GetMapping("/consultar-entregas")
+    @GetMapping("/entregas-finalizadas")
     public ResponseEntity<List<GetMFRequerimientosEntregasProjection>> getEntregasByNIT(@RequestParam Integer nit) {
         try {
             List<GetMFRequerimientosEntregasProjection> entrega = repository.findEntregasByNIT(nit);

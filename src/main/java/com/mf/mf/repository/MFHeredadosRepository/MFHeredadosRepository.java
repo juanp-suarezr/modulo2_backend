@@ -14,6 +14,21 @@ public interface MFHeredadosRepository extends JpaRepository<MFHashHeredado, Lon
     boolean existsByIdProgramacionAndIdVigilado(Long idProgramacion, Integer idVigilado);
 
     @Modifying
-    @Query("UPDATE MFHashHeredado m SET m.estadoEntrega = :nuevoEstado WHERE m.fechaEntrega < :fechaActual")
+    @Query("UPDATE MFHashHeredado m " +
+                  "SET m.estadoEntrega = " +
+                  "    CASE " +
+                  "        WHEN m.estadoEntrega = 285 THEN :nuevoEstado " +
+                  "        WHEN m.estadoEntrega = 289 THEN 284 " +
+                  "    END " +
+                  "WHERE m.fechaEntrega < :fechaActual " +
+                  "AND m.estadoEntrega IN (285, 289)")
     void actualizarEstadoPorFechaEntrega(@Param("nuevoEstado") Integer nuevoEstado, @Param("fechaActual") LocalDate fechaActual);
+
+    @Modifying
+    @Query("UPDATE MFHashHeredado m " +
+            "SET m.estadoEntrega = 289 " +
+            "WHERE m.idHeredado = :idHeredado")
+    void actualizarEstadoEntrega(@Param("idHeredado") Integer id);
+
+
 }

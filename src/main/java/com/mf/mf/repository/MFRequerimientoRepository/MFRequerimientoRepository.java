@@ -86,7 +86,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN r.periodoEntregaDescripcion p " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
-            "WHERE h.estadoEntrega = 285 " +
+            "WHERE (h.estadoEntrega = 285 OR h.estadoEntrega = 289) " +
             "AND h.nit = :nitUsuario")
     List<GetMFRequerimientosEntregasProjection> findEntregasPendientesByNIT(@Param("nitUsuario") Integer nitUsuario);
 
@@ -100,8 +100,14 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "r.actoAdministrativo as actoAdministrativo, " +
             "r.annioVigencia as annioVigencia, " +
             "r.tipoProgramacion as tipoProgramacion, " +
+            "r.periodoEntrega as periodoEntrega, " +
+            "r.fechaPublicacion as fechaPublicacion, " +
             "h.idProgramacion as idProgramacion, " +
             "h.individual as individual, " +
+            "h.fechaEntrega as fechaEntrega, " +
+            "h.idHeredado as idHeredado, " +
+            "h.estadoEntrega as estadoEntrega, " +
+            "h.nit as nit, " +
             "d.idNumeroDigitos as idNumeroDigitos, " +
             "f.descripcion as tipoRequerimientoDescripcion, " +
             "e.descripcion as estadoRequerimientoDescripcion " +
@@ -113,7 +119,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "LEFT JOIN r.tipoRequerimientoDescripcion f " +
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
-            "WHERE h.estadoEntrega != 285 " +
+            "WHERE h.estadoEntrega NOT IN (285, 289) " +
             "AND h.nit = :nitUsuario")
     List<GetMFRequerimientosEntregasProjection> findEntregasByNIT(@Param("nitUsuario") Integer nitUsuario);
 

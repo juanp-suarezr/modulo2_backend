@@ -132,6 +132,7 @@ public class MFRequerimientoServices {
 
             }
             else {
+                System.out.println("individual: " + mfRequerimientoDTO.getVigiladoNIT());
                 mfHeredadosServices.crearRegistros(
                         savedEntity.getIdRequerimiento(),
                         mfRequerimientoDTO.getVigiladoNIT(),
