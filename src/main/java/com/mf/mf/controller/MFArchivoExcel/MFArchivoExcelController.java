@@ -82,8 +82,6 @@ public class MFArchivoExcelController {
             // Preparar respuesta de éxito
             response.put("message", result);
 
-            mfHashHeredadoRepository.actualizarEstadoEntrega(Integer.valueOf(idHeredado)); // Donde 123L es el ID del registro a modificar
-
             return ResponseEntity.ok(response);
         } catch (JsonProcessingException e) {
             // Manejar errores en la conversión de JSON
@@ -97,4 +95,6 @@ public class MFArchivoExcelController {
             return ResponseEntity.status(500).body(response);
         }
     }
+
+
 }

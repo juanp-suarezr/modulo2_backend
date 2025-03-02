@@ -249,10 +249,19 @@ public class MFArchivoExcelServices {
                     // Usar la referencia actual si existe, de lo contrario ignorar
                     if (recordIndex < refArray.length) {
                         String cellRef = refArray[recordIndex];
-                        Object cellValue = getCellValue(sheet, cellRef, formulaEvaluator, entityClass.getDeclaredField(field).getType());
+                        Object cellValue = getCellValue(nit, sheet, cellRef, formulaEvaluator, entityClass.getDeclaredField(field).getType());
+
+
+                        if (field.equals("nitSinDigitoVerificacion")) {
+                            if (cellValue != nit) {
+                                System.out.println("cell value: " + cellValue);
+                                throw new IllegalArgumentException("El nit diligenciado no es mismo que el nit registrado'" + nit);
+                            }
+                        }
 
                         // Asignar el valor al campo correspondiente
                         Field declaredField = entityClass.getDeclaredField(field);
+
                         declaredField.setAccessible(true);
                         declaredField.set(entity, cellValue);
                     }
@@ -302,14 +311,17 @@ public class MFArchivoExcelServices {
 
 
 
-    private Object getCellValue(Sheet sheet, String cellRef, FormulaEvaluator formulaEvaluator, Class<?> fieldType) {
+    private Object getCellValue(String nit, Sheet sheet, String cellRef, FormulaEvaluator formulaEvaluator, Class<?> fieldType) {
         CellReference ref = new CellReference(cellRef);
-        System.out.println(cellRef);
+
         Row row = sheet.getRow(ref.getRow());
         if (row != null) {
             Cell cell = row.getCell(ref.getCol());
             if (cell != null) {
                 if (fieldType == Integer.class || fieldType == int.class) {
+
+                    System.out.println("info nit:" + cell);
+
                     return getNumberCellValue(sheet, cellRef, formulaEvaluator);
                 } else if (fieldType == String.class) {
                     return getStringCellValue(sheet, cellRef, formulaEvaluator);
