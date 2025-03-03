@@ -253,9 +253,9 @@ public class MFArchivoExcelServices {
 
 
                         if (field.equals("nitSinDigitoVerificacion")) {
-                            if (cellValue != nit) {
+                            if (!cellValue.toString().equals(nit)) {
                                 System.out.println("cell value: " + cellValue);
-                                throw new IllegalArgumentException("El nit diligenciado no es mismo que el nit registrado'" + nit);
+                                throw new IllegalArgumentException("El nit diligenciado " +cellValue+ " no es mismo que el nit registrado" + nit);
                             }
                         }
 

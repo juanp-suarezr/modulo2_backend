@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Repository
 public interface MFHeredadosRepository extends JpaRepository<MFHashHeredado, Long>  {
@@ -26,9 +27,14 @@ public interface MFHeredadosRepository extends JpaRepository<MFHashHeredado, Lon
 
     @Modifying
     @Query("UPDATE MFHashHeredado m " +
-            "SET m.estadoEntrega = 289 " +
+            "SET m.estadoEntrega = :estado " +
             "WHERE m.idHeredado = :idHeredado")
-    void actualizarEstadoEntrega(@Param("idHeredado") Integer id);
+    void actualizarEstadoEntrega(@Param("idHeredado") Integer id, @Param("estado") Integer estado);
+
+    //heredado by id
+    @Query("SELECT h FROM MFHashHeredado h WHERE h.idHeredado = :idHeredado")
+    Optional<MFHashHeredado> findByIdHeredado(@Param("idHeredado") Integer idHeredado);
+
 
 
 }

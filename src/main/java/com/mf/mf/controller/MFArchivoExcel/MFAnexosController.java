@@ -3,6 +3,7 @@ package com.mf.mf.controller.MFArchivoExcel;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mf.mf.dto.excel.MFAnexosDTO;
+import com.mf.mf.model.MFHashHeredado;
 import com.mf.mf.model.excel.MFAnexos;
 import com.mf.mf.projection.MFExcelProjection.GetMFAnexosProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosEntregasProjection;
@@ -51,6 +52,15 @@ public class MFAnexosController {
 
             MFAnexos anexo = new MFAnexos();
 
+            var heredadoOpt = mfHeredadosRepository.findByIdHeredado(requestBody.getIdHeredado());
+
+            if (heredadoOpt.isEmpty()) {
+                response.put("error", "No se encontró un heredado con el id proporcionado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+
+            MFHashHeredado heredado = heredadoOpt.get();
+
             anexo.setIdHeredado(requestBody.getIdHeredado());
             anexo.setCaratula(requestBody.getCaratula());
             anexo.setEstadoSituacionFinanciera(requestBody.getEstadoSituacionFinanciera());
@@ -62,8 +72,9 @@ public class MFAnexosController {
             anexo.setDictamenFiscal(requestBody.getDictamenFiscal());
             anexo.setEstado(true);
 
+            int estado = (heredado.getEstadoEntrega() == 286) ? 460 : 284;
             // Guardar el formulario en la base de datos
-            mfHeredadosRepository.actualizarEstadoEntrega(requestBody.getIdHeredado());
+            mfHeredadosRepository.actualizarEstadoEntrega(requestBody.getIdHeredado(), estado);
             mfAnexosRepository.save(anexo);
 
             response.put("mensaje", "Anexo guardado con éxito");
