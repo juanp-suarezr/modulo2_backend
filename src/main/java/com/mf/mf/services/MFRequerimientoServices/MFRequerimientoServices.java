@@ -6,6 +6,7 @@ import com.mf.mf.model.MFHashDelegatura;
 import com.mf.mf.model.MFHashDigitoNIT;
 import com.mf.mf.model.MFRequerimiento;
 import com.mf.mf.projection.MFRequerimientoProjection.*;
+import com.mf.mf.repository.MFHeredadosRepository.MFHeredadosRepository;
 import com.mf.mf.repository.MFRequerimientoRepository.MFHashDelegaturaRepository;
 import com.mf.mf.repository.MFRequerimientoRepository.MFHashDigitoNITRepository;
 import com.mf.mf.repository.MFRequerimientoRepository.MFRequerimientoRepository;
@@ -25,7 +26,8 @@ public class MFRequerimientoServices {
     private MFRequerimientoRepository mfRequerimientoRepository;
     @Autowired
     private MFHashDelegaturaRepository mfHashDelegaturaRepository; // Añadir el repositorio de MFHashDelegatura
-
+    @Autowired
+    private MFHeredadosRepository mfHeredadosRepository;
     @Autowired
     private MFHashDigitoNITRepository mfHashDigitoNITRepository; // Añadir el repositorio de MFHashDelegatura
     @Autowired
@@ -164,11 +166,23 @@ public class MFRequerimientoServices {
             List<GetMFHashDigitoNITProjection> digitoNIT = mfHashDigitoNITRepository.findProjectionsByIdRequerimiento(idRequerimiento);
             List<GetMFHashDelegaturaProjection> delegaturas = mfHashDelegaturaRepository.findProjectionsByIdRequerimiento(idRequerimiento);
 
-            // 3. Crear el DTO con los datos
+            // 3. Agregar los idHeredados a cada programación
+            // for (GetMFHashDigitoNITProjection digito : digitoNIT) {
+            //     List<GetMFHashHeredadosProjection> heredados = mfHeredadosRepository.findHeredadosByIdProgramacion(digito.getIdProgramacion());
+            //     digito.setHeredados(heredados);
+            // }
+
+            // for (GetMFHashDelegaturaProjection delegatura : delegaturas) {
+            //     List<GetMFHashHeredadosProjection> heredados = mfHeredadosRepository.findHeredadosByIdProgramacion(delegatura.getIdProgramacion());
+            //     delegatura.setHeredados(heredados);
+            // }
+
+            // 4. Crear el DTO con los datos
             MFRequerimientoWithHashDTO result = new MFRequerimientoWithHashDTO(requerimiento, digitoNIT, delegaturas);
 
-            // 4. Devolver el DTO
+            // 5. Devolver el DTO
             return result;
+            
         } catch (IndexOutOfBoundsException e) {
             throw new RuntimeException("Error: No se encontró el requerimiento con ID " + idRequerimiento, e);
         }

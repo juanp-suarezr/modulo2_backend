@@ -1,6 +1,9 @@
 package com.mf.mf.controller.MFArchivoExcel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mf.mf.model.excel.MFIdentificacionVigilado;
+import com.mf.mf.projection.MFExcelProjection.GetMFIdentificacionVigiladoProjection;
+import com.mf.mf.repository.MFExcelRepository.MFIdentificacionVigiladoRepository;
 import com.mf.mf.repository.MFHeredadosRepository.MFHeredadosRepository;
 import com.mf.mf.services.MFArchivoExcelServices.MFArchivoExcelServices;
 import com.mf.mf.services.MFArchivoExcelServices.MFArchivoExcelServices.ValidationRanges;
@@ -14,6 +17,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,12 +28,14 @@ public class MFArchivoExcelController {
 
     private final MFArchivoExcelServices excelService;
     private final MFHeredadosRepository mfHashHeredadoRepository;
+    private final MFIdentificacionVigiladoRepository mfIdentificacionVigiladoRepository;
 
 
     @Autowired
-    public MFArchivoExcelController(MFArchivoExcelServices excelService, MFHeredadosRepository mfHashHeredadoRepository) {
+    public MFArchivoExcelController(MFArchivoExcelServices excelService, MFHeredadosRepository mfHashHeredadoRepository, MFIdentificacionVigiladoRepository mfIdentificacionVigiladoRepository) {
         this.excelService = excelService;
         this.mfHashHeredadoRepository = mfHashHeredadoRepository;
+        this.mfIdentificacionVigiladoRepository = mfIdentificacionVigiladoRepository;
     }
 
     @PostMapping("/upload")
@@ -78,7 +84,20 @@ public class MFArchivoExcelController {
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, Map<String, String>> fieldMappings = objectMapper.readValue(
                     fieldMappingJSON, new TypeReference<Map<String, Map<String, String>>>() {});
-            String result = excelService.processAndSaveExcelData(file, nit, Integer.valueOf(idHeredado), fieldMappings);
+                
+            // Verificar si el registro ya existe
+            boolean exists = excelService.existsIdentificacionVigilado(Integer.valueOf(nit), Integer.valueOf(idHeredado));
+            
+            String result;
+            if (exists) {
+                // Actualizar registro existente
+                result = excelService.updateIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);
+            } else {
+                // Crear nuevo registro
+                result = excelService.createIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);
+            }
+
+           
             // Preparar respuesta de éxito
             response.put("message", result);
 

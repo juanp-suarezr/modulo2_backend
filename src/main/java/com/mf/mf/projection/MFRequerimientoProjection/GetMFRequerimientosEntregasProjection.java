@@ -38,5 +38,8 @@ public interface GetMFRequerimientosEntregasProjection {
     LocalDate getFechaEntrega();
     Integer getNit();
 
+    //ANEXOS
+    LocalDate getFechaReporte();
+
 
 }

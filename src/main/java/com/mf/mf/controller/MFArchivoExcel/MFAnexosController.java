@@ -1,25 +1,23 @@
 package com.mf.mf.controller.MFArchivoExcel;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mf.mf.dto.excel.MFAnexosDTO;
 import com.mf.mf.model.MFHashHeredado;
 import com.mf.mf.model.excel.MFAnexos;
 import com.mf.mf.projection.MFExcelProjection.GetMFAnexosProjection;
-import com.mf.mf.projection.MFRequerimientoProjection.GetMFRequerimientosEntregasProjection;
 import com.mf.mf.repository.MFExcelRepository.MFAnexosRepository;
 import com.mf.mf.repository.MFHeredadosRepository.MFHeredadosRepository;
-import com.mf.mf.services.MFArchivoExcelServices.MFAnexosServices;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Base64;
+
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/anexos")
@@ -30,12 +28,10 @@ public class MFAnexosController {
 
     private final MFAnexosRepository mfAnexosRepository;
     private final MFHeredadosRepository mfHeredadosRepository;
-    private final ObjectMapper objectMapper;
 
-    //Obtener anexos by idHeredado
+    // Obtener anexos por idHeredado
     @GetMapping("/byIDHeredado")
-    public ResponseEntity<List<GetMFAnexosProjection>> findByNit(@RequestParam String idHeredado) {
-        System.out.println(idHeredado);
+    public ResponseEntity<List<GetMFAnexosProjection>> findByidHeredado(@RequestParam String idHeredado) {
         try {
             List<GetMFAnexosProjection> anexos = mfAnexosRepository.findAnexosByHeredado(Integer.valueOf(idHeredado));
             return ResponseEntity.ok(anexos);
@@ -49,41 +45,64 @@ public class MFAnexosController {
     public ResponseEntity<?> guardarAnexo(@RequestBody MFAnexosDTO requestBody) {
         Map<String, String> response = new HashMap<>();
         try {
-
-            MFAnexos anexo = new MFAnexos();
-
-            var heredadoOpt = mfHeredadosRepository.findByIdHeredado(requestBody.getIdHeredado());
-
+            Optional<MFHashHeredado> heredadoOpt = mfHeredadosRepository.findByIdHeredado(requestBody.getIdHeredado());
             if (heredadoOpt.isEmpty()) {
                 response.put("error", "No se encontró un heredado con el id proporcionado");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
             MFHashHeredado heredado = heredadoOpt.get();
+            List<MFAnexos> anexoExistente = mfAnexosRepository.findAnexosByHeredadoList(requestBody.getIdHeredado());
+            System.out.println(anexoExistente);
 
-            anexo.setIdHeredado(requestBody.getIdHeredado());
+            System.out.println(anexoExistente.isEmpty());
+            MFAnexos anexo;
+            if (anexoExistente.isEmpty()) {
+                System.out.println("anexo create");
+                anexo = new MFAnexos();
+                anexo.setIdHeredado(requestBody.getIdHeredado());
+            } else {
+                anexo = anexoExistente.get(0);
+                System.out.println("anexo update --> " + anexo);
+            }
+            System.out.println("anexo --> " + anexo);
+
+
             anexo.setCaratula(requestBody.getCaratula());
             anexo.setEstadoSituacionFinanciera(requestBody.getEstadoSituacionFinanciera());
             anexo.setEstadoResultados(requestBody.getEstadoResultados());
             anexo.setEstadoResultadosIntegral(requestBody.getEstadoResultadosIntegral());
-            anexo.setFlujoEfectivoIndirecto(requestBody.getFlujoEfectivoIndirecto());
-            anexo.setFlujoEfectivoDirecto(requestBody.getFlujoEfectivoDirecto());
+            anexo.setFlujoEfectivo(requestBody.getFlujoEfectivo());
             anexo.setEstadoCambiosPatrimonio(requestBody.getEstadoCambiosPatrimonio());
             anexo.setDictamenFiscal(requestBody.getDictamenFiscal());
+            anexo.setRevelacionesEstadosFinancieros(requestBody.getRevelacionesEstadosFinancieros());
+            anexo.setNotasEstadosFinancieros(requestBody.getNotasEstadosFinancieros());
+            anexo.setCertificacionCumplimientoEEFF(requestBody.getCertificacionCumplimientoEEFF());
+            anexo.setPoliticasContables(requestBody.getPoliticasContables());
+            anexo.setInformeGestion(requestBody.getInformeGestion());
+            anexo.setProyectoDistribucionUtilidadesEmpresas(requestBody.getProyectoDistribucionUtilidadesEmpresas());
+            anexo.setDeclaracionRenta(requestBody.getDeclaracionRenta());
+            anexo.setComposicionAccionaria(requestBody.getComposicionAccionaria());
+            anexo.setActaAsambleaAprobacionEF(requestBody.getActaAsambleaAprobacionEF());
+            anexo.setFechaEntrega(LocalDate.now());
             anexo.setEstado(true);
 
-            int estado = (heredado.getEstadoEntrega() == 286) ? 460 : 284;
-            // Guardar el formulario en la base de datos
-            mfHeredadosRepository.actualizarEstadoEntrega(requestBody.getIdHeredado(), estado);
+            if (anexoExistente.isEmpty()) {
+
+                int estado = (heredado.getEstadoEntrega() == 286) ? 460 : 284;
+                mfHeredadosRepository.actualizarEstadoEntrega(requestBody.getIdHeredado(), estado);
+
+
+            }
             mfAnexosRepository.save(anexo);
 
-            response.put("mensaje", "Anexo guardado con éxito");
 
+
+            response.put("mensaje", "Anexo guardado con éxito");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("error", "Error al procesar el archivo: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }
-
 }

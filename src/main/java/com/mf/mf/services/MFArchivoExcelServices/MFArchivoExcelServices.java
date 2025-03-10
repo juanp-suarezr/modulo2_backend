@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,39 @@ public class MFArchivoExcelServices {
         }
     }
 
+    // Método para verificar si un registro ya existe
+    public boolean existsIdentificacionVigilado(Integer nit, Integer idHeredado) {
+        return identificacionVigiladoRepository.findMFIdentificacionVigiladosByNit(nit, idHeredado) != null;
+    }
+
+    // Método para crear un nuevo registro
+    @Transactional
+    public String createIdentificacionVigilado(MultipartFile file, String nit, Integer idHeredado, Map<String, Map<String, String>> fieldMappings) {
+        return processAndSaveExcelData(file, nit, idHeredado, fieldMappings);
+    }
+
+    // Método para actualizar un registro existente
+    @Transactional
+    public String updateIdentificacionVigilado(MultipartFile file, String nit, Integer idHeredado, Map<String, Map<String, String>> fieldMappings) {
+        try {
+            // Si todo se procesa correctamente, eliminar registros existentes
+            identificacionVigiladoRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
+            estadoSituacionFinancieraRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
+            estadoResultadoRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
+            estadoResultadoIntegralORIRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
+            estadoFlujoEfectivoIndirectoRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
+            estadoFlujoEfectivoDirectoRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
+            estadoDictamenRevisorFiscalRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
+            // Procesar y guardar los nuevos datos
+            processAndSaveExcelData(file, nit, idHeredado, fieldMappings);
+
+            return "Todos los datos se han procesado y actualizado correctamente.";
+        } catch (Exception e) {
+            throw new RuntimeException("Error al actualizar los datos: " + e.getMessage(), e);
+        }
+    }
+
+
     //guardar los campos excel
     @Transactional
     public String processAndSaveExcelData(MultipartFile file, String nit, Integer idHeredado, Map<String, Map<String, String>> fieldMappings) {
@@ -91,6 +125,7 @@ public class MFArchivoExcelServices {
             throw new RuntimeException("Error al procesar el archivo Excel: " + e.getMessage(), e);
         }
     }
+
 
     // Método auxiliar para obtener la clase de entidad correspondiente
     private Class<?> getEntityClass(String sheetName) {
@@ -213,6 +248,7 @@ public class MFArchivoExcelServices {
         }
     }
 
+
     private <T> void processSheetData(
             Workbook workbook,
             String sheetName,
@@ -334,6 +370,7 @@ public class MFArchivoExcelServices {
         }
         return null;
     }
+
 
     @Transactional
     protected void saveEntity(Object entity) {

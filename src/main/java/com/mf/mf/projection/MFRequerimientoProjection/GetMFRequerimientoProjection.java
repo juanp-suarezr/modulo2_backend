@@ -50,6 +50,8 @@ public interface GetMFRequerimientoProjection {
 
     String getEstadoRequerimientoDescripcion();
 
+    
+
     List<GetMFHashDelegaturaProjection> getDelegaturas();
     List<GetMFHashDigitoNITProjection> getDigitoNIT();
 

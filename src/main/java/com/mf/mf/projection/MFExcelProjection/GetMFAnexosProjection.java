@@ -1,19 +1,28 @@
 package com.mf.mf.projection.MFExcelProjection;
 
+import java.time.LocalDate;
+
 public interface GetMFAnexosProjection {
 
-    Long getIdAnexo();
+    long getIdAnexo();
     Integer getIdHeredado();
-
-    // Si estos archivos deben exponerse como datos binarios (byte[]), puedes dejarlos así.
-    byte[] getCaratula();
-    byte[] getEstadoSituacionFinanciera();
-    byte[] getEstadoResultados();
-    byte[] getEstadoResultadosIntegral();
-    byte[] getFlujoEfectivoIndirecto();
-    byte[] getFlujoEfectivoDirecto();
-    byte[] getEstadoCambiosPatrimonio();
-    byte[] getDictamenFiscal();
+    String getCaratula();
+    String getEstadoSituacionFinanciera();
+    String getEstadoResultados();
+    String getEstadoResultadosIntegral();
+    String getFlujoEfectivo();
+    String getEstadoCambiosPatrimonio();
+    String getDictamenFiscal();
+    String getRevelacionesEstadosFinancieros();
+    String getNotasEstadosFinancieros();
+    String getCertificacionCumplimientoEEFF();
+    String getPoliticasContables();
+    String getInformeGestion();
+    String getProyectoDistribucionUtilidadesEmpresas();
+    String getDeclaracionRenta();
+    String getComposicionAccionaria();
+    String getActaAsambleaAprobacionEF();
+    LocalDate getFechaEntrega();
 
     Boolean getEstado();
 
