@@ -57,20 +57,18 @@ public class MFAnulacionController {
     public ResponseEntity<?> guardarAnexoAnulacion(@RequestBody MFGuardarAnexoSolicitudDTO requestBody) {
         Map<String, String> response = new HashMap<>();
         try {
-            // Obtener los datos de la solicitud y el anexo
+            // Obtener datos de la solicitud y anexos
             MFSolicitudAnulacionDTO requestBodySolicitud = requestBody.getSolicitud();
-            MFAnexoAnulacionDTO requestBodyAnexo = requestBody.getAnexo();
+            List<MFAnexoAnulacionDTO> requestBodyAnexos = requestBody.getAnexo();  // ✅ Ahora es una lista
 
-            // Buscar el heredado
+            // Buscar heredado
             Optional<MFHashHeredado> heredadoOpt = mfHeredadosRepository.findByIdHeredado(requestBodySolicitud.getIdHeredado());
             if (heredadoOpt.isEmpty()) {
                 response.put("error", "No se encontró un heredado con el ID proporcionado");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
 
-            MFHashHeredado heredado = heredadoOpt.get();
-
-            // Guardar la solicitud de anulación (asumiendo que tienes una entidad `MFSolicitudAnulacion`)
+            // Guardar la solicitud de anulación
             MFSolicitudAnulacion solicitud = new MFSolicitudAnulacion();
             solicitud.setIdHeredado(requestBodySolicitud.getIdHeredado());
             solicitud.setNombre(requestBodySolicitud.getNombre());
@@ -86,18 +84,21 @@ public class MFAnulacionController {
 
             mfSolicitudAnulacionRepository.save(solicitud);
 
-            // Guardar el anexo de anulación
-            MFAnexosAnulacion anexo = new MFAnexosAnulacion();
-            anexo.setIdAnulacion(requestBodyAnexo.getIdAnulacion());
-            anexo.setNombre(requestBodyAnexo.getNombre());
-            anexo.setDetalle(requestBodyAnexo.getDetalle());
-            anexo.setPath(requestBodyAnexo.getPath());
-            anexo.setEstado(true);
+            // Guardar cada anexo en la base de datos
+            for (MFAnexoAnulacionDTO requestBodyAnexo : requestBodyAnexos) {
+                MFAnexosAnulacion anexo = new MFAnexosAnulacion();
+                anexo.setIdAnulacion((int) solicitud.getId());
+                anexo.setNombre(requestBodyAnexo.getNombre());
+                anexo.setDetalle(requestBodyAnexo.getDetalle());
+                anexo.setPath(requestBodyAnexo.getPath());
+                anexo.setEstado(true);
+
+                mfAnexoAnulacionRepository.save(anexo);
+            }
 
             mfHeredadosRepository.actualizarEstadoEntrega(requestBodySolicitud.getIdHeredado(), 461);
-            mfAnexoAnulacionRepository.save(anexo);
 
-            response.put("mensaje", "Anexo guardado con éxito");
+            response.put("mensaje", "Anexos guardados con éxito");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.put("error", "Error al procesar el archivo: " + e.getMessage());

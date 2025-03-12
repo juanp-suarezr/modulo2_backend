@@ -2,8 +2,11 @@ package com.mf.mf.dto.anulacion;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class MFGuardarAnexoSolicitudDTO {
-    private MFAnexoAnulacionDTO anexo;
+
     private MFSolicitudAnulacionDTO solicitud;
+    private List<MFAnexoAnulacionDTO> anexo;
 }
