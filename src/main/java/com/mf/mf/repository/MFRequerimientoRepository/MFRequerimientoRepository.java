@@ -89,7 +89,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "LEFT JOIN r.periodoEntregaDescripcion p " +
             "LEFT JOIN MFAnexos a ON h.idHeredado = a.idHeredado " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
-            "WHERE h.estadoEntrega NOT IN (284, 460) " +
+            "WHERE h.estadoEntrega NOT IN (284, 460, 461) " +
             "AND h.nit = :nitUsuario")
     List<GetMFRequerimientosEntregasProjection> findEntregasPendientesByNIT(@Param("nitUsuario") Integer nitUsuario);
 
@@ -126,7 +126,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             " JOIN r.tipoRequerimientoDescripcion f " +
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
-            "WHERE COALESCE(h.estadoEntrega, 0) IN (284, 460) " +
+            "WHERE COALESCE(h.estadoEntrega, 0) IN (284, 460, 461) " +
             "AND h.nit = :nitUsuario")
     List<GetMFRequerimientosEntregasProjection> findEntregasByNIT(@Param("nitUsuario") Integer nitUsuario);
 

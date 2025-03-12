@@ -10,7 +10,7 @@ public class MFSolicitudAnulacionDTO {
     private long id;
     private Integer idHeredado; // FK
     private String nombre;
-    private String apellido;
+    private String razonSocial;
     private String identificacion;
     private String email;
     private String email1;
