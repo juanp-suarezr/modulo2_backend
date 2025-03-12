@@ -72,7 +72,7 @@ public class MFArchivoExcelController {
         }
     }
 
-
+    //REPORTE FINANCIERO
     @PostMapping("/saveExcel")
     public ResponseEntity<Map<String, String>> processExcelFile(
             @RequestParam("file") MultipartFile file,
@@ -95,11 +95,13 @@ public class MFArchivoExcelController {
             } else {
                 // Crear nuevo registro
                 result = excelService.createIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);
+                mfHashHeredadoRepository.actualizarCargoExcel(Integer.valueOf(idHeredado));
             }
 
            
             // Preparar respuesta de éxito
             response.put("message", result);
+
 
             return ResponseEntity.ok(response);
         } catch (JsonProcessingException e) {

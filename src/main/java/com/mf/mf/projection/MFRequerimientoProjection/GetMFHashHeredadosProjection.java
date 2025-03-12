@@ -15,6 +15,7 @@ public interface GetMFHashHeredadosProjection {
     Integer getEstadoRequerimiento();
     Boolean getEstado();
     Boolean getIndividual();
+    Boolean getCargoExcel();
     Integer getTipoProgramacion();
 
 }

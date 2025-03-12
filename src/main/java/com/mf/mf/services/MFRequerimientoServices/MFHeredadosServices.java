@@ -78,7 +78,8 @@ public class MFHeredadosServices {
                         registro.getNit(),
                         registro.getFechaEntrega(),
                         registro.getEstadoEntrega(),
-                        registro.isIndividual()
+                        registro.isIndividual(),
+                        registro.isCargoExcel()
                 ))
                 .collect(Collectors.toList());
     }
@@ -151,7 +152,8 @@ public class MFHeredadosServices {
                         registro.getNit(),
                         registro.getFechaEntrega(),
                         registro.getEstadoEntrega(),
-                        registro.isIndividual()
+                        registro.isIndividual(),
+                        registro.isCargoExcel()
                 ))
                 .collect(Collectors.toList());
 

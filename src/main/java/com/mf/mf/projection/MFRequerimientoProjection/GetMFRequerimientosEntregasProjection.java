@@ -35,6 +35,7 @@ public interface GetMFRequerimientosEntregasProjection {
     Integer getIdHeredado();
     Integer getEstadoEntrega();
     boolean getIndividual();
+    boolean getHasExcel();
     LocalDate getFechaEntrega();
     Integer getNit();
 

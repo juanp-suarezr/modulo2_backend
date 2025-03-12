@@ -71,6 +71,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "h.individual as individual, " +
             "h.estadoEntrega as estadoEntrega, " +
             "h.idHeredado as idHeredado, " +
+            "h.cargoExcel as hasExcel, " +
             "h.nit as nit, " +
             "h.fechaEntrega as fechaEntrega, " +
             "d.idNumeroDigitos as idNumeroDigitos, " +
@@ -108,6 +109,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "h.individual as individual, " +
             "h.fechaEntrega as fechaEntrega, " +
             "h.idHeredado as idHeredado, " +
+            "h.cargoExcel as hasExcel, " +
             "h.estadoEntrega as estadoEntrega, " +
             "h.nit as nit, " +
             "d.idNumeroDigitos as idNumeroDigitos, " +

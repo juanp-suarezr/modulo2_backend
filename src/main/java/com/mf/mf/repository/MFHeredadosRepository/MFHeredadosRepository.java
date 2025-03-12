@@ -40,6 +40,12 @@ public interface MFHeredadosRepository extends JpaRepository<MFHashHeredado, Lon
     @Query("SELECT h FROM MFHashHeredado h WHERE h.idHeredado = :idHeredado")
     Optional<MFHashHeredado> findByIdHeredado(@Param("idHeredado") Integer idHeredado);
 
+    @Modifying
+    @Query("UPDATE MFHashHeredado m " +
+            "SET m.cargoExcel = true " +
+            "WHERE m.idHeredado = :idHeredado")
+    void actualizarCargoExcel(@Param("idHeredado") Integer id);
+
 
 
 }

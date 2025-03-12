@@ -15,9 +15,10 @@ public class MFHashHeredadoDTO {
     private Integer estadoEntrega; // datos maestros asignacion por debajo
     private Integer nit;
     private boolean individual;
+    private boolean cargoExcel;
     private Integer tipoProgramacion;
 
-    public MFHashHeredadoDTO(long idHeredado, Integer idVigilado, Integer nit, LocalDate fechaEntrega, Integer estadoEntrega, boolean individual) {
+    public MFHashHeredadoDTO(long idHeredado, Integer idVigilado, Integer nit, LocalDate fechaEntrega, Integer estadoEntrega, boolean individual, boolean cargoExcel) {
     }
 
 }
