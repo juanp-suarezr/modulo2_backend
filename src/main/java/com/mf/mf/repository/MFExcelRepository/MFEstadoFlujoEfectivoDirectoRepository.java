@@ -6,6 +6,7 @@ import com.mf.mf.projection.MFExcelProjection.GetMFEstadoFlujoDirectoProjection;
 
 import java.util.List;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,5 +27,10 @@ public interface MFEstadoFlujoEfectivoDirectoRepository extends JpaRepository<MF
     @Query("DELETE FROM MFEstadoFlujoEfectivoDirecto t WHERE t.nit = :nit AND t.idHeredado = :idHeredado")
     void deleteByNitAndIdHeredado(@Param("nit") Integer nit, @Param("idHeredado") Integer idHeredado);
 
+    //CAMBIAR A FALSE
+    @Modifying
+    @Transactional
+    @Query("UPDATE MFEstadoFlujoEfectivoDirecto e SET e.estado = false WHERE e.idHeredado = :idHeredado")
+    void updateEstadoByIdHeredado(@Param("idHeredado") Integer idHeredado);
 
 }

@@ -78,6 +78,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "f.descripcion as tipoRequerimientoDescripcion, " +
             "p.descripcion as periodoEntregaDescripcion, " +
             "e.descripcion as estadoRequerimientoDescripcion, " +
+            "s.estadoSolicitud as estadoAnulacion, " +
             "a.fechaEntrega as fechaReporte " +
             "FROM MFRequerimiento r " +
             "LEFT JOIN MFHashHeredado h ON " +
@@ -88,8 +89,10 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN r.periodoEntregaDescripcion p " +
             "LEFT JOIN MFAnexos a ON h.idHeredado = a.idHeredado " +
+            "LEFT JOIN MFSolicitudAnulacion s ON h.idHeredado = s.idHeredado " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
-            "WHERE h.estadoEntrega NOT IN (284, 460, 461) " +
+            "WHERE (h.estadoEntrega NOT IN (284, 460,  461, 462) " +
+            "       OR (h.estadoEntrega = 460 AND s IS NOT NULL AND s.estadoSolicitud = 'Aprobado')) " +
             "AND h.nit = :nitUsuario")
     List<GetMFRequerimientosEntregasProjection> findEntregasPendientesByNIT(@Param("nitUsuario") Integer nitUsuario);
 
@@ -115,6 +118,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "d.idNumeroDigitos as idNumeroDigitos, " +
             "f.descripcion as tipoRequerimientoDescripcion, " +
             "e.descripcion as estadoRequerimientoDescripcion, " +
+            "s.estadoSolicitud as estadoAnulacion, " +
             "a.fechaEntrega as fechaReporte " +
 
             "FROM MFRequerimiento r " +
@@ -123,10 +127,12 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "    (h.tipoProgramacion = 233 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
             "    (h.tipoProgramacion = 232 AND h.idProgramacion = r.idRequerimiento)) " +
             "LEFT JOIN MFAnexos a ON h.idHeredado = a.idHeredado " +
+            "LEFT JOIN MFSolicitudAnulacion s ON h.idHeredado = s.idHeredado " +
             " JOIN r.tipoRequerimientoDescripcion f " +
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
-            "WHERE COALESCE(h.estadoEntrega, 0) IN (284, 460, 461) " +
+            "WHERE COALESCE(h.estadoEntrega, 0) IN (284, 460, 461, 462)  " +
+            "AND s.estadoSolicitud IS NULL " +
             "AND h.nit = :nitUsuario")
     List<GetMFRequerimientosEntregasProjection> findEntregasByNIT(@Param("nitUsuario") Integer nitUsuario);
 

@@ -4,6 +4,7 @@ import com.mf.mf.model.anulacion.MFAnexosAnulacion;
 import com.mf.mf.model.anulacion.MFSolicitudAnulacion;
 import com.mf.mf.model.excel.MFAnexos;
 import com.mf.mf.projection.MFAnulacion.GetMFAnexoAnulacionProjection;
+import com.mf.mf.projection.MFAnulacion.GetMFSolicitudAnulacionProjection;
 import com.mf.mf.projection.MFExcelProjection.GetMFAnexosProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,8 +21,6 @@ public interface MFAnexoAnulacionRepository extends JpaRepository<MFAnexosAnulac
             "FROM MFAnexosAnulacion a " +
             "WHERE a.idAnulacion = :idAnulacion")
     List<GetMFAnexoAnulacionProjection> findAnexosByAnulado(@Param("idAnulacion") Integer idAnulacion);
-
-
 
 
 }

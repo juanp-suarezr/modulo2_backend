@@ -3,6 +3,7 @@ package com.mf.mf.repository.MFExcelRepository;
 import com.mf.mf.model.excel.MFIdentificacionVigilado;
 import com.mf.mf.projection.MFExcelProjection.GetMFIdentificacionVigiladoProjection;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMUVTipoVigiladoProjection;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,5 +25,11 @@ public interface MFIdentificacionVigiladoRepository extends JpaRepository<MFIden
     @Modifying
     @Query("DELETE FROM MFIdentificacionVigilado t WHERE t.nit = :nit AND t.idHeredado = :idHeredado")
     void deleteByNitAndIdHeredado(@Param("nit") Integer nit, @Param("idHeredado") Integer idHeredado);
+
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE MFIdentificacionVigilado e SET e.estado = false WHERE e.idHeredado = :idHeredado")
+    void updateEstadoByIdHeredado(@Param("idHeredado") Integer idHeredado);
 
 }

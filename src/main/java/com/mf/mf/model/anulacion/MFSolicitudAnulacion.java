@@ -26,8 +26,9 @@ public class MFSolicitudAnulacion {
     private String peticion;
     private String itemsModificados;
     private String estadoSolicitud;
+    private String observacion;
     private boolean estado;
-    private LocalDate fechaSolicitud; // datos maestros asignacion por debajo
+    private LocalDate fechaSolicitud; // asignacion por debajo
 
     // Relaciones con otras entidades
 

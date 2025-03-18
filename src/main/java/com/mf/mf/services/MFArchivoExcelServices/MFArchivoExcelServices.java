@@ -107,6 +107,18 @@ public class MFArchivoExcelServices {
         }
     }
 
+    //Metodo para poner estado en false y guardar historial
+    public void disablePreviousExcelRecords(Integer idHeredado) {
+        identificacionVigiladoRepository.updateEstadoByIdHeredado(idHeredado);
+        estadoSituacionFinancieraRepository.updateEstadoByIdHeredado(idHeredado);
+        estadoResultadoRepository.updateEstadoByIdHeredado(idHeredado);
+        estadoResultadoIntegralORIRepository.updateEstadoByIdHeredado(idHeredado);
+        estadoFlujoEfectivoIndirectoRepository.updateEstadoByIdHeredado(idHeredado);
+        estadoFlujoEfectivoDirectoRepository.updateEstadoByIdHeredado(idHeredado);
+        estadoDictamenRevisorFiscalRepository.updateEstadoByIdHeredado(idHeredado);
+
+    }
+
 
     //guardar los campos excel
     @Transactional

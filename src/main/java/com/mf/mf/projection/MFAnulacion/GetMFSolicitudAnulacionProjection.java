@@ -20,14 +20,24 @@ public interface GetMFSolicitudAnulacionProjection {
     String getEstadoSolicitud();
     Boolean getEstado();
     LocalDate getFechaSolicitud();
+    String getObservacion();
 
-    //PROGRAMACION
+    //REUQERIMIENTO
     Integer getIdProgramacion();
     Integer getActoAdministrativo();
+    String getTipoRequerimientoDescripcion();
+    String getEstadoRequerimientoDescripcion();
+    LocalDate getFechaInicio();
+    LocalDate getFechaFin();
+    LocalDate getFechaPublicacion();
+    Integer getAnnioVigencia();
 
 
     //HEREDADOS
     Integer getIdHeredado();
     Integer getNit();
+    Integer getEstadoEntrega();
+    boolean getIndividual();
+    LocalDate getFechaEntrega();
 
 }

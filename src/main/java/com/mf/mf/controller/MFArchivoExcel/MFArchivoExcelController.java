@@ -1,8 +1,10 @@
 package com.mf.mf.controller.MFArchivoExcel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mf.mf.model.anulacion.MFSolicitudAnulacion;
 import com.mf.mf.model.excel.MFIdentificacionVigilado;
 import com.mf.mf.projection.MFExcelProjection.GetMFIdentificacionVigiladoProjection;
+import com.mf.mf.repository.MFAnulacion.MFSolicitudAnulacionRepository;
 import com.mf.mf.repository.MFExcelRepository.MFIdentificacionVigiladoRepository;
 import com.mf.mf.repository.MFHeredadosRepository.MFHeredadosRepository;
 import com.mf.mf.services.MFArchivoExcelServices.MFArchivoExcelServices;
@@ -30,12 +32,14 @@ public class MFArchivoExcelController {
     private final MFHeredadosRepository mfHashHeredadoRepository;
     private final MFIdentificacionVigiladoRepository mfIdentificacionVigiladoRepository;
 
+    private final MFSolicitudAnulacionRepository mfSolicitudAnulacionRepository;
 
     @Autowired
-    public MFArchivoExcelController(MFArchivoExcelServices excelService, MFHeredadosRepository mfHashHeredadoRepository, MFIdentificacionVigiladoRepository mfIdentificacionVigiladoRepository) {
+    public MFArchivoExcelController(MFArchivoExcelServices excelService, MFHeredadosRepository mfHashHeredadoRepository, MFIdentificacionVigiladoRepository mfIdentificacionVigiladoRepository, MFSolicitudAnulacionRepository mfSolicitudAnulacionRepository) {
         this.excelService = excelService;
         this.mfHashHeredadoRepository = mfHashHeredadoRepository;
         this.mfIdentificacionVigiladoRepository = mfIdentificacionVigiladoRepository;
+        this.mfSolicitudAnulacionRepository = mfSolicitudAnulacionRepository;
     }
 
     @PostMapping("/upload")
@@ -87,11 +91,25 @@ public class MFArchivoExcelController {
                 
             // Verificar si el registro ya existe
             boolean exists = excelService.existsIdentificacionVigilado(Integer.valueOf(nit), Integer.valueOf(idHeredado));
-            
+
+            // Verificar si el idHeredado tiene una solicitud de anulación aprobada
+            boolean hasApprovedAnulation = mfSolicitudAnulacionRepository.existsByIdHeredadoAndEstadoSolicitud(
+                    Integer.valueOf(idHeredado), "Aprobado");
+
+            if (hasApprovedAnulation) {
+                // Si existe una solicitud de anulación aprobada, actualizar el estado del registro anterior
+                excelService.disablePreviousExcelRecords(Integer.valueOf(idHeredado));
+            }
+
+
             String result;
             if (exists) {
-                // Actualizar registro existente
-                result = excelService.updateIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);
+                if (hasApprovedAnulation) {
+                    result = excelService.createIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);
+                } else {
+                    // Actualizar registro existente
+                    result = excelService.updateIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);
+                }
             } else {
                 // Crear nuevo registro
                 result = excelService.createIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);

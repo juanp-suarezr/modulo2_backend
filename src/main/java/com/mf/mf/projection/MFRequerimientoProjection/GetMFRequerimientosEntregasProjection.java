@@ -42,5 +42,8 @@ public interface GetMFRequerimientosEntregasProjection {
     //ANEXOS
     LocalDate getFechaReporte();
 
+    //ANULACION
+    String getEstadoAnulacion();
+
 
 }

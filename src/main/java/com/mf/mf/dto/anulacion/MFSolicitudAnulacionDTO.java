@@ -19,6 +19,7 @@ public class MFSolicitudAnulacionDTO {
     private String itemsModificados;
     private String estadoSolicitud;
     private boolean estado;
+    private String observacion;
     private LocalDate fechaSolicitud;
 
 

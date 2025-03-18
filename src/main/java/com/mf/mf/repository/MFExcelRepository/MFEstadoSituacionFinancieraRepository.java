@@ -4,6 +4,7 @@ import com.mf.mf.model.excel.MFEstadoSituacionFinanciera;
 import com.mf.mf.model.excel.MFIdentificacionVigilado;
 import com.mf.mf.projection.MFExcelProjection.GetMFEstadoSituacionFinancieraProjection;
 import com.mf.mf.projection.MFExcelProjection.GetMFIdentificacionVigiladoProjection;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,5 +27,10 @@ public interface MFEstadoSituacionFinancieraRepository extends JpaRepository<MFE
     @Query("DELETE FROM MFEstadoSituacionFinanciera t WHERE t.nit = :nit AND t.idHeredado = :idHeredado")
     void deleteByNitAndIdHeredado(@Param("nit") Integer nit, @Param("idHeredado") Integer idHeredado);
 
+    //CAMBIAR A FALSE
+    @Modifying
+    @Transactional
+    @Query("UPDATE MFEstadoSituacionFinanciera e SET e.estado = false WHERE e.idHeredado = :idHeredado")
+    void updateEstadoByIdHeredado(@Param("idHeredado") Integer idHeredado);
 
 }
