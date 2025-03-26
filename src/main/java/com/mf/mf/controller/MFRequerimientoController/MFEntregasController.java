@@ -52,5 +52,16 @@ public class MFEntregasController {
         }
     }
 
+    //Obtener entregas finalizadas por nit
+    @GetMapping("/entregas-finalizadas-misional")
+    public ResponseEntity<List<GetMFRequerimientosEntregasProjection>> getEntregasMisional() {
+        try {
+            List<GetMFRequerimientosEntregasProjection> entrega = repository.findEntregas();
+            return ResponseEntity.ok(entrega);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 
 }

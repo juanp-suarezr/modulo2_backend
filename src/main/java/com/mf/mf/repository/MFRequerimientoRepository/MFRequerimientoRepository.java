@@ -99,6 +99,52 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
 
 
     //ENTREGAS FINALIZADAS
+    @Query("SELECT DISTINCT r.idRequerimiento as idRequerimiento, " +
+            "r.nombreRequerimiento as nombreRequerimiento, " +
+            "r.fechaInicio as fechaInicio, " +
+            "r.fechaFin as fechaFin, " +
+            "r.actoAdministrativo as actoAdministrativo, " +
+            "r.annioVigencia as annioVigencia, " +
+            "r.tipoProgramacion as tipoProgramacion, " +
+            "r.periodoEntrega as periodoEntrega, " +
+            "r.fechaPublicacion as fechaPublicacion, " +
+            "h.idProgramacion as idProgramacion, " +
+            "h.individual as individual, " +
+            "h.fechaEntrega as fechaEntrega, " +
+            "h.idHeredado as idHeredado, " +
+            "h.cargoExcel as hasExcel, " +
+            "h.estadoEntrega as estadoEntrega, " +
+            "h.nit as nit, " +
+            "d.idNumeroDigitos as idNumeroDigitos, " +
+            "f.descripcion as tipoRequerimientoDescripcion, " +
+            "e.descripcion as estadoRequerimientoDescripcion, " +
+            "s.estadoSolicitud as estadoAnulacion, " +
+            "MAX(a.fechaEntrega) as fechaReporte " + // Tomar solo el registro más reciente
+
+            "FROM MFRequerimiento r " +
+            "JOIN MFHashHeredado h ON " +
+            "   ((h.tipoProgramacion = 231 AND h.idProgramacion IN (SELECT del.idProgramacion FROM MFHashDelegatura del WHERE del.idRequerimiento = r.idRequerimiento)) OR " +
+            "    (h.tipoProgramacion = 233 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
+            "    (h.tipoProgramacion = 232 AND h.idProgramacion = r.idRequerimiento)) " +
+            "LEFT JOIN MFAnexos a ON h.idHeredado = a.idHeredado " + // Se cambió a LEFT JOIN
+            "LEFT JOIN MFSolicitudAnulacion s ON h.idHeredado = s.idHeredado " +
+            "JOIN r.tipoRequerimientoDescripcion f " +
+            "LEFT JOIN r.estadoRequerimientoDescripcion e " +
+            "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
+            "WHERE COALESCE(h.estadoEntrega, 0) IN (284, 460, 461, 462)  " +
+            "AND ( " +
+            "    (h.estadoEntrega = 460 AND s.estadoSolicitud IS NULL) OR " +
+            "    (h.estadoEntrega = 462 OR h.estadoEntrega = 461) " +
+            ") " +
+            "AND h.nit = :nitUsuario " +
+            "GROUP BY r.idRequerimiento, r.nombreRequerimiento, r.fechaInicio, r.fechaFin, " +
+            "r.actoAdministrativo, r.annioVigencia, r.tipoProgramacion, r.periodoEntrega, r.fechaPublicacion, " +
+            "h.idProgramacion, h.individual, h.fechaEntrega, h.idHeredado, h.cargoExcel, h.estadoEntrega, h.nit, " +
+            "d.idNumeroDigitos, f.descripcion, e.descripcion, s.estadoSolicitud")
+    List<GetMFRequerimientosEntregasProjection> findEntregasByNIT(@Param("nitUsuario") Integer nitUsuario);
+
+
+    //ENTREGAS FINALIZADAS GENERAL VISTA MISIONAL
     @Query("SELECT r.idRequerimiento as idRequerimiento, " +
             "r.nombreRequerimiento as nombreRequerimiento, " +
             "r.fechaInicio as fechaInicio, " +
@@ -132,9 +178,16 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
             "WHERE COALESCE(h.estadoEntrega, 0) IN (284, 460, 461, 462)  " +
-            "AND s.estadoSolicitud IS NULL " +
-            "AND h.nit = :nitUsuario")
-    List<GetMFRequerimientosEntregasProjection> findEntregasByNIT(@Param("nitUsuario") Integer nitUsuario);
+            "AND ( " +
+            "    (h.estadoEntrega = 460 AND s.estadoSolicitud IS NULL) OR " +
+            "    (h.estadoEntrega = 462 OR h.estadoEntrega = 461) " +
+            ") " +
+            "GROUP BY r.idRequerimiento, r.nombreRequerimiento, r.fechaInicio, r.fechaFin, " +
+            "r.actoAdministrativo, r.annioVigencia, r.tipoProgramacion, r.periodoEntrega, r.fechaPublicacion, " +
+            "h.idProgramacion, h.individual, h.fechaEntrega, h.idHeredado, h.cargoExcel, h.estadoEntrega, h.nit, " +
+            "d.idNumeroDigitos, f.descripcion, e.descripcion, s.estadoSolicitud")
+    List<GetMFRequerimientosEntregasProjection> findEntregas();
+
 
     @Modifying
     @Query("UPDATE MFRequerimiento m SET m.estadoRequerimiento = :estadoReq WHERE m.fechaFin < :fechaActual")

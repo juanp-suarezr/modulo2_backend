@@ -105,4 +105,63 @@ public class MFAnexosController {
             return ResponseEntity.status(500).body(response);
         }
     }
+
+    @PostMapping("/guardarActualizado")
+    @Transactional
+    public ResponseEntity<?> guardarAnexo1(@RequestBody MFAnexosDTO requestBody) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            Optional<MFHashHeredado> heredadoOpt = mfHeredadosRepository.findByIdHeredado(requestBody.getIdHeredado());
+            if (heredadoOpt.isEmpty()) {
+                response.put("error", "No se encontró un heredado con el id proporcionado");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+
+            MFHashHeredado heredado = heredadoOpt.get();
+            List<MFAnexos> anexoExistente = mfAnexosRepository.findAnexosByHeredadoList(requestBody.getIdHeredado());
+            System.out.println(anexoExistente);
+
+            System.out.println(anexoExistente.isEmpty());
+            MFAnexos anexo;
+
+            mfAnexosRepository.changeEstado(requestBody.getIdHeredado());
+
+            anexo = new MFAnexos();
+            anexo.setIdHeredado(requestBody.getIdHeredado());
+
+
+
+            anexo.setCaratula(requestBody.getCaratula());
+            anexo.setEstadoSituacionFinanciera(requestBody.getEstadoSituacionFinanciera());
+            anexo.setEstadoResultados(requestBody.getEstadoResultados());
+            anexo.setEstadoResultadosIntegral(requestBody.getEstadoResultadosIntegral());
+            anexo.setFlujoEfectivo(requestBody.getFlujoEfectivo());
+            anexo.setEstadoCambiosPatrimonio(requestBody.getEstadoCambiosPatrimonio());
+            anexo.setDictamenFiscal(requestBody.getDictamenFiscal());
+            anexo.setRevelacionesEstadosFinancieros(requestBody.getRevelacionesEstadosFinancieros());
+            anexo.setNotasEstadosFinancieros(requestBody.getNotasEstadosFinancieros());
+            anexo.setCertificacionCumplimientoEEFF(requestBody.getCertificacionCumplimientoEEFF());
+            anexo.setPoliticasContables(requestBody.getPoliticasContables());
+            anexo.setInformeGestion(requestBody.getInformeGestion());
+            anexo.setProyectoDistribucionUtilidadesEmpresas(requestBody.getProyectoDistribucionUtilidadesEmpresas());
+            anexo.setDeclaracionRenta(requestBody.getDeclaracionRenta());
+            anexo.setComposicionAccionaria(requestBody.getComposicionAccionaria());
+            anexo.setActaAsambleaAprobacionEF(requestBody.getActaAsambleaAprobacionEF());
+            anexo.setFechaEntrega(LocalDate.now());
+            anexo.setEstado(true);
+
+
+            mfHeredadosRepository.actualizarEstadoEntrega(requestBody.getIdHeredado(), 462);
+            mfAnexosRepository.save(anexo);
+
+
+
+            response.put("mensaje", "Anexo guardado con éxito");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("error", "Error al procesar el archivo: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
 }

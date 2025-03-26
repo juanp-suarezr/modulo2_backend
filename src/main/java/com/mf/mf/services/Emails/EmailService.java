@@ -18,92 +18,82 @@ public class EmailService {
     private String domain;
 
     public void sendSimpleMessage(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("supertransportedigital@supertransporte.gov.co");
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        javaMailSender.send(message);
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("supertransportedigital@supertransporte.gov.co");
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(text);
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            throw new RuntimeException("Error enviar correo: " + e.getMessage(), e);
+        }
     }
 
-    public void sendEmailAprobado(
-            String to,
-            String to1,
-            String tipoReporte,
-            String fechaSolicitud,
-            String nombre,
-            String razonSocial,
-            String nit) {
+    public void sendEmailAprobado(String to, String to1, String tipoReporte, String fechaSolicitud, String nombre, String razonSocial, String nit) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("supertransportedigital@supertransporte.gov.co");
+            message.setTo(to);
+            if (to1 != null && !to1.trim().isEmpty()) {
+                message.setCc(to1);
+            }
+            message.setSubject("Correo aprobación de solicitud de anulación.");
+            String emailText = String.format(
+                    "Estimado(a) %s,\n\n" +
+                            "Nos permitimos informarle que su solicitud de anulación del reporte **%s** ha sido aprobada.\n" +
+                            "Detalles de la solicitud:\n" +
+                            "- **Fecha de solicitud:** %s\n" +
+                            "- **Nombre:** %s\n" +
+                            "- **Razón Social:** %s\n" +
+                            "- **NIT:** %s\n\n" +
+                            "A partir de ahora, puede ingresar al módulo financiero y actualizar su reporte en entregas pendientes. Una vez actualizado, este se guardará en estado de retransmisión y lo podrá consultar en el apartado de consultar entregas.\n" +
+                            "Gracias por su cooperación y cumplimiento con los requisitos establecidos.\n\n" +
+                            "Atentamente,\n" +
+                            "**Superintendencia de Transporte**",
+                    nombre, tipoReporte, fechaSolicitud, nombre, razonSocial, nit);
+            message.setText(emailText);
+            javaMailSender.send(message);
 
+        } catch (Exception e) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("supertransportedigital@supertransporte.gov.co");
-        message.setTo(to);
-        // Agregar `to1` solo si no es nulo ni vacío
-        if (to1 != null && !to1.trim().isEmpty()) {
-            message.setCc(to1); // Agregar el segundo correo en copia
+            throw new RuntimeException("Error al enviar correo de aprobación: " + e.getMessage(), e);
         }
-        message.setSubject("Correo aprobación de solicitud de anulación.");
-        String emailText = String.format(
-                "Estimado(a) %s,\n\n" +
-                        "Nos permitimos informarle que su solicitud de anulación del reporte **%s** ha sido aprobada.\n" +
-                        "Detalles de la solicitud:\n" +
-                        "- **Fecha de solicitud:** %s\n" +
-                        "- **Nombre:** %s\n" +
-                        "- **Razón Social:** %s\n" +
-                        "- **NIT:** %s\n\n" +
-                        "A partir de ahora, puede ingresar al modulo financiero y actualizar su reporte en entregas pendientes. Una vez actualizado, este se guardará en estado de retransmisión y lo podrá consultar en el apartado de consultar entregas:\n" +
-                        "Gracias por su cooperación y cumplimiento con los requisitos establecidos.\n\n" +
-                        "Atentamente,\n" +
-                        "**Superintendencia de Transporte**",
-                nombre, tipoReporte, fechaSolicitud, nombre, razonSocial, nit);
-
-        message.setText(emailText);
-        javaMailSender.send(message);
     }
 
 
-    public void sendEmailRechazado(
-            String to,
-            String to1,
-            String tipoReporte,
-            String fechaSolicitud,
-            String nombre,
-            String razonSocial,
-            String nit,
-            String observacion) {
+    public void sendEmailRechazado(String to, String to1, String tipoReporte, String fechaSolicitud, String nombre, String razonSocial, String nit, String observacion) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("supertransportedigital@supertransporte.gov.co");
+            message.setTo(to);
+            if (to1 != null && !to1.trim().isEmpty()) {
+                message.setCc(to1);
+            }
+            if (Objects.equals(observacion, "NA")) {
+                observacion = "no es viable la solicitud";
+            }
+            message.setSubject("Correo rechazo de solicitud de anulación.");
+            String emailText = String.format(
+                    "Estimado(a) %s,\n\n" +
+                            "Lamentamos informarle que su solicitud de anulación del reporte **%s** ha sido rechazada.\n" +
+                            "Detalles de la solicitud:\n" +
+                            "- **Fecha de solicitud:** %s\n" +
+                            "- **Nombre:** %s\n" +
+                            "- **Razón Social:** %s\n" +
+                            "- **NIT:** %s\n" +
+                            "- **Motivo de rechazo:** %s\n\n" +
+                            "Si considera que esto es un error, le sugerimos comunicarse con la Superintendencia de Transporte para mayor información.\n\n" +
+                            "Atentamente,\n" +
+                            "**Superintendencia de Transporte**",
+                    nombre, tipoReporte, fechaSolicitud, nombre, razonSocial, nit, observacion);
+            message.setText(emailText);
+            javaMailSender.send(message);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("supertransportedigital@supertransporte.gov.co");
-        message.setTo(to);
+        } catch (Exception e) {
 
-        // Agregar `to1` solo si no es nulo ni vacío
-        if (to1 != null && !to1.trim().isEmpty()) {
-            message.setCc(to1);
+            throw new RuntimeException("Error al enviar correo de rechazo: " + e.getMessage(), e);
         }
-
-        if (Objects.equals(observacion, "NA")) {
-            observacion = "no es viable la solicitud";
-        }
-
-        message.setSubject("Correo rechazo de solicitud de anulación.");
-
-        String emailText = String.format(
-                "Estimado(a) %s,\n\n" +
-                        "Lamentamos informarle que su solicitud de anulación del reporte **%s** ha sido rechazada.\n" +
-                        "Detalles de la solicitud:\n" +
-                        "- **Fecha de solicitud:** %s\n" +
-                        "- **Nombre:** %s\n" +
-                        "- **Razón Social:** %s\n" +
-                        "- **NIT:** %s\n" +
-                        "- **Motivo de rechazo:** %s\n\n" +
-                        "Si considera que esto es un error, le sugerimos comunicarse con la Superintendencia de Transporte para mayor información.\n\n" +
-                        "Atentamente,\n" +
-                        "**Superintendencia de Transporte**",
-                nombre, tipoReporte, fechaSolicitud, nombre, razonSocial, nit, observacion);
-
-        message.setText(emailText);
-        javaMailSender.send(message);
     }
 
 }
