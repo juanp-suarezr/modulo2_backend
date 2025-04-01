@@ -8,155 +8,155 @@ public interface GetMFEstadoSituacionFinancieraProjection {
 
     Boolean getEstado();
 
-    Integer getTotalActivosCorrientes();
+    Long getTotalActivosCorrientes();
 
-    Integer getEfectivoYEquivalentesAlEfectivo();
+    Long getEfectivoYEquivalentesAlEfectivo();
 
-    Integer getEfectivoRestringido();
+    Long getEfectivoRestringido();
 
-    Integer getInversionesCortoPlazo();
+    Long getInversionesCortoPlazo();
 
-    Integer getCuentasComercialesCobrarOperacionalesClientes();
+    Long getCuentasComercialesCobrarOperacionalesClientes();
 
-    Integer getCuentasPorCobrarConPartesRelacionadas1();
+    Long getCuentasPorCobrarConPartesRelacionadas1();
 
-    Integer getActivosBiologicos();
+    Long getActivosBiologicos();
 
-    Integer getOtrasCuentasPorCobrar1();
+    Long getOtrasCuentasPorCobrar1();
 
-    Integer getPagosAnticipados();
+    Long getPagosAnticipados();
 
-    Integer getInventariosCorrientes();
+    Long getInventariosCorrientes();
 
-    Integer getActivosPorImpuestos();
+    Long getActivosPorImpuestos();
 
-    Integer getActivosDistintosAlEfectivoPignoradosComoGarantia();
+    Long getActivosDistintosAlEfectivoPignoradosComoGarantia();
 
-    Integer getOtrosActivosFinancieros1();
+    Long getOtrosActivosFinancieros1();
 
-    Integer getOtrosActivosNoFinancieros1();
+    Long getOtrosActivosNoFinancieros1();
 
     String getValidacionActivosCorrientes();
 
-    Integer getTotalActivosNoCorrientes();
+    Long getTotalActivosNoCorrientes();
 
-    Integer getDepositosYOtrosActivos1();
+    Long getDepositosYOtrosActivos1();
 
-    Integer getInversionesLargoPlazo();
+    Long getInversionesLargoPlazo();
 
-    Integer getCuentasComercialesPorCobrar();
+    Long getCuentasComercialesPorCobrar();
 
-    Integer getCuentasPorCobrarConPartesRelacionadas2();
+    Long getCuentasPorCobrarConPartesRelacionadas2();
 
-    Integer getOtrasCuentasPorCobrar2();
+    Long getOtrasCuentasPorCobrar2();
 
-    Integer getPropiedadDeInversion();
+    Long getPropiedadDeInversion();
 
-    Integer getActivosIntangiblesYCreditoMercantil();
+    Long getActivosIntangiblesYCreditoMercantil();
 
-    Integer getPropiedadesPlantaYEquipo();
+    Long getPropiedadesPlantaYEquipo();
 
-    Integer getActivosBiologicosNoCorrientes();
+    Long getActivosBiologicosNoCorrientes();
 
-    Integer getInversionesContabilizadasParticipacion();
+    Long getInversionesContabilizadasParticipacion();
 
-    Integer getInversionesSubsidiarNegocios();
+    Long getInversionesSubsidiarNegocios();
 
-    Integer getPlusvalia();
+    Long getPlusvalia();
 
-    Integer getInventariosNoCorrientes();
+    Long getInventariosNoCorrientes();
 
-    Integer getActivosPorImpuestosDiferidos();
+    Long getActivosPorImpuestosDiferidos();
 
-    Integer getActivosPorImpuestosCorrientesNoCorrientes();
+    Long getActivosPorImpuestosCorrientesNoCorrientes();
 
-    Integer getOtrosActivosFinancieros2();
+    Long getOtrosActivosFinancieros2();
 
-    Integer getOtrosActivosNoFinancieros2();
+    Long getOtrosActivosNoFinancieros2();
 
-    Integer getActivosDistintosAlEfectivo();
+    Long getActivosDistintosAlEfectivo();
 
     String getValidacionActivosNoCorrientes();
 
     String getValidacionActivos();
 
-    Integer getPasivos();
+    Long getPasivos();
 
-    Integer getPasivosCorrientes();
+    Long getPasivosCorrientes();
 
-    Integer getCuentasPorPagarComercialesProveedores();
+    Long getCuentasPorPagarComercialesProveedores();
 
-    Integer getOtrasCuentasPorPagar();
+    Long getOtrasCuentasPorPagar();
 
-    Integer getPasivosPorImpuestos1();
+    Long getPasivosPorImpuestos1();
 
-    Integer getDeudaFinanciera();
+    Long getDeudaFinanciera();
 
-    Integer getOtrosPasivosNoFinancieros1();
+    Long getOtrosPasivosNoFinancieros1();
 
-    Integer getDepositosYOtrosActivos2();
+    Long getDepositosYOtrosActivos2();
 
-    Integer getPorcionCorrienteDeuda();
+    Long getPorcionCorrienteDeuda();
 
-    Integer getCuentasPorPagarConPartesRelacionadas3();
+    Long getCuentasPorPagarConPartesRelacionadas3();
 
-    Integer getOtrasProvisiones();
+    Long getOtrasProvisiones();
 
-    Integer getProvisionesPorBeneficiosAEmpleados1();
+    Long getProvisionesPorBeneficiosAEmpleados1();
 
-    Integer getIngresosRecibidosPorCuentaDeTerceros();
+    Long getIngresosRecibidosPorCuentaDeTerceros();
 
     String getValidacionPasivosCorrientes();
 
-    Integer getPasivosNoCorrientes();
+    Long getPasivosNoCorrientes();
 
-    Integer getDeudaALargoPlazo();
+    Long getDeudaALargoPlazo();
 
-    Integer getCuentasPorPagar();
+    Long getCuentasPorPagar();
 
-    Integer getProvisionesPorBeneficiosAEmpleados2();
+    Long getProvisionesPorBeneficiosAEmpleados2();
 
-    Integer getPasivosPorImpuestosDiferidos();
+    Long getPasivosPorImpuestosDiferidos();
 
-    Integer getIngresosRecibidosPorAnticipado();
+    Long getIngresosRecibidosPorAnticipado();
 
-    Integer getOtrosPasivosNoFinancieros2();
+    Long getOtrosPasivosNoFinancieros2();
 
-    Integer getOtrosPasivosFinancieros();
+    Long getOtrosPasivosFinancieros();
 
-    Integer getPasivosPorImpuestos2();
+    Long getPasivosPorImpuestos2();
 
     String getValidacionPasivosNoCorrientes();
 
     String getValidacionPasivos();
 
-    Integer getPatrimonio();
+    Long getPatrimonio();
 
-    Integer getCapitalPagado();
+    Long getCapitalPagado();
 
-    Integer getPrimaDeEmision();
+    Long getPrimaDeEmision();
 
-    Integer getReadquisicionDeInstrumentosDePatrimonioPropio();
+    Long getReadquisicionDeInstrumentosDePatrimonioPropio();
 
-    Integer getInversionSumplementariaAlCapitalAsignado();
+    Long getInversionSumplementariaAlCapitalAsignado();
 
-    Integer getOtrasParticipacionesEnElPatrimonio();
+    Long getOtrasParticipacionesEnElPatrimonio();
 
-    Integer getSuperavitPorRevaluacion();
+    Long getSuperavitPorRevaluacion();
 
-    Integer getReservaLegal();
+    Long getReservaLegal();
 
-    Integer getOtrasReservas();
+    Long getOtrasReservas();
 
-    Integer getUtilidadYorPerdidaDelEjercicio();
+    Long getUtilidadYorPerdidaDelEjercicio();
 
-    Integer getUtilidadYorPerdidaAcumulada();
+    Long getUtilidadYorPerdidaAcumulada();
 
-    Integer getGananciasAcumuladasPorEfectoDeLaConvergencia();
+    Long getGananciasAcumuladasPorEfectoDeLaConvergencia();
 
-    Integer getGananciasAcumuladasDiferentesALasGeneradasPorEfectoDeLaConvergencia();
+    Long getGananciasAcumuladasDiferentesALasGeneradasPorEfectoDeLaConvergencia();
 
-    Integer getTotalPasivoPatrimonio();
+    Long getTotalPasivoPatrimonio();
     String getValidacionPatrimonio();
 
     String getValidacionGananciaPerdidaNeta();

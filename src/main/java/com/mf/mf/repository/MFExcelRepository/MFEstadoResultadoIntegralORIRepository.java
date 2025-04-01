@@ -22,6 +22,13 @@ public interface MFEstadoResultadoIntegralORIRepository extends JpaRepository<MF
             "AND t.idHeredado = :idHeredado")
     List<GetMFEstadoResultadoIntegralORIProjection> findMFORIByNit(Integer nit, Integer idHeredado);
 
+    //SIN ESTADO PARA HISTORIAL MISIONAL
+    @Query("SELECT t FROM MFEstadoResultadoIntegralORI t " +
+            "WHERE t.nit = :nit "+
+            "AND t.idHeredado = :idHeredado")
+    List<GetMFEstadoResultadoIntegralORIProjection> findMFORIByNit1(Integer nit, Integer idHeredado);
+
+
     //DELETE
     @Modifying
     @Query("DELETE FROM MFEstadoResultadoIntegralORI t WHERE t.nit = :nit AND t.idHeredado = :idHeredado")

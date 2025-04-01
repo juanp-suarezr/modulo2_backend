@@ -22,6 +22,13 @@ public interface MFEstadoResultadoRepository extends JpaRepository<MFEstadoResul
             "AND t.idHeredado = :idHeredado")
     List<GetMFEstadoResultadosProjection> findMFERByNit(Integer nit, Integer idHeredado);
 
+    //SIN ESTADO PARA HISTORIAL MISIONAL
+    @Query("SELECT t FROM MFEstadoResultados t " +
+            "WHERE t.nit = :nit "+
+            "AND t.idHeredado = :idHeredado")
+    List<GetMFEstadoResultadosProjection> findMFERByNit1(Integer nit, Integer idHeredado);
+
+
     //DELETE
     @Modifying
     @Query("DELETE FROM MFEstadoResultados t WHERE t.nit = :nit AND t.idHeredado = :idHeredado")
