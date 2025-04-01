@@ -22,6 +22,12 @@ public interface MFEstadoSituacionFinancieraRepository extends JpaRepository<MFE
             "AND t.idHeredado = :idHeredado")
     List<GetMFEstadoSituacionFinancieraProjection> findMFESFByNit(Integer nit, Integer idHeredado);
 
+    //SIN ESTADO PARA HISTORIAL MISIONAL
+    @Query("SELECT t FROM MFEstadoSituacionFinanciera t " +
+            "WHERE t.nit = :nit "+
+            "AND t.idHeredado = :idHeredado")
+    List<GetMFEstadoSituacionFinancieraProjection> findMFESFByNit1(Integer nit, Integer idHeredado);
+
     //DELETE
     @Modifying
     @Query("DELETE FROM MFEstadoSituacionFinanciera t WHERE t.nit = :nit AND t.idHeredado = :idHeredado")

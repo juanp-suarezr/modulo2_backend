@@ -21,6 +21,12 @@ public interface MFIdentificacionVigiladoRepository extends JpaRepository<MFIden
             "AND t.idHeredado = :idHeredado")
     List<GetMFIdentificacionVigiladoProjection> findMFIdentificacionVigiladosByNit(Integer nit, Integer idHeredado);
 
+    //Traer los datos pero sin el estado en true, para comparar historial -- rol misional
+    @Query("SELECT t FROM MFIdentificacionVigilado t " +
+            "WHERE t.nit = :nit "+
+            "AND t.idHeredado = :idHeredado")
+    List<GetMFIdentificacionVigiladoProjection> findMFIdentificacionVigiladosByNit1(Integer nit, Integer idHeredado);
+
     // En MFIdentificacionVigiladoRepository
     @Modifying
     @Query("DELETE FROM MFIdentificacionVigilado t WHERE t.nit = :nit AND t.idHeredado = :idHeredado")
@@ -31,5 +37,6 @@ public interface MFIdentificacionVigiladoRepository extends JpaRepository<MFIden
     @Transactional
     @Query("UPDATE MFIdentificacionVigilado e SET e.estado = false WHERE e.idHeredado = :idHeredado")
     void updateEstadoByIdHeredado(@Param("idHeredado") Integer idHeredado);
+
 
 }
