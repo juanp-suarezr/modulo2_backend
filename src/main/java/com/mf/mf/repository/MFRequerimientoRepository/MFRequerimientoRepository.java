@@ -84,7 +84,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "LEFT JOIN MFHashHeredado h ON " +
             "   ((h.tipoProgramacion = 231 AND h.idProgramacion IN (SELECT del.idProgramacion FROM MFHashDelegatura del WHERE del.idRequerimiento = r.idRequerimiento)) OR " +
             "    (h.tipoProgramacion = 233 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
-            "    (h.tipoProgramacion = 232 AND h.idProgramacion = r.idRequerimiento)) " +
+            "    (h.tipoProgramacion NOT IN (231, 233) AND h.idProgramacion = r.idRequerimiento)) " +
             "LEFT JOIN r.tipoRequerimientoDescripcion f " +
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN r.periodoEntregaDescripcion p " +
@@ -125,7 +125,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "JOIN MFHashHeredado h ON " +
             "   ((h.tipoProgramacion = 231 AND h.idProgramacion IN (SELECT del.idProgramacion FROM MFHashDelegatura del WHERE del.idRequerimiento = r.idRequerimiento)) OR " +
             "    (h.tipoProgramacion = 233 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
-            "    (h.tipoProgramacion = 232 AND h.idProgramacion = r.idRequerimiento)) " +
+            "    (h.tipoProgramacion NOT IN (231, 233) AND h.idProgramacion = r.idRequerimiento)) " +
             "LEFT JOIN MFAnexos a ON h.idHeredado = a.idHeredado " + // Se cambió a LEFT JOIN
             "LEFT JOIN MFSolicitudAnulacion s ON h.idHeredado = s.idHeredado " +
             "JOIN r.tipoRequerimientoDescripcion f " +
@@ -171,7 +171,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "LEFT JOIN MFHashHeredado h ON " +
             "   ((h.tipoProgramacion = 231 AND h.idProgramacion IN (SELECT del.idProgramacion FROM MFHashDelegatura del WHERE del.idRequerimiento = r.idRequerimiento)) OR " +
             "    (h.tipoProgramacion = 233 AND h.idProgramacion IN (SELECT d.idProgramacion FROM MFHashDigitoNIT d WHERE d.idRequerimiento = r.idRequerimiento)) OR " +
-            "    (h.tipoProgramacion = 232 AND h.idProgramacion = r.idRequerimiento)) " +
+            "    (h.tipoProgramacion NOT IN (231, 233) AND h.idProgramacion = r.idRequerimiento)) " +
             "LEFT JOIN MFAnexos a ON h.idHeredado = a.idHeredado " +
             "LEFT JOIN MFSolicitudAnulacion s ON h.idHeredado = s.idHeredado " +
             " JOIN r.tipoRequerimientoDescripcion f " +
