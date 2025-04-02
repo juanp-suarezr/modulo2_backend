@@ -2,10 +2,7 @@ package com.mf.mf.controller.MFTablasExcelController;
 
 import com.mf.mf.projection.MFExcelProjection.*;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMUVTipoVigiladoProjection;
-import com.mf.mf.repository.MFExcelRepository.MFEstadoResultadoIntegralORIRepository;
-import com.mf.mf.repository.MFExcelRepository.MFEstadoResultadoRepository;
-import com.mf.mf.repository.MFExcelRepository.MFEstadoSituacionFinancieraRepository;
-import com.mf.mf.repository.MFExcelRepository.MFIdentificacionVigiladoRepository;
+import com.mf.mf.repository.MFExcelRepository.*;
 import com.mf.mf.services.MFRequerimientoServices.MUVEmpresasServices;
 import com.mf.mf.services.MFRequerimientoServices.MUVTipoVigiladoServices;
 import com.mf.mf.services.MFTablasExcelService.MFTablasExcelServices;
@@ -33,6 +30,12 @@ public class MFTablasExcelController {
     private MFEstadoResultadoRepository mfEstadoResultadoRepository;
     @Autowired
     private MFEstadoResultadoIntegralORIRepository mfEstadoResultadoIntegralORIRepository;
+    @Autowired
+    private MFEstadoFlujoIndirectoRepository mfEstadoFlujoIndirectoRepository;
+    @Autowired
+    private MFEstadoFlujoDirectoRepository mfEstadoFlujoDirectoRepository;
+    @Autowired
+    private MFDictamenRevisorFiscalRepository mfDictamenRevisorFiscalRepository;
 
     //Obtener TIPO VIGILADOS
     @GetMapping("/indentificacion-vigilado")
@@ -340,6 +343,59 @@ public class MFTablasExcelController {
         }
         return mfTablasExcelServices.obtenerEFEIndirectoByNIT(nit, idHeredado);
     }
+
+    //Obtener historial -- rol misional -- EFECTIVO INDIRECTO
+    @GetMapping("/comparativo-EFEIndirecto")
+    public Map<String, Object> compararEFEIndirecto(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+
+        // Obtener los registros correspondientes al NIT e ID heredado
+        // Intentar obtener los registros
+
+        List<GetMFEstadoFlujoIndirectoProjection> registros = mfEstadoFlujoIndirectoRepository.findMFEFEIndirectoByNit1(nit, idHeredado);
+
+
+        if (registros == null || registros.size() < 2) {
+            throw new RuntimeException("Error: No se encontraron suficientes registros para comparar.");
+        }
+
+        // Filtrar los registros por estado
+        GetMFEstadoFlujoIndirectoProjection registroAntiguo = registros.stream()
+                .filter(r -> !r.getEstado()) // Estado false
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Error: No se encontró un registro antiguo (estado = false)."));
+
+        GetMFEstadoFlujoIndirectoProjection registroActualizado = registros.stream()
+                .filter(r -> r.getEstado()) // Estado true
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Error: No se encontró un registro actualizado (estado = true)."));
+
+        // Comparar los registros automáticamente usando reflexión
+        Map<String, Object> cambios = new HashMap<>();
+        try {
+            cambios.put("annio", registroActualizado.getAnnio());
+            for (var method : GetMFEstadoFlujoIndirectoProjection.class.getDeclaredMethods()) {
+                if (method.getName().startsWith("get")) { // Solo métodos "get"
+                    String fieldName = Character.toLowerCase(method.getName().charAt(3)) + method.getName().substring(4); // Obtener el nombre del campo
+                    Object valorAntiguo = method.invoke(registroAntiguo);
+                    Object valorActualizado = method.invoke(registroActualizado);
+
+                    if (valorAntiguo != null && !valorAntiguo.equals(valorActualizado)) {
+                        cambios.put(fieldName, Map.of("antiguo", valorAntiguo, "actualizado", valorActualizado));
+                    } else if (valorAntiguo == null && valorActualizado != null) {
+                        cambios.put(fieldName, Map.of("antiguo", null, "actualizado", valorActualizado));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al comparar los registros.", e);
+        }
+
+        return cambios; // Devuelve el mapa con los cambios al frontend
+    }
+
 
     //Obtener ESTADOS FLUJO EFECTIVO DIRECTO
     @GetMapping("/EFEDirecto")
