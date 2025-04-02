@@ -7,6 +7,8 @@ import com.mf.mf.model.MFDocumentos;
 import com.mf.mf.model.MFHashHeredado;
 import com.mf.mf.model.anulacion.MFAnexosAnulacion;
 import com.mf.mf.model.anulacion.MFSolicitudAnulacion;
+import com.mf.mf.projection.GetMFDocumentosProjection;
+import com.mf.mf.projection.MFExcelProjection.GetMFAnexosProjection;
 import com.mf.mf.repository.MFAnulacion.MFSolicitudAnulacionRepository;
 import com.mf.mf.repository.MFDocumentos.MFDocumentosRepository;
 import com.mf.mf.repository.MFHeredadosRepository.MFHeredadosRepository;
@@ -36,6 +38,7 @@ public class MFDocumentosController {
     private final MFSolicitudAnulacionRepository mfSolicitudAnulacionRepository;
     private final MFHeredadosRepository mfHeredadosRepository;
 
+    //guardar docs
     @PostMapping("/guardar")
     public ResponseEntity<?> guardarDocumento(@RequestBody MFDocumentos documento) {
 
@@ -57,6 +60,14 @@ public class MFDocumentosController {
     }
 
 
-
-
+    //get by nit
+    @GetMapping("/documentosCargados")
+    public ResponseEntity<List<GetMFDocumentosProjection>> findByNIT(@RequestParam Integer nit) {
+        try {
+            List<GetMFDocumentosProjection> docs = mfDocumentosRepository.findByNITProjection(nit);
+            return ResponseEntity.ok(docs);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

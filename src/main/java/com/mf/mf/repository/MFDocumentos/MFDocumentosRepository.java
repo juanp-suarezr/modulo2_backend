@@ -2,6 +2,7 @@ package com.mf.mf.repository.MFDocumentos;
 
 import com.mf.mf.model.MFDocumentos;
 import com.mf.mf.model.excel.MFAnexos;
+import com.mf.mf.projection.GetMFDocumentosProjection;
 import com.mf.mf.projection.MFExcelProjection.GetMFAnexosProjection;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,7 +21,14 @@ public interface MFDocumentosRepository extends JpaRepository<MFDocumentos, Long
             "FROM MFDocumentos d " +
             "WHERE d.idHeredado = :idHeredado " +
             "AND d.estado = true")
-    List<GetMFAnexosProjection> findByIdProjection(@Param("idHeredado") Integer idHeredado);
+    List<GetMFDocumentosProjection> findByIdProjection(@Param("idHeredado") Integer idHeredado);
+
+    //documentos By nit
+    @Query("SELECT d " +
+            "FROM MFDocumentos d " +
+            "WHERE d.nit = :nit " +
+            "AND d.estado = true")
+    List<GetMFDocumentosProjection> findByNITProjection(@Param("nit") Integer nit);
 
     //Anexos By idHeredados Model anexos list
     @Query("SELECT a " +
