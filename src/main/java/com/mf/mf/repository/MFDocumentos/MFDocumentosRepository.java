@@ -12,9 +12,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MFDocumentosRepository extends JpaRepository<MFDocumentos, Long> {
+
+    @Query("SELECT d FROM MFDocumentos d WHERE d.idHeredado = :idHeredado "+ "AND d.estado = true")
+    Optional<MFDocumentos> findByIdHeredado(@Param("idHeredado") Integer idHeredado);
 
     //documentos By idHeredados
     @Query("SELECT d " +

@@ -48,13 +48,14 @@ public class MFDocumentosController {
                 documento.getIdHeredado(), "Aprobado");
 
         if (hasApprovedAnulation) {
+            System.out.println(documento.getIdHeredado());
             // Si existe una solicitud de anulación aprobada, actualizar el estado del registro anterior
             mfDocumentosRepository.changeEstado(documento.getIdHeredado());
 
         }
 
         MFDocumentos docGuardado = documentosService.guardarDocumento(documento);
-        mfHeredadosRepository.actualizarCargoExcel(documento.getIdHeredado());
+
 
         return ResponseEntity.ok(docGuardado);
     }

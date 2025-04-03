@@ -12,7 +12,7 @@ public class MFDocumentos {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idDocumentos;
     private Integer idHeredado;
-    private String nit;
+    private Integer nit;
     private String link;
     private boolean estado;
 

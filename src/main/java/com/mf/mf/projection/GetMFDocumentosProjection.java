@@ -12,7 +12,7 @@ public interface GetMFDocumentosProjection {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long getIdDocumentos();
     Integer getIdHeredado();
-    String getNit();
+    Integer getNit();
     String getLink();
     Boolean getEstado();
 
