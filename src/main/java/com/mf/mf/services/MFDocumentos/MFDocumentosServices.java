@@ -29,7 +29,8 @@ public class MFDocumentosServices {
         if (existente.isPresent()) {
             return existente.get();
         }
-
+        // Si no existe, lo guarda como un nuevo registro con estado true
+        documento.setEstado(true); // ✅ Se establece el estado en true
         // Si no existe, lo guarda como un nuevo registro
         MFDocumentos nuevoDocumento = documentosRepository.save(documento);
 
