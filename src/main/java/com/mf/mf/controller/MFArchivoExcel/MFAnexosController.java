@@ -162,7 +162,21 @@ public class MFAnexosController {
             anexo.setComposicionAccionaria(requestBody.getComposicionAccionaria());
             anexo.setActaAsambleaAprobacionEF(requestBody.getActaAsambleaAprobacionEF());
             anexo.setFechaEntrega(LocalDate.now());
+            anexo.setRelacionLitigios(requestBody.getRelacionLitigios());
+            anexo.setActoAdministrativo(requestBody.getActoAdministrativo());
+            anexo.setRelacionCuentasXPagarPasivo(requestBody.getRelacionCuentasXPagarPasivo());
+            anexo.setRelacionTipoEquipo(requestBody.getRelacionTipoEquipo());
+            anexo.setPlanInversiones(requestBody.getPlanInversiones());
+            anexo.setCronogramaCumplimientoInversiones(requestBody.getCronogramaCumplimientoInversiones());
+            anexo.setCronogramaMantenimientoEquipos(requestBody.getCronogramaMantenimientoEquipos());
+            anexo.setMatrizRiesgos(requestBody.getMatrizRiesgos());
+            anexo.setPlanMejoramiento(requestBody.getPlanMejoramiento());
+            anexo.setContratos(requestBody.getContratos());
+            anexo.setAcuerdoMunicipal(requestBody.getAcuerdoMunicipal());
+            anexo.setResolucionPermisosOperecacion(requestBody.getResolucionPermisosOperecacion());
+            anexo.setOtros(requestBody.getOtros());
             anexo.setEstado(true);
+
 
 
             mfHeredadosRepository.actualizarEstadoEntrega(requestBody.getIdHeredado(), 480);
