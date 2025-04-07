@@ -26,4 +26,18 @@ public class MFAnexosDTO {
     private String actaAsambleaAprobacionEF;
     private LocalDate fechaEntrega;
     private boolean estado;
+    private String relacionLitigios;
+    private String actoAdministrativo;
+    private String relacionCuentasXPagarPasivo;
+    private String relacionTipoEquipo;
+    private String planInversiones;
+    private String cronogramaCumplimientoInversiones;
+    private String cronogramaMantenimientoEquipos;
+    private String matrizRiesgos;
+    private String planMejoramiento;
+    private String contratos;
+    private String acuerdoMunicipal;
+    private String resolucionPermisosOperecacion;
+    private String otros;
+
 }

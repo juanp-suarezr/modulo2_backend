@@ -91,7 +91,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "LEFT JOIN MFAnexos a ON h.idHeredado = a.idHeredado " +
             "LEFT JOIN MFSolicitudAnulacion s ON h.idHeredado = s.idHeredado " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
-            "WHERE (h.estadoEntrega NOT IN (284, 460,  461, 462) " +
+            "WHERE (h.estadoEntrega NOT IN (284, 460,  461, 480) " +
             "       OR (h.estadoEntrega = 460 AND s IS NOT NULL AND s.estadoSolicitud = 'Aprobado')) " +
             "AND h.nit = :nitUsuario")
     List<GetMFRequerimientosEntregasProjection> findEntregasPendientesByNIT(@Param("nitUsuario") Integer nitUsuario);
@@ -131,11 +131,9 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             "JOIN r.tipoRequerimientoDescripcion f " +
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
-            "WHERE COALESCE(h.estadoEntrega, 0) IN (284, 460, 461, 462)  " +
-            "AND ( " +
-            "    (h.estadoEntrega = 460 AND s.estadoSolicitud IS NULL) OR " +
-            "    (h.estadoEntrega = 462 OR h.estadoEntrega = 461) " +
-            ") " +
+            "WHERE COALESCE(h.estadoEntrega, 0) IN (284, 461, 480)  " +
+            "OR ( " +
+            "    (h.estadoEntrega = 460 AND s.estadoSolicitud IS NULL) ) " +
             "AND h.nit = :nitUsuario " +
             "GROUP BY r.idRequerimiento, r.nombreRequerimiento, r.fechaInicio, r.fechaFin, " +
             "r.actoAdministrativo, r.annioVigencia, r.tipoProgramacion, r.periodoEntrega, r.fechaPublicacion, " +
@@ -177,11 +175,9 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
             " JOIN r.tipoRequerimientoDescripcion f " +
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "LEFT JOIN MFHashDigitoNIT d ON r.idRequerimiento = d.idRequerimiento " +
-            "WHERE COALESCE(h.estadoEntrega, 0) IN (284, 460, 461, 462)  " +
-            "AND ( " +
-            "    (h.estadoEntrega = 460 AND s.estadoSolicitud IS NULL) OR " +
-            "    (h.estadoEntrega = 462 OR h.estadoEntrega = 461) " +
-            ") " +
+            "WHERE COALESCE(h.estadoEntrega, 0) IN (284, 461, 480)  " +
+            "OR ( " +
+            "    (h.estadoEntrega = 460 AND s.estadoSolicitud IS NULL) ) " +
             "GROUP BY r.idRequerimiento, r.nombreRequerimiento, r.fechaInicio, r.fechaFin, " +
             "r.actoAdministrativo, r.annioVigencia, r.tipoProgramacion, r.periodoEntrega, r.fechaPublicacion, " +
             "h.idProgramacion, h.individual, h.fechaEntrega, h.idHeredado, h.cargoExcel, h.estadoEntrega, h.nit, " +

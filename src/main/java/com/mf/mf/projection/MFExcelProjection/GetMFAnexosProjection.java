@@ -25,6 +25,20 @@ public interface GetMFAnexosProjection {
     LocalDate getFechaEntrega();
 
     Boolean getEstado();
+    String getRelacionLitigios();
+    String getActoAdministrativo();
+    String getRelacionCuentasXPagarPasivo();
+    String getRelacionTipoEquipo();
+    String getPlanInversiones();
+    String getCronogramaCumplimientoInversiones();
+    String getCronogramaMantenimientoEquipos();
+    String getMatrizRiesgos();
+    String getPlanMejoramiento();
+    String getContratos();
+    String getAcuerdoMunicipal();
+    String getResolucionPermisosOperecacion();
+    String getOtros();
+
 
 }
 
