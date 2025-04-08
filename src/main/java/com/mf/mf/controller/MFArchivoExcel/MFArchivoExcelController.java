@@ -101,16 +101,21 @@ public class MFArchivoExcelController {
                 excelService.disablePreviousExcelRecords(Integer.valueOf(idHeredado));
             }
 
+            System.out.println(exists);
+
 
             String result;
             if (exists) {
                 if (hasApprovedAnulation) {
                     result = excelService.createIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);
                 } else {
+                    System.out.println("ENTRO ACTUALIZAR");
+
                     // Actualizar registro existente
                     result = excelService.updateIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);
                 }
             } else {
+                System.out.println("ENTRO CREAR");
                 // Crear nuevo registro
                 result = excelService.createIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);
                 mfHashHeredadoRepository.actualizarCargoExcel(Integer.valueOf(idHeredado));

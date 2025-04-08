@@ -77,7 +77,8 @@ public class MFArchivoExcelServices {
 
     // Método para verificar si un registro ya existe
     public boolean existsIdentificacionVigilado(Integer nit, Integer idHeredado) {
-        return identificacionVigiladoRepository.findMFIdentificacionVigiladosByNit(nit, idHeredado) != null;
+        System.out.println(identificacionVigiladoRepository.findMFIdentificacionVigiladosByNit(nit, idHeredado));
+        return !identificacionVigiladoRepository.findMFIdentificacionVigiladosByNit(nit, idHeredado).isEmpty();
     }
 
     // Método para crear un nuevo registro
@@ -377,6 +378,8 @@ public class MFArchivoExcelServices {
                     return getDateCellValue(sheet, cellRef, formulaEvaluator);
                 } else if (fieldType == Boolean.class || fieldType == boolean.class) {
                     return getBooleanCellValue(sheet, cellRef, formulaEvaluator);
+                } else if(fieldType == long.class || fieldType == Long.class) {
+                    return getNumberLongCellValue(sheet, cellRef, formulaEvaluator);
                 }
             }
         }
@@ -482,6 +485,28 @@ public class MFArchivoExcelServices {
                 }
             } else if (cell != null && cell.getCellType() == CellType.NUMERIC) {
                 return cell.getLocalDateTimeCellValue().toLocalDate();
+            }
+        }
+        return null;
+    }
+
+    private Long getNumberLongCellValue(Sheet sheet, String cellRef, FormulaEvaluator formulaEvaluator) {
+        CellReference ref = new CellReference(cellRef);
+        Row row = sheet.getRow(ref.getRow());
+        if (row != null) {
+            Cell cell = row.getCell(ref.getCol());
+
+            if (cell != null) {
+                if (cell.getCellType() == CellType.FORMULA) {
+                    CellValue evaluatedValue = formulaEvaluator.evaluate(cell);
+                    if (evaluatedValue != null && evaluatedValue.getCellType() == CellType.NUMERIC) {
+                        double number = evaluatedValue.getNumberValue();
+                        System.out.println(number);
+                        return (long) number; // Usa long para soportar valores grandes
+                    }
+                } else if (cell.getCellType() == CellType.NUMERIC) {
+                    return (long) cell.getNumericCellValue();
+                }
             }
         }
         return null;
