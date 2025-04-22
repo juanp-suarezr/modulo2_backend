@@ -38,8 +38,11 @@ public interface MFSolicitudAnulacionRepository extends JpaRepository<MFSolicitu
 
             "FROM MFSolicitudAnulacion s " +
             "LEFT JOIN MFHashHeredado h ON h.idHeredado = s.idHeredado " +
-            "LEFT JOIN MFRequerimiento r ON h.idProgramacion = r.idRequerimiento "+
-            " JOIN r.tipoRequerimientoDescripcion f " +
+            "LEFT JOIN MFRequerimiento r ON " +
+            "   ((h.tipoProgramacion = 231 AND r.idRequerimiento IN (SELECT del.idRequerimiento FROM MFHashDelegatura del WHERE del.idProgramacion = h.idProgramacion)) OR " +
+            "    (h.tipoProgramacion = 233 AND r.idRequerimiento IN (SELECT d.idRequerimiento FROM MFHashDigitoNIT d WHERE d.idProgramacion = h.idProgramacion)) OR " +
+            "    (h.tipoProgramacion NOT IN (231, 233) AND h.idProgramacion = r.idRequerimiento)) " +
+            "LEFT JOIN r.tipoRequerimientoDescripcion f " +
             "WHERE COALESCE(h.estadoEntrega, 0) IN (461) ")
     List<GetMFSolicitudAnulacionProjection> findMFSolicitudAnulacion();
 
@@ -68,11 +71,16 @@ public interface MFSolicitudAnulacionRepository extends JpaRepository<MFSolicitu
             "r.periodoEntrega as periodoEntrega, " +
             "r.annioVigencia as annioVigencia, " +
             "r.fechaPublicacion as fechaPublicacion, " +
-            "r.actoAdministrativo as actoAdministrativo " +
+            "r.actoAdministrativo as actoAdministrativo, " +
+            "doc.link as link " +
 
             "FROM MFSolicitudAnulacion s " +
             "LEFT JOIN MFHashHeredado h ON h.idHeredado = s.idHeredado " +
-            "LEFT JOIN MFRequerimiento r ON h.idProgramacion = r.idRequerimiento "+
+            "LEFT JOIN MFDocumentos doc ON h.idHeredado = doc.idHeredado " +
+            "LEFT JOIN MFRequerimiento r ON " +
+            "   ((h.tipoProgramacion = 231 AND r.idRequerimiento IN (SELECT del.idRequerimiento FROM MFHashDelegatura del WHERE del.idProgramacion = h.idProgramacion)) OR " +
+            "    (h.tipoProgramacion = 233 AND r.idRequerimiento IN (SELECT d.idRequerimiento FROM MFHashDigitoNIT d WHERE d.idProgramacion = h.idProgramacion)) OR " +
+            "    (h.tipoProgramacion NOT IN (231, 233) AND h.idProgramacion = r.idRequerimiento)) " +
             " JOIN r.tipoRequerimientoDescripcion f " +
             "LEFT JOIN r.estadoRequerimientoDescripcion e " +
             "WHERE s.id = :idAnulacion ")
