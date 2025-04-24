@@ -75,52 +75,14 @@ public class MFDocumentosController {
 
     //Obtener historial -- rol misional --
     @GetMapping("/comparativo-documentos")
-    public Map<String, Object> compararDocumentos(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
-        if (nit == null) {
-            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
-        }
-
-        // Obtener los registros correspondientes al NIT e ID heredado
-        // Intentar obtener los registros
-
+    public List<GetMFDocumentosProjection> compararDocumentos(@RequestParam Integer idHeredado) {
         List<GetMFDocumentosProjection> registros = mfDocumentosRepository.findByHeredado1(idHeredado);
-
 
         if (registros == null || registros.size() < 2) {
             throw new RuntimeException("Error: No se encontraron suficientes registros para comparar.");
         }
 
-        // Filtrar los registros por estado
-        GetMFDocumentosProjection registroAntiguo = registros.stream()
-                .filter(r -> !r.getEstado()) // Estado false
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Error: No se encontró un registro antiguo (estado = false)."));
-
-        GetMFDocumentosProjection registroActualizado = registros.stream()
-                .filter(r -> r.getEstado()) // Estado true
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Error: No se encontró un registro actualizado (estado = true)."));
-
-        // Comparar los registros automáticamente usando reflexión
-        Map<String, Object> cambios = new HashMap<>();
-        try {
-            for (var method : GetMFIdentificacionVigiladoProjection.class.getDeclaredMethods()) {
-                if (method.getName().startsWith("get")) { // Solo métodos "get"
-                    String fieldName = Character.toLowerCase(method.getName().charAt(3)) + method.getName().substring(4); // Obtener el nombre del campo
-                    Object valorAntiguo = method.invoke(registroAntiguo);
-                    Object valorActualizado = method.invoke(registroActualizado);
-
-                    if (valorAntiguo != null && !valorAntiguo.equals(valorActualizado)) {
-                        cambios.put(fieldName, Map.of("antiguo", valorAntiguo, "actualizado", valorActualizado));
-                    } else if (valorAntiguo == null && valorActualizado != null) {
-                        cambios.put(fieldName, Map.of("antiguo", null, "actualizado", valorActualizado));
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Error al comparar los registros.", e);
-        }
-
-        return cambios; // Devuelve el mapa con los cambios al frontend
+        return registros; // ✅ retorna una lista válida
     }
+
 }
