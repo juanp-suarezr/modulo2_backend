@@ -41,6 +41,13 @@ public interface MFDocumentosRepository extends JpaRepository<MFDocumentos, Long
             "AND a.estado = true")
     List<MFDocumentos> findById(@Param("idHeredado") Integer idHeredado);
 
+    //documentos By idHeredados historial
+    @Query("SELECT d " +
+            "FROM MFDocumentos d " +
+            "WHERE d.idHeredado = :idHeredado")
+    List<GetMFDocumentosProjection> findByHeredado1(@Param("idHeredado") Integer idHeredado);
+
+
     //CAMBIAR A FALSE
     @Modifying
     @Transactional

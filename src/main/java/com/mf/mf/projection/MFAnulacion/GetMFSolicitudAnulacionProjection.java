@@ -40,4 +40,7 @@ public interface GetMFSolicitudAnulacionProjection {
     boolean getIndividual();
     LocalDate getFechaEntrega();
 
+    //DOCUMENTOS
+    String getLink();
+
 }
