@@ -84,8 +84,10 @@ public class MFDocumentosController {
 
         // Guardar todos los documentos
         for (MFDocumentos documento : request.getDocumentos()) {
-            documentosService.guardarDocumento(documento);
+            documentosService.guardarDocumento(documento, true);
         }
+
+
 
         return ResponseEntity.ok("Documentos guardados exitosamente.");
     }
