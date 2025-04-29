@@ -91,6 +91,31 @@ public class MFDocumentosController {
 
         return ResponseEntity.ok("Documentos guardados exitosamente.");
     }
+
+    //Actualizar documentos reportes intermedios
+    @PostMapping("/actualizar-multiples")
+    public ResponseEntity<String> actualizarMultiplesDocumentos(@RequestBody DocumentoRequest request) {
+
+        if (request.getPaths() == null || request.getPaths().isEmpty()) {
+            return ResponseEntity.badRequest().body("No se recibieron rutas para guardar.");
+        }
+
+        for (String path : request.getPaths()) {
+            MFDocumentos documento = new MFDocumentos();
+            documento.setLink(path); // O el campo real si no se llama 'link'
+            documento.setNit(request.getNit()); // Solo si MFDocumentos tiene este campo
+            documento.setIdHeredado(request.getIdHeredado());
+            documento.setEstado(true);
+
+            documentosService.guardarDocumento(documento, true);
+        }
+
+        mfDocumentosRepository.deleteByIdHeredado(request.getIdHeredado());
+
+        return ResponseEntity.ok("Documentos guardados exitosamente.");
+    }
+
+
     //get by nit
     @GetMapping("/documentosCargados")
     public ResponseEntity<List<GetMFDocumentosProjection>> findByNIT(@RequestParam Integer nit) {

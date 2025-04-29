@@ -26,6 +26,7 @@ public class MFDocumentosServices {
         return guardarDocumento(documento, false); // valor por defecto
     }
 
+    //GUARDAR 1 SOLO ARCHIVO
     @Transactional(propagation = Propagation.REQUIRED)
     public MFDocumentos guardarDocumento(MFDocumentos documento, boolean isFinalStep) {
         Optional<MFDocumentos> existente = documentosRepository.findByIdHeredado(documento.getIdHeredado());
@@ -49,5 +50,28 @@ public class MFDocumentosServices {
 
         return nuevoDocumento;
     }
+
+    //GUARDAR MULTI DOCS
+    @Transactional(propagation = Propagation.REQUIRED)
+    public MFDocumentos guardarMultiDocumento(MFDocumentos documento, boolean isFinalStep) {
+        Optional<MFDocumentos> existente = documentosRepository.findByIdHeredado(documento.getIdHeredado());
+        Optional<MFHashHeredado> heredadoOpt = mfHeredadosRepository.findByIdHeredado(documento.getIdHeredado());
+
+        MFHashHeredado heredado = heredadoOpt.get();
+
+
+        documento.setEstado(true);
+        MFDocumentos nuevoDocumento = documentosRepository.save(documento);
+
+        mfHeredadosRepository.actualizarCargoExcel(documento.getIdHeredado());
+
+        if (isFinalStep && !existente.isPresent()) {
+            int estado = (heredado.getEstadoEntrega() == 286) ? 460 : 289;
+            mfHeredadosRepository.actualizarEstadoEntrega(documento.getIdHeredado(), estado);
+        }
+
+        return nuevoDocumento;
+    }
+
 
 }

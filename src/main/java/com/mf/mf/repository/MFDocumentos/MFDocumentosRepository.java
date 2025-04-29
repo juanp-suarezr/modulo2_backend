@@ -55,5 +55,11 @@ public interface MFDocumentosRepository extends JpaRepository<MFDocumentos, Long
     void changeEstado(@Param("idHeredado") Integer idHeredado);
 
 
+    //ELIMINAR POR IDHeredado
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM MFDocumentos d WHERE d.idHeredado = :idHeredado")
+    void deleteByIdHeredado(@Param("idHeredado") Integer idHeredado);
+
 }
 
