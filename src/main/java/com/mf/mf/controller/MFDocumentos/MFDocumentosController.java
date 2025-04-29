@@ -1,31 +1,20 @@
 package com.mf.mf.controller.MFDocumentos;
 
-import com.mf.mf.dto.anulacion.MFAnexoAnulacionDTO;
-import com.mf.mf.dto.anulacion.MFGuardarAnexoSolicitudDTO;
-import com.mf.mf.dto.anulacion.MFSolicitudAnulacionDTO;
 import com.mf.mf.model.MFDocumentos;
-import com.mf.mf.model.MFHashHeredado;
-import com.mf.mf.model.anulacion.MFAnexosAnulacion;
-import com.mf.mf.model.anulacion.MFSolicitudAnulacion;
 import com.mf.mf.projection.GetMFDocumentosProjection;
-import com.mf.mf.projection.MFExcelProjection.GetMFAnexosProjection;
-import com.mf.mf.projection.MFExcelProjection.GetMFIdentificacionVigiladoProjection;
 import com.mf.mf.repository.MFAnulacion.MFSolicitudAnulacionRepository;
 import com.mf.mf.repository.MFDocumentos.MFDocumentosRepository;
 import com.mf.mf.repository.MFHeredadosRepository.MFHeredadosRepository;
 import com.mf.mf.services.MFDocumentos.MFDocumentosServices;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.transaction.Transactional;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/documentos")
@@ -41,15 +30,23 @@ public class MFDocumentosController {
 
     // Clase auxiliar para recibir la lista de documentos
     public static class DocumentoRequest {
-        private List<MFDocumentos> documentos;
+        // Getters y setters
+        @Setter
+        @Getter
+        private List<String> paths;
+        @Getter
+        private Integer nit;
+        @Setter
+        private Long idHeredado;
 
-        public List<MFDocumentos> getDocumentos() {
-            return documentos;
+        public void setNit(String nit) {
+            this.nit = Integer.valueOf(nit);
         }
 
-        public void setDocumentos(List<MFDocumentos> documentos) {
-            this.documentos = documentos;
+        public Integer getIdHeredado() {
+            return Math.toIntExact(idHeredado);
         }
+
     }
 
     //guardar docs
@@ -76,22 +73,24 @@ public class MFDocumentosController {
 
     //Guardar documentos reportes intermedios
     @PostMapping("/guardar-multiples")
-    public ResponseEntity<?> guardarMultiplesDocumentos(@RequestBody DocumentoRequest request) {
+    public ResponseEntity<String> guardarMultiplesDocumentos(@RequestBody DocumentoRequest request) {
 
-        if (request.getDocumentos() == null || request.getDocumentos().isEmpty()) {
-            return ResponseEntity.badRequest().body("No se recibieron documentos para guardar.");
+        if (request.getPaths() == null || request.getPaths().isEmpty()) {
+            return ResponseEntity.badRequest().body("No se recibieron rutas para guardar.");
         }
 
-        // Guardar todos los documentos
-        for (MFDocumentos documento : request.getDocumentos()) {
+        for (String path : request.getPaths()) {
+            MFDocumentos documento = new MFDocumentos();
+            documento.setLink(path); // O el campo real si no se llama 'link'
+            documento.setNit(request.getNit()); // Solo si MFDocumentos tiene este campo
+            documento.setIdHeredado(request.getIdHeredado());
+            documento.setEstado(true);
+
             documentosService.guardarDocumento(documento, true);
         }
 
-
-
         return ResponseEntity.ok("Documentos guardados exitosamente.");
     }
-
     //get by nit
     @GetMapping("/documentosCargados")
     public ResponseEntity<List<GetMFDocumentosProjection>> findByNIT(@RequestParam Integer nit) {
