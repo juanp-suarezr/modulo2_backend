@@ -39,6 +39,19 @@ public class MFDocumentosController {
     private final MFSolicitudAnulacionRepository mfSolicitudAnulacionRepository;
     private final MFHeredadosRepository mfHeredadosRepository;
 
+    // Clase auxiliar para recibir la lista de documentos
+    public static class DocumentoRequest {
+        private List<MFDocumentos> documentos;
+
+        public List<MFDocumentos> getDocumentos() {
+            return documentos;
+        }
+
+        public void setDocumentos(List<MFDocumentos> documentos) {
+            this.documentos = documentos;
+        }
+    }
+
     //guardar docs
     @PostMapping("/guardar")
     public ResponseEntity<?> guardarDocumento(@RequestBody MFDocumentos documento) {
@@ -61,6 +74,21 @@ public class MFDocumentosController {
         return ResponseEntity.ok(docGuardado);
     }
 
+    //Guardar documentos reportes intermedios
+    @PostMapping("/guardar-multiples")
+    public ResponseEntity<?> guardarMultiplesDocumentos(@RequestBody DocumentoRequest request) {
+
+        if (request.getDocumentos() == null || request.getDocumentos().isEmpty()) {
+            return ResponseEntity.badRequest().body("No se recibieron documentos para guardar.");
+        }
+
+        // Guardar todos los documentos
+        for (MFDocumentos documento : request.getDocumentos()) {
+            documentosService.guardarDocumento(documento);
+        }
+
+        return ResponseEntity.ok("Documentos guardados exitosamente.");
+    }
 
     //get by nit
     @GetMapping("/documentosCargados")
