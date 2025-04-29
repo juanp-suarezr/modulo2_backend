@@ -127,6 +127,18 @@ public class MFDocumentosController {
         }
     }
 
+    //get by heredado
+    @GetMapping("/documentosCargados")
+    public ResponseEntity<List<GetMFDocumentosProjection>> findByHeredado(@RequestParam Integer idHeredado) {
+        try {
+            List<GetMFDocumentosProjection> docs = mfDocumentosRepository.findByIdProjection(idHeredado);
+            return ResponseEntity.ok(docs);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
     //Obtener historial -- rol misional --
     @GetMapping("/comparativo-documentos")
     public List<GetMFDocumentosProjection> compararDocumentos(@RequestParam Integer idHeredado) {
