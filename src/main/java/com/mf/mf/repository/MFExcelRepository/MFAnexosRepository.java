@@ -21,6 +21,13 @@ public interface MFAnexosRepository extends JpaRepository<MFAnexos, Long> {
             "WHERE a.idHeredado = :idHeredado " +
             "AND a.estado = true")
     List<GetMFAnexosProjection> findAnexosByHeredado(@Param("idHeredado") Integer idHeredado);
+
+    //Anexos By idHeredados
+    @Query("SELECT a " +
+            "FROM MFAnexos a " +
+            "WHERE a.idHeredado = :idHeredado")
+    List<GetMFAnexosProjection> findAnexosByHeredadoComparativo(@Param("idHeredado") Integer idHeredado);
+
     //Anexos By idHeredados Model anexos list
     @Query("SELECT a " +
             "FROM MFAnexos a " +

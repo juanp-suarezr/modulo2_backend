@@ -40,6 +40,17 @@ public class MFAnexosController {
         }
     }
 
+    //Obtener historial -- rol misional --
+    @GetMapping("/byIDHeredadoComparativo")
+    public ResponseEntity<List<GetMFAnexosProjection>> findByidHeredadoComparativo(@RequestParam String idHeredado) {
+        try {
+            List<GetMFAnexosProjection> anexos = mfAnexosRepository.findAnexosByHeredadoComparativo(Integer.valueOf(idHeredado));
+            return ResponseEntity.ok(anexos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
     @PostMapping("/guardar")
     @Transactional
     public ResponseEntity<?> guardarAnexo(@RequestBody MFAnexosDTO requestBody) {
