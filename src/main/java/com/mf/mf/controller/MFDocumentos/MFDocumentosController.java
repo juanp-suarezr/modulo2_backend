@@ -86,7 +86,7 @@ public class MFDocumentosController {
             documento.setIdHeredado(request.getIdHeredado());
             documento.setEstado(true);
 
-            documentosService.guardarDocumento(documento, true);
+            documentosService.guardarMultiDocumento(documento, true);
         }
 
         return ResponseEntity.ok("Documentos guardados exitosamente.");
@@ -100,6 +100,8 @@ public class MFDocumentosController {
             return ResponseEntity.badRequest().body("No se recibieron rutas para guardar.");
         }
 
+        mfDocumentosRepository.deleteByIdHeredado(request.getIdHeredado());
+
         for (String path : request.getPaths()) {
             MFDocumentos documento = new MFDocumentos();
             documento.setLink(path); // O el campo real si no se llama 'link'
@@ -107,10 +109,10 @@ public class MFDocumentosController {
             documento.setIdHeredado(request.getIdHeredado());
             documento.setEstado(true);
 
-            documentosService.guardarDocumento(documento, true);
+            documentosService.guardarMultiDocumento(documento, true);
         }
 
-        mfDocumentosRepository.deleteByIdHeredado(request.getIdHeredado());
+
 
         return ResponseEntity.ok("Documentos guardados exitosamente.");
     }
@@ -128,7 +130,7 @@ public class MFDocumentosController {
     }
 
     //get by heredado
-    @GetMapping("/documentosCargados")
+    @GetMapping("/documentosCargados1")
     public ResponseEntity<List<GetMFDocumentosProjection>> findByHeredado(@RequestParam Integer idHeredado) {
         try {
             List<GetMFDocumentosProjection> docs = mfDocumentosRepository.findByIdProjection(idHeredado);
