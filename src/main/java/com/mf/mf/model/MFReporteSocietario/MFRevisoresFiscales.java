@@ -18,7 +18,7 @@ public class MFRevisoresFiscales {
     @JoinColumn(name = "idConstitucion", referencedColumnName = "idSocietario")
     private MFReporteSocietario constitucion;
 
-    private Integer tipo_identificacion;
+    private String tipo_identificacion;
     private String nro_identificacion;
     private String nombre;
     private Boolean principal;

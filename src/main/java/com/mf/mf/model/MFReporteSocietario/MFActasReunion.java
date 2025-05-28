@@ -11,6 +11,7 @@ import java.time.LocalDate;
 public class MFActasReunion {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idActas;
 
     @ManyToOne(fetch = FetchType.LAZY)

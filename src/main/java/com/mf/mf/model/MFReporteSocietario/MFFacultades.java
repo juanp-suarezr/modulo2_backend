@@ -8,6 +8,7 @@ import lombok.Data;
 @Table(schema = "financiero", name = "\"MFFacultades\"")
 public class MFFacultades {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idFacultades;
 
     @ManyToOne(fetch = FetchType.LAZY)

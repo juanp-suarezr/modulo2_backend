@@ -18,7 +18,7 @@ public class MFReporteSocietario {
 
     @Column(nullable = false)
     private String tipoDocumentoCreacion;
-    private Integer ciudadNotariaId;
+    private String ciudadNotariaId;
     private String notaria;
     private LocalDate fechaDocumento;
     @Column(length = 10, nullable = false)

@@ -12,7 +12,7 @@ public class MFDatosAdicionales {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idAdicionales;
+    private long idDatosAdicionales;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idConstitucion", referencedColumnName = "idSocietario")
     private MFReporteSocietario constitucion;

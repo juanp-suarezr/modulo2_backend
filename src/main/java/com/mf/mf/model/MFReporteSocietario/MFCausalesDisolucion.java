@@ -17,7 +17,6 @@ public class MFCausalesDisolucion {
 
     @Column(length = 200, nullable = false)
     private String descripcion;
-    private Boolean estado = true;
     @Column(nullable = false)
     private Integer idHeredado;
     @Column(nullable = false)

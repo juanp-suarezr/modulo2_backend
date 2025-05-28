@@ -8,13 +8,14 @@ import lombok.Data;
 @Table(schema = "financiero", name = "\"MFconvocantesReunion\"")
 public class MFConvocantesReunion {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idConvocante;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idReunion", referencedColumnName = "idReuniones")
     private MFReuniones reunion;
 
-    private Integer tipoDocumento;
+    private String tipoDocumento;
 
     @Column(length = 10)
     private String nroIdentificacion;

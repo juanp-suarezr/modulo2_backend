@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Table(schema = "financiero", name = "\"MFDatosCapital\"")
 public class MFDatosCapital {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idDatosCapital;
 
     @ManyToOne(fetch = FetchType.LAZY)
