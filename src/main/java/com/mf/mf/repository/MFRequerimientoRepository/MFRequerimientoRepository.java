@@ -30,7 +30,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
 
     List<GetMFRequerimientosTableProjection> findAllProjections();
 
-    @Query("SELECT a.idRequerimiento as idRequerimiento, " +
+    @Query("SELECT DISTINCT a.idRequerimiento as idRequerimiento, " +
             "a.nombreRequerimiento as nombreRequerimiento, " +
             "a.fechaInicio as fechaInicio, " +
             "a.fechaFin as fechaFin, " +
@@ -58,7 +58,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
     List<GetMFRequerimientoProjection> findProjectionsByIdRequerimiento(Long idRequerimiento);
 
     //ENTREGAS PENDIENTES
-    @Query("SELECT r.idRequerimiento as idRequerimiento, " +
+    @Query("SELECT DISTINCT r.idRequerimiento as idRequerimiento, " +
             "r.nombreRequerimiento as nombreRequerimiento, " +
             "r.fechaInicio as fechaInicio, " +
             "r.fechaFin as fechaFin, " +
@@ -143,7 +143,7 @@ public interface MFRequerimientoRepository extends JpaRepository<MFRequerimiento
 
 
     //ENTREGAS FINALIZADAS GENERAL VISTA MISIONAL
-    @Query("SELECT r.idRequerimiento as idRequerimiento, " +
+    @Query("SELECT DISTINCT r.idRequerimiento as idRequerimiento, " +
             "r.nombreRequerimiento as nombreRequerimiento, " +
             "r.fechaInicio as fechaInicio, " +
             "r.fechaFin as fechaFin, " +

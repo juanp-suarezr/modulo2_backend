@@ -40,4 +40,6 @@ public class MFAnexosDTO {
     private String resolucionPermisosOperecacion;
     private String otros;
 
+    private Integer nit;
+
 }

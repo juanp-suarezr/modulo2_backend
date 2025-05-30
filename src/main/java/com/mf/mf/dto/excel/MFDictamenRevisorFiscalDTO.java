@@ -15,7 +15,8 @@ public class MFDictamenRevisorFiscalDTO {
     private String parrafoEnfasisDictamen;
     private String hipotesisNegocioMarcha;
     private String validacionHNM;
-    private Long nit;
+    private Integer idHeredado;
+    private Integer nit;
     private Integer annio;
 
 }

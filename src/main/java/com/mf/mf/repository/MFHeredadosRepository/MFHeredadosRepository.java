@@ -2,6 +2,7 @@ package com.mf.mf.repository.MFHeredadosRepository;
 
 import com.mf.mf.model.MFHashHeredado;
 import com.mf.mf.projection.MFRequerimientoProjection.GetMFHashHeredadosProjection;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -41,6 +42,7 @@ public interface MFHeredadosRepository extends JpaRepository<MFHashHeredado, Lon
     Optional<MFHashHeredado> findByIdHeredado(@Param("idHeredado") Integer idHeredado);
 
     @Modifying
+    @Transactional
     @Query("UPDATE MFHashHeredado m " +
             "SET m.cargoExcel = true " +
             "WHERE m.idHeredado = :idHeredado")

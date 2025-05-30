@@ -16,23 +16,23 @@ public class MFEstadoResultadoIntegralORI {
     private Long id;
     private Boolean estado;
 
-    private Integer gananciaPerdidaNeta;
-    private Integer otroResultadoIntegralDiferenciasCambioConversion;
-    private Integer otroResultadoIntegralGananciasActuariales;
-    private Integer otroResultadoIntegralGananciasRevaluacion;
-    private Integer totalOtroResultadoIntegralNoReclasificable;
-    private Integer gananciasCoberturasFlujosEfectivo;
-    private Integer totalOtroResultadoIntegralReclasificable;
+    private Long gananciaPerdidaNeta;
+    private Long otroResultadoIntegralDiferenciasCambioConversion;
+    private Long otroResultadoIntegralGananciasActuariales;
+    private Long otroResultadoIntegralGananciasRevaluacion;
+    private Long totalOtroResultadoIntegralNoReclasificable;
+    private Long gananciasCoberturasFlujosEfectivo;
+    private Long totalOtroResultadoIntegralReclasificable;
 
-    private Integer participacionOtroResultadoIntegralSubsidiarias;
+    private Long participacionOtroResultadoIntegralSubsidiarias;
 
-    private Integer totalOtroResultadoIntegral;
+    private Long totalOtroResultadoIntegral;
 
-    private Integer resultadoIntegralTotal;
+    private Long resultadoIntegralTotal;
 
-    private Integer resultadoIntegralPropietariosControladora;
+    private Long resultadoIntegralPropietariosControladora;
 
-    private Integer resultadoIntegralParticipacionesNoControladoras;
+    private Long resultadoIntegralParticipacionesNoControladoras;
 
 
     private String validacionEstadoResultados;

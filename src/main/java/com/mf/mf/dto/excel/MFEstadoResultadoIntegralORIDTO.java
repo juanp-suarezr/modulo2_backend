@@ -29,6 +29,8 @@ public class MFEstadoResultadoIntegralORIDTO {
 
     private String validacionEstadoResultados; // Validación del estado de resultados
     private Integer nit; // NIT del vigilado
+    private Integer idHeredado;
+
 
 
 }

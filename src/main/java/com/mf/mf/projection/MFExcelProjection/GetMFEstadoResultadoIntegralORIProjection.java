@@ -6,29 +6,29 @@ public interface GetMFEstadoResultadoIntegralORIProjection {
 
     Boolean getEstado();
 
-    Integer getGananciaPerdidaNeta();
+    Long getGananciaPerdidaNeta();
 
-    Integer getOtroResultadoIntegralDiferenciasCambioConversion();
+    Long getOtroResultadoIntegralDiferenciasCambioConversion();
 
-    Integer getOtroResultadoIntegralGananciasActuariales();
+    Long getOtroResultadoIntegralGananciasActuariales();
 
-    Integer getOtroResultadoIntegralGananciasRevaluacion();
+    Long getOtroResultadoIntegralGananciasRevaluacion();
 
-    Integer getTotalOtroResultadoIntegralNoReclasificable();
+    Long getTotalOtroResultadoIntegralNoReclasificable();
 
-    Integer getGananciasCoberturasFlujosEfectivo();
+    Long getGananciasCoberturasFlujosEfectivo();
 
-    Integer getTotalOtroResultadoIntegralReclasificable();
+    Long getTotalOtroResultadoIntegralReclasificable();
 
-    Integer getParticipacionOtroResultadoIntegralSubsidiarias();
+    Long getParticipacionOtroResultadoIntegralSubsidiarias();
 
-    Integer getTotalOtroResultadoIntegral();
+    Long getTotalOtroResultadoIntegral();
 
-    Integer getResultadoIntegralTotal();
+    Long getResultadoIntegralTotal();
 
-    Integer getResultadoIntegralPropietariosControladora();
+    Long getResultadoIntegralPropietariosControladora();
 
-    Integer getResultadoIntegralParticipacionesNoControladoras();
+    Long getResultadoIntegralParticipacionesNoControladoras();
 
     String getValidacionEstadoResultados();
 

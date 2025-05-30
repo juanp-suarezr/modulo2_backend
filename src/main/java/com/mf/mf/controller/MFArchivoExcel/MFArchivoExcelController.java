@@ -107,6 +107,7 @@ public class MFArchivoExcelController {
             String result;
             if (exists) {
                 if (hasApprovedAnulation) {
+                    System.out.println("ENTRO ANULACION");
                     result = excelService.createIdentificacionVigilado(file, nit, Integer.valueOf(idHeredado), fieldMappings);
                 } else {
                     System.out.println("ENTRO ACTUALIZAR");

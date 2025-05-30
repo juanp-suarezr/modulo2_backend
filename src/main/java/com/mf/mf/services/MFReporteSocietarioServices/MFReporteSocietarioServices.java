@@ -268,7 +268,7 @@ public class MFReporteSocietarioServices {
 
         int estado = (heredado.getEstadoEntrega() == 286) ? 460 : 289;
         mfHeredadosRepository.actualizarEstadoEntrega(Integer.valueOf(idHeredado), estado);
-
+        mfHeredadosRepository.actualizarCargoExcel(Integer.valueOf(idHeredado));
 
 
 

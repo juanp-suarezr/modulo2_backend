@@ -73,7 +73,7 @@ public class MFSolicitudAnulacionServices {
                 // Enviar correo
                 if ("Aprobado".equalsIgnoreCase(estadoReq)) {
                     mfHeredadosRepository.actualizarEstadoEntrega(datos.getIdHeredado(), 460);
-                    emailService.sendEmailAprobado(to, to1, tipoReporte, fechaSolicitud, nombre, razonSocial, nit);
+                    emailService.sendEmailAprobado(to, to1, tipoReporte, fechaSolicitud, nombre, razonSocial, nit, observacion);
                 } else {
                     emailService.sendEmailRechazado(to, to1, tipoReporte, fechaSolicitud, nombre, razonSocial, nit, observacion);
                 }

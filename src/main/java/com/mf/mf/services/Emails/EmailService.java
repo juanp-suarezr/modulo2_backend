@@ -30,7 +30,7 @@ public class EmailService {
         }
     }
 
-    public void sendEmailAprobado(String to, String to1, String tipoReporte, String fechaSolicitud, String nombre, String razonSocial, String nit) {
+    public void sendEmailAprobado(String to, String to1, String tipoReporte, String fechaSolicitud, String nombre, String razonSocial, String nit, String observacion) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom("supertransportedigital@supertransporte.gov.co");
@@ -47,11 +47,12 @@ public class EmailService {
                             "- **Nombre:** %s\n" +
                             "- **Razón Social:** %s\n" +
                             "- **NIT:** %s\n\n" +
+                            "- **Observaciones:** %s\n\n" +
                             "A partir de ahora, puede ingresar al módulo financiero y actualizar su reporte en entregas pendientes. Una vez actualizado, este se guardará en estado de retransmisión y lo podrá consultar en el apartado de consultar entregas.\n" +
                             "Gracias por su cooperación y cumplimiento con los requisitos establecidos.\n\n" +
                             "Atentamente,\n" +
                             "**Superintendencia de Transporte**",
-                    nombre, tipoReporte, fechaSolicitud, nombre, razonSocial, nit);
+                    nombre, tipoReporte, fechaSolicitud, nombre, razonSocial, nit, observacion);
             message.setText(emailText);
             javaMailSender.send(message);
 
