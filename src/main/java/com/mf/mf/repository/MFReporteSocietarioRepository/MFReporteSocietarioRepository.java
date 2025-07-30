@@ -1,5 +1,6 @@
 package com.mf.mf.repository.MFReporteSocietarioRepository;
 
+import com.mf.mf.dto.MFReporteSocietario.MFRegistroSocietarioDTO;
 import com.mf.mf.model.MFDocumentos;
 import com.mf.mf.model.MFReporteSocietario.MFReporteSocietario;
 import com.mf.mf.projection.GetMFDocumentosProjection;
@@ -20,7 +21,7 @@ public interface MFReporteSocietarioRepository extends JpaRepository<MFReporteSo
     List<GetMFReporteSocietarioProjection> findAllProjectedBy();
 
     @Query("""
-    SELECT rs
+    SELECT DISTINCT rs
     FROM MFReporteSocietario rs
     LEFT JOIN FETCH rs.causalesDisolucion cd
     LEFT JOIN FETCH rs.datosAdicionales da
@@ -32,6 +33,15 @@ public interface MFReporteSocietarioRepository extends JpaRepository<MFReporteSo
     WHERE rs.nit = :nit AND rs.idHeredado = :idHeredado
 """)
     Optional<MFReporteSocietario> findWithRelationsByNitAndIdHeredado(@Param("nit") Integer nit, @Param("idHeredado") Integer idHeredado);
+
+    @Query("""
+    SELECT DISTINCT rs
+    FROM MFReporteSocietario rs
+    WHERE rs.nit = :nit AND rs.idHeredado = :idHeredado
+""")
+    Optional<MFReporteSocietario> reporteSocietarioByIdHeredado(@Param("nit") Integer nit, @Param("idHeredado") Integer idHeredado);
+
+
 
 }
 

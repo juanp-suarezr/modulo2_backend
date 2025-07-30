@@ -28,6 +28,20 @@ public interface MFEstadoResultadoRepository extends JpaRepository<MFEstadoResul
             "AND t.idHeredado = :idHeredado")
     List<GetMFEstadoResultadosProjection> findMFERByNit1(Integer nit, Integer idHeredado);
 
+    //traerse los datos para reporte financiero
+    @Query(value = "SELECT t.\"gananciaNeta\" AS gananciaNeta, " +
+            "t.estado AS estado, " +
+            "t.\"ingresosActividadesOrdinarias\" AS ingresosActividadesOrdinarias, " +
+            "t.\"gananciaOperacion\" AS gananciaOperacion, " +
+            "t.nit AS nit, " +
+            "t.annio AS annio " +
+            "FROM financiero.\"MFEstadoResultados\" t " +
+            "WHERE t.nit = :nit AND t.estado = true AND t.actual = true " +
+            "ORDER BY t.annio DESC " +
+            "LIMIT 1",
+            nativeQuery = true)
+    GetMFEstadoResultadosProjection findUltimoRegistroPorNit(@Param("nit") Integer nit);
+
 
     //DELETE
     @Modifying

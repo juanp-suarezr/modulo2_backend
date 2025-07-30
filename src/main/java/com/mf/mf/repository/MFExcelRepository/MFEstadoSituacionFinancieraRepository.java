@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @Repository
@@ -27,6 +28,21 @@ public interface MFEstadoSituacionFinancieraRepository extends JpaRepository<MFE
             "WHERE t.nit = :nit "+
             "AND t.idHeredado = :idHeredado")
     List<GetMFEstadoSituacionFinancieraProjection> findMFESFByNit1(Integer nit, Integer idHeredado);
+
+    //traerse los datos para reporte financiero
+    @Query(value = "SELECT t.\"totalActivosCorrientes\" AS totalActivosCorrientes, " +
+            "t.estado AS estado, " +
+            "t.\"totalActivosNoCorrientes\" AS totalActivosNoCorrientes, " +
+            "t.nit AS nit, " +
+            "t.annio AS annio, " +
+            "t.\"pasivosCorrientes\" AS pasivosCorrientes, " +
+            "t.\"pasivosNoCorrientes\" AS pasivosNoCorrientes " +
+            "FROM financiero.\"MFEstadoSituacionFinanciera\" t " +
+            "WHERE t.nit = :nit AND t.estado = true AND t.actual = true " +
+            "ORDER BY t.annio DESC " +
+            "LIMIT 1",
+            nativeQuery = true)
+    GetMFEstadoSituacionFinancieraProjection findUltimoRegistroPorNit(@Param("nit") Integer nit);
 
     //DELETE
     @Modifying

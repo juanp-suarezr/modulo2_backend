@@ -40,6 +40,8 @@ public class MFArchivoExcelServices {
     private MFEstadoFlujoEfectivoDirectoRepository estadoFlujoEfectivoDirectoRepository;
     @Autowired
     private MFDictamenRevisorFiscalRepository estadoDictamenRevisorFiscalRepository;
+    @Autowired
+    private MFEstadoCambioPatrimonioRepository estadoCambioPatrimonioRepository;
 
 
     // Convertir JSON a ValidationRanges
@@ -99,6 +101,7 @@ public class MFArchivoExcelServices {
             estadoFlujoEfectivoIndirectoRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
             estadoFlujoEfectivoDirectoRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
             estadoDictamenRevisorFiscalRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
+            estadoCambioPatrimonioRepository.deleteByNitAndIdHeredado(Integer.valueOf(nit), idHeredado);
             // Procesar y guardar los nuevos datos
             processAndSaveExcelData(file, nit, idHeredado, fieldMappings);
 
@@ -117,6 +120,7 @@ public class MFArchivoExcelServices {
         estadoFlujoEfectivoIndirectoRepository.updateEstadoByIdHeredado(idHeredado);
         estadoFlujoEfectivoDirectoRepository.updateEstadoByIdHeredado(idHeredado);
         estadoDictamenRevisorFiscalRepository.updateEstadoByIdHeredado(idHeredado);
+        estadoCambioPatrimonioRepository.updateEstadoByIdHeredado(idHeredado);
 
     }
 
@@ -157,6 +161,8 @@ public class MFArchivoExcelServices {
                 return MFEstadoFlujoEfectivoDirecto.class;
             case "Dictamen":
                 return MFDictamenRevisorFiscal.class;
+            case "ECP":
+                return MFEstadoCambioPatrimonio.class;
             default:
                 throw new IllegalArgumentException("La hoja '" + sheetName + "' no está mapeada para su procesamiento.");
         }
@@ -403,7 +409,9 @@ public class MFArchivoExcelServices {
             estadoFlujoEfectivoDirectoRepository.save((MFEstadoFlujoEfectivoDirecto) entity);
         }else if (entity instanceof MFDictamenRevisorFiscal) {
             estadoDictamenRevisorFiscalRepository.save((MFDictamenRevisorFiscal) entity);
-        } else {
+        }else if (entity instanceof MFEstadoCambioPatrimonio) {
+            estadoCambioPatrimonioRepository.save((MFEstadoCambioPatrimonio) entity);
+    } else {
             throw new IllegalArgumentException("Tipo de entidad no soportado: " + entity.getClass().getName());
         }
     }

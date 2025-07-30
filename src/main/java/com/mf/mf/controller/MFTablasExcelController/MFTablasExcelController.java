@@ -36,6 +36,8 @@ public class MFTablasExcelController {
     private MFEstadoFlujoDirectoRepository mfEstadoFlujoDirectoRepository;
     @Autowired
     private MFDictamenRevisorFiscalRepository mfDictamenRevisorFiscalRepository;
+    @Autowired
+    private MFEstadoCambioPatrimonioRepository mfEstadoCambioPatrimonioRepository;
 
     //Obtener TIPO VIGILADOS
     @GetMapping("/indentificacion-vigilado")
@@ -406,6 +408,58 @@ public class MFTablasExcelController {
         return mfTablasExcelServices.obtenerEFEDirectoByNIT(nit, idHeredado);
     }
 
+    //Obtener historial -- rol misional -- TIPO VIGILADOS
+    @GetMapping("/comparativo-EFEDirecto")
+    public Map<String, Object> compararEFEDirecto(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+
+        // Obtener los registros correspondientes al NIT e ID heredado
+        // Intentar obtener los registros
+
+        List<GetMFEstadoFlujoDirectoProjection> registros = mfEstadoFlujoDirectoRepository.findMFEFEDirectoByNit1(nit, idHeredado);
+
+
+        if (registros == null || registros.size() < 2) {
+            throw new RuntimeException("Error: No se encontraron suficientes registros para comparar.");
+        }
+
+        // Filtrar los registros por estado
+        GetMFEstadoFlujoDirectoProjection registroAntiguo = registros.stream()
+                .filter(r -> !r.getEstado()) // Estado false
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Error: No se encontró un registro antiguo (estado = false)."));
+
+        GetMFEstadoFlujoDirectoProjection registroActualizado = registros.stream()
+                .filter(r -> r.getEstado()) // Estado true
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Error: No se encontró un registro actualizado (estado = true)."));
+
+        // Comparar los registros automáticamente usando reflexión
+        Map<String, Object> cambios = new HashMap<>();
+        try {
+            for (var method : GetMFEstadoFlujoDirectoProjection.class.getDeclaredMethods()) {
+                if (method.getName().startsWith("get")) { // Solo métodos "get"
+                    String fieldName = Character.toLowerCase(method.getName().charAt(3)) + method.getName().substring(4); // Obtener el nombre del campo
+                    Object valorAntiguo = method.invoke(registroAntiguo);
+                    Object valorActualizado = method.invoke(registroActualizado);
+
+                    if (valorAntiguo != null && !valorAntiguo.equals(valorActualizado)) {
+                        cambios.put(fieldName, Map.of("antiguo", valorAntiguo, "actualizado", valorActualizado));
+                    } else if (valorAntiguo == null && valorActualizado != null) {
+                        cambios.put(fieldName, Map.of("antiguo", null, "actualizado", valorActualizado));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al comparar los registros.", e);
+        }
+
+        return cambios; // Devuelve el mapa con los cambios al frontend
+    }
+
+
     //Obtener ESTADOS DICTAMEN
     @GetMapping("/dictamen")
     public List<GetMFDictamenRevisorFiscalProjection> obtenerDictamen(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
@@ -414,6 +468,120 @@ public class MFTablasExcelController {
         }
         return mfTablasExcelServices.obtenerDictamenByNIT(nit, idHeredado);
     }
+
+    //Obtener historial -- rol misional -- TIPO VIGILADOS
+    @GetMapping("/comparativo-dictamen")
+    public Map<String, Object> compararDictamen(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+
+        // Obtener los registros correspondientes al NIT e ID heredado
+        // Intentar obtener los registros
+
+        List<GetMFDictamenRevisorFiscalProjection> registros = mfDictamenRevisorFiscalRepository.findDictamenByNit1(nit, idHeredado);
+
+
+        if (registros == null || registros.size() < 2) {
+            throw new RuntimeException("Error: No se encontraron suficientes registros para comparar.");
+        }
+
+        // Filtrar los registros por estado
+        GetMFDictamenRevisorFiscalProjection registroAntiguo = registros.stream()
+                .filter(r -> !r.getEstado()) // Estado false
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Error: No se encontró un registro antiguo (estado = false)."));
+
+        GetMFDictamenRevisorFiscalProjection registroActualizado = registros.stream()
+                .filter(r -> r.getEstado()) // Estado true
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Error: No se encontró un registro actualizado (estado = true)."));
+
+        // Comparar los registros automáticamente usando reflexión
+        Map<String, Object> cambios = new HashMap<>();
+        try {
+            for (var method : GetMFDictamenRevisorFiscalProjection.class.getDeclaredMethods()) {
+                if (method.getName().startsWith("get")) { // Solo métodos "get"
+                    String fieldName = Character.toLowerCase(method.getName().charAt(3)) + method.getName().substring(4); // Obtener el nombre del campo
+                    Object valorAntiguo = method.invoke(registroAntiguo);
+                    Object valorActualizado = method.invoke(registroActualizado);
+
+                    if (valorAntiguo != null && !valorAntiguo.equals(valorActualizado)) {
+                        cambios.put(fieldName, Map.of("antiguo", valorAntiguo, "actualizado", valorActualizado));
+                    } else if (valorAntiguo == null && valorActualizado != null) {
+                        cambios.put(fieldName, Map.of("antiguo", null, "actualizado", valorActualizado));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al comparar los registros.", e);
+        }
+
+        return cambios; // Devuelve el mapa con los cambios al frontend
+    }
+
+
+    //Obtener TIPO VIGILADOS
+    @GetMapping("/estado-patrimonio")
+    public List<GetMFEstadoCambioPatrimonioProjection> obtenerEstadoCambioPatrimonio(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+        return mfTablasExcelServices.obtenerEstadoCambioByNIT(nit, idHeredado);
+    }
+
+    //Obtener historial -- rol misional -- TIPO VIGILADOS
+    @GetMapping("/comparativo-estado-patrimonio")
+    public Map<String, Object> compararPatrimonio(@RequestParam Integer nit, @RequestParam Integer idHeredado) {
+        if (nit == null) {
+            throw new RuntimeException("Error: El parámetro 'nit' no se envió.");
+        }
+
+        // Obtener los registros correspondientes al NIT e ID heredado
+        // Intentar obtener los registros
+
+        List<GetMFEstadoCambioPatrimonioProjection> registros = mfEstadoCambioPatrimonioRepository.findEstadoPatrimonioByNit1(nit, idHeredado);
+
+
+        if (registros == null || registros.size() < 2) {
+            throw new RuntimeException("Error: No se encontraron suficientes registros para comparar.");
+        }
+
+        // Filtrar los registros por estado
+        GetMFEstadoCambioPatrimonioProjection registroAntiguo = registros.stream()
+                .filter(r -> !r.getEstado()) // Estado false
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Error: No se encontró un registro antiguo (estado = false)."));
+
+        GetMFEstadoCambioPatrimonioProjection registroActualizado = registros.stream()
+                .filter(r -> r.getEstado()) // Estado true
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Error: No se encontró un registro actualizado (estado = true)."));
+
+        // Comparar los registros automáticamente usando reflexión
+        Map<String, Object> cambios = new HashMap<>();
+        try {
+            for (var method : GetMFEstadoCambioPatrimonioProjection.class.getDeclaredMethods()) {
+                if (method.getName().startsWith("get")) { // Solo métodos "get"
+                    String fieldName = Character.toLowerCase(method.getName().charAt(3)) + method.getName().substring(4); // Obtener el nombre del campo
+                    Object valorAntiguo = method.invoke(registroAntiguo);
+                    Object valorActualizado = method.invoke(registroActualizado);
+
+                    if (valorAntiguo != null && !valorAntiguo.equals(valorActualizado)) {
+                        cambios.put(fieldName, Map.of("antiguo", valorAntiguo, "actualizado", valorActualizado));
+                    } else if (valorAntiguo == null && valorActualizado != null) {
+                        cambios.put(fieldName, Map.of("antiguo", null, "actualizado", valorActualizado));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al comparar los registros.", e);
+        }
+
+        return cambios; // Devuelve el mapa con los cambios al frontend
+    }
+
+
 
 
 }

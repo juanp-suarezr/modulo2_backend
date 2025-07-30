@@ -22,6 +22,13 @@ public interface MFEstadoFlujoDirectoRepository extends JpaRepository<MFEstadoFl
             "AND t.idHeredado = :idHeredado")
     List<GetMFEstadoFlujoDirectoProjection> findMFEFEDirectoByNit(Integer nit, Integer idHeredado);
 
+    //SIN ESTADO PARA HISTORIAL MISIONAL
+    @Query("SELECT t FROM MFEstadoFlujoEfectivoDirecto t " +
+            "WHERE t.nit = :nit "+
+            "AND t.idHeredado = :idHeredado")
+    List<GetMFEstadoFlujoDirectoProjection> findMFEFEDirectoByNit1(Integer nit, Integer idHeredado);
+
+
     //DELETE
     @Modifying
     @Query("DELETE FROM MFEstadoFlujoEfectivoDirecto t WHERE t.nit = :nit AND t.idHeredado = :idHeredado")

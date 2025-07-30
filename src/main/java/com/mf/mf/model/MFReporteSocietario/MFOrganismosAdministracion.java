@@ -35,9 +35,5 @@ public class MFOrganismosAdministracion {
     @Column(nullable = false)
     private Integer nit;
 
-    // Relaciones con otras entidades
 
-    @ManyToOne
-    @JoinColumn(name = "\"tipo_identificacion\"", referencedColumnName = "id", insertable = false, updatable = false)
-    private CatalogoDetalle tipoDocumentoDescripcion;
 }

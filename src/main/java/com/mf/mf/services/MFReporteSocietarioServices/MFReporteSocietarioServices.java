@@ -6,16 +6,18 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mf.mf.dto.MFReporteSocietario.*;
 
+import com.mf.mf.mapper.MFReporteSocietarioMapper.MFReporteSocietarioMapper;
 import com.mf.mf.model.MFHashHeredado;
 import com.mf.mf.model.MFReporteSocietario.*;
 import com.mf.mf.repository.MFHeredadosRepository.MFHeredadosRepository;
 import com.mf.mf.repository.MFReporteSocietarioRepository.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.time.format.DateTimeFormatter;
@@ -38,8 +40,9 @@ public class MFReporteSocietarioServices {
     private final MFAcasReunionRepository acasReunionRepository;
 
     private final MFHeredadosRepository mfHeredadosRepository;
+    private final MFReporteSocietarioMapper mfReporteSocietarioMapper;
 
-    public MFReporteSocietarioServices(MFReporteSocietarioRepository reporteSocietarioRepository, MFCausalesDisolucionRepository causalesDisolucionRepository, MFDatosAdicionalesRepository datosAdicionalesRepository, MFFacultadesRepository facultadesRepository, MFDatosCapitalRepository datosCapitalRepository, MFRevisoresFiscalesRepository revisoresFiscalesRepository, MFOrganismosAdministracionRepository organismosAdministracionRepository, MFReunionesRepository reunionesRepository, MFConvocantesRepository convocantesRepository, MFAcasReunionRepository acasReunionRepository, MFHeredadosRepository mfHeredadosRepository) {
+    public MFReporteSocietarioServices(MFReporteSocietarioRepository reporteSocietarioRepository, MFCausalesDisolucionRepository causalesDisolucionRepository, MFDatosAdicionalesRepository datosAdicionalesRepository, MFFacultadesRepository facultadesRepository, MFDatosCapitalRepository datosCapitalRepository, MFRevisoresFiscalesRepository revisoresFiscalesRepository, MFOrganismosAdministracionRepository organismosAdministracionRepository, MFReunionesRepository reunionesRepository, MFConvocantesRepository convocantesRepository, MFAcasReunionRepository acasReunionRepository, MFHeredadosRepository mfHeredadosRepository, MFReporteSocietarioMapper mfReporteSocietarioMapper) {
         this.reporteSocietarioRepository = reporteSocietarioRepository;
         this.causalesDisolucionRepository = causalesDisolucionRepository;
         this.datosAdicionalesRepository = datosAdicionalesRepository;
@@ -51,6 +54,7 @@ public class MFReporteSocietarioServices {
         this.convocantesRepository = convocantesRepository;
         this.acasReunionRepository = acasReunionRepository;
         this.mfHeredadosRepository = mfHeredadosRepository;
+        this.mfReporteSocietarioMapper = mfReporteSocietarioMapper;
 
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -190,6 +194,25 @@ public class MFReporteSocietarioServices {
             revisoresFiscalesRepository.save(entityRevisores);
         }
 
+        //3.5 DATOS CAPITAL
+        MFDatosCapital entityDatosCapital = new MFDatosCapital();
+        entityDatosCapital.setConstitucion(reporte);
+        entityDatosCapital.setValorCapital(valorCapital);
+        entityDatosCapital.setCapitalAutorizado(capitalAutorizado);
+        entityDatosCapital.setNroAcciones(nroAcciones);
+        entityDatosCapital.setCapitalSuscrito(capitalSuscrito);
+        entityDatosCapital.setFechaPagoCapitalSuscrito(fechaPagoCapitalSuscrito);
+        entityDatosCapital.setNroCuotas(nroCuotas);
+        entityDatosCapital.setTipoAccion(tipoAccion);
+        entityDatosCapital.setValorAccion(valorAccion);
+        entityDatosCapital.setCapitalPagado(capitalPagado);
+        entityDatosCapital.setCantidadAccionistas(cantidadAccionistas);
+        entityDatosCapital.setIdHeredado(Integer.valueOf(idHeredado));
+        entityDatosCapital.setNit(Integer.valueOf(nit));
+        entityDatosCapital.setEstado(true);
+        datosCapitalRepository.save(entityDatosCapital);
+
+
         //4. ORGANISMOS ADMINISTRACION
         for (MFOrganismosAdministracionDTO orgAdmin : organismos) {
             MFOrganismosAdministracion entityOrganismos= new MFOrganismosAdministracion();
@@ -273,6 +296,62 @@ public class MFReporteSocietarioServices {
 
 
 
+    }
+
+
+    public MFReporteSocietarioWithRelationshipDTO obtenerPorNitYHeredado(Integer nit, Integer idHeredado) {
+        // 1. Buscar entidad principal
+        MFReporteSocietario entidad = reporteSocietarioRepository
+                .reporteSocietarioByIdHeredado(nit, idHeredado)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No se encontró reporte societario para nit: " + nit + " y idHeredado: " + idHeredado));
+
+        Integer idConstitucion = Math.toIntExact(entidad.getIdSocietario()); // o el campo que actúe como foreign key
+
+        // 2. Cargar entidades hijas por separado
+        List<MFCausalesDisolucion> causalesDisolucion = causalesDisolucionRepository
+                .causalesDisolucionByIdHeredado(idConstitucion);
+
+        List<MFDatosAdicionales> datosAdicionales = datosAdicionalesRepository
+                .datosAdicionalesByIdHeredado(idConstitucion);
+        List<MFDatosCapital> datosCapital = datosCapitalRepository
+                .datosCapitalByIdHeredado(idConstitucion);
+        List<MFRevisoresFiscales> revisoresFiscales = revisoresFiscalesRepository
+                .revisoresFiscalesByIdHeredado(idConstitucion);
+        List<MFFacultades> facultades = facultadesRepository
+                .facultadesByIdHeredado(idConstitucion);
+        List<MFOrganismosAdministracion> organismosAdministracion = organismosAdministracionRepository
+                .organismosAdminByIdHeredado(idConstitucion);
+        List<MFReuniones> reuniones = reunionesRepository
+                .reunionesByIdHeredado(idConstitucion);
+
+        //sub
+        for (MFReuniones reunion : reuniones) {
+            List<MFActasReunion> actasReuniones = acasReunionRepository
+                    .actasReunionesByIdHeredado((int) reunion.getIdReuniones());
+
+            List<MFConvocantesReunion> convocantesReuniones = convocantesRepository
+                    .convocantesByIdHeredado((int) reunion.getIdReuniones());
+
+            // Asignar las listas a cada reunión
+            reunion.setActas(actasReuniones);
+            reunion.setConvocantes(convocantesReuniones);
+        }
+
+
+
+        // 3. Asignar manualmente si tienes relaciones bidireccionales o DTOs que lo necesitan
+        entidad.setCausalesDisolucion(causalesDisolucion);
+        entidad.setDatosAdicionales(datosAdicionales);
+        entidad.setDatosCapital(datosCapital);
+        entidad.setRevisoresFiscales(revisoresFiscales);
+        entidad.setFacultades(facultades);
+        entidad.setOrganismosAdministracion(organismosAdministracion);
+        entidad.setReuniones(reuniones);
+        // ... setea los demás
+
+        // 4. Mapear a DTO con todas las relaciones llenas
+        return mfReporteSocietarioMapper.toDTO(entidad);
     }
 
     // Métodos para convertir datos

@@ -28,6 +28,8 @@ public class MFTablasExcelServices {
     private MFEstadoFlujoDirectoRepository mfEstadoFlujoDirectoRepository;
     @Autowired
     private MFDictamenRevisorFiscalRepository mfDictamenRevisorFiscalRepository;
+    @Autowired
+    private MFEstadoCambioPatrimonioRepository mfEstadoCambioPatrimonioRepository;
 
     //Obtener info IDENTIFICACION VIGILADO para tabla principal
     public List<GetMFIdentificacionVigiladoProjection> obtenerIdentificacionVigiladoByNIT(Integer nit, Integer idHeredado) {
@@ -176,6 +178,26 @@ public class MFTablasExcelServices {
         return tipoVigiladoInfo;
     }
 
+    //Obtener info EFEDirecto para tabla principal
+    public List<GetMFEstadoCambioPatrimonioProjection> obtenerEstadoCambioByNIT(Integer nit, Integer idHeredado) {
+        // Si no se proporciona idDelegatura, retornar una lista vacía
+        if (nit == null) {
+            System.out.println("Advertencia: nit empresa no proporcionado");
+            return Collections.emptyList(); // Retorna una lista vacía
+        }
+
+        // Intentar obtener los registros
+        List<GetMFEstadoCambioPatrimonioProjection> tipoVigiladoInfo = mfEstadoCambioPatrimonioRepository.findMFestadoPatrimonioByNit(nit, idHeredado);
+
+        // Retornar lista vacía si no se encuentran registros, con mensaje de advertencia
+        if (tipoVigiladoInfo.isEmpty()) {
+
+            System.out.println("Advertencia: No se encontraron registros para el nit: " + nit);
+            return Collections.emptyList();
+        }
+
+        return tipoVigiladoInfo;
+    }
 
 
 

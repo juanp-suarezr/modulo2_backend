@@ -2,11 +2,12 @@ package com.mf.mf.dto.MFReporteSocietario;
 
 import com.mf.mf.model.MFReporteSocietario.MFOrganismosAdministracion;
 import jakarta.persistence.Column;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-
+@Data
 public class MFRegistroSocietarioDTO {
     private String tipo_sociedad;
     private String tipo_documento;

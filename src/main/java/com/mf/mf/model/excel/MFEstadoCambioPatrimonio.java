@@ -32,5 +32,7 @@ public class MFEstadoCambioPatrimonio {
     private Integer annio;
     private Integer nit;
     private Boolean actual;
+    private Integer idHeredado;
+
     
 }

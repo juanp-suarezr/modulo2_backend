@@ -34,8 +34,5 @@ public class MFRevisoresFiscales {
 
     // Relaciones con otras entidades
 
-    @ManyToOne
-    @JoinColumn(name = "\"tipo_identificacion\"", referencedColumnName = "id", insertable = false, updatable = false)
-    private CatalogoDetalle tipoDocumentoDescripcion;
 
 }

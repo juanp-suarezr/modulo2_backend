@@ -27,6 +27,7 @@ public interface MFIdentificacionVigiladoRepository extends JpaRepository<MFIden
             "AND t.idHeredado = :idHeredado")
     List<GetMFIdentificacionVigiladoProjection> findMFIdentificacionVigiladosByNit1(Integer nit, Integer idHeredado);
 
+
     // En MFIdentificacionVigiladoRepository
     @Modifying
     @Query("DELETE FROM MFIdentificacionVigilado t WHERE t.nit = :nit AND t.idHeredado = :idHeredado")

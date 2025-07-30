@@ -3,15 +3,14 @@ package com.mf.mf.controller.MFReporteSocietario;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mf.mf.dto.MFReporteSocietario.MFFacultadesDTO;
-import com.mf.mf.dto.MFReporteSocietario.MFOrganismosAdministracionDTO;
-import com.mf.mf.dto.MFReporteSocietario.MFReunionesDTO;
-import com.mf.mf.dto.MFReporteSocietario.MFRevisoresFiscalesDTO;
+import com.mf.mf.dto.MFReporteSocietario.*;
 import com.mf.mf.services.MFReporteSocietarioServices.MFReporteSocietarioServices;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/reporte-societario")
 @Tag(name = "Reporte Societario", description = "Reporte societario vigilado")
@@ -58,6 +58,29 @@ public class MFReporteSocietarioController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al procesar el formulario: " + e.getMessage());
         }
     }
+
+
+    //LISTAR INFO ESPECIFICA SEGUN IDHeredado y NIT
+    @GetMapping
+    public ResponseEntity<MFReporteSocietarioWithRelationshipDTO> obtenerPorNitYHeredado(
+            @RequestParam Integer nit,
+            @RequestParam Integer idHeredado) {
+        try {
+            System.out.println(reporteSocietarioService
+                    .obtenerPorNitYHeredado(nit, idHeredado));
+            MFReporteSocietarioWithRelationshipDTO dto = reporteSocietarioService
+                    .obtenerPorNitYHeredado(nit, idHeredado);
+            System.out.println(dto);
+            return ResponseEntity.ok(dto);
+        } catch (EntityNotFoundException ex) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception ex) {
+            log.error("e1: ", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 
 
 }
